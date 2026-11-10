@@ -1,0 +1,6 @@
+* text=auto eol=lf
+# Keep the imported bytes exact for provenance and deterministic Java ZIPs.
+upstream/** -text
+src/content/java/*.md -text
+*.jpg binary
+*.png binary

@@ -1,0 +1,643 @@
+{
+  "importedAt": "2026-11-10",
+  "networkCommit": "2299cccbf7535b71c67007a3e92d7c6fa546d332",
+  "networkDirty": true,
+  "files": [
+    {
+      "source": "azure-network-basics/js/lessons.js",
+      "target": "upstream/network/js/lessons.js",
+      "sha256": "6e843686ce90a1d6b45875161b1ae1919c583640258fc29602e128276b4157ce",
+      "bytes": 15464
+    },
+    {
+      "source": "azure-network-basics/js/v02.js",
+      "target": "upstream/network/js/v02.js",
+      "sha256": "f55261794b2331569386773f87041e1bd6d452d3c0dd2e4faebd277f4bd66373",
+      "bytes": 11093
+    },
+    {
+      "source": "azure-network-basics/LICENSE",
+      "target": "upstream/network/LICENSE",
+      "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685",
+      "bytes": 1056
+    },
+    {
+      "source": "azure-network-basics/README.md",
+      "target": "upstream/network/README.md",
+      "sha256": "c5f6243901f60f253bca2255722469740bd303a668e4957cbd44bb654e44d15f",
+      "bytes": 1823
+    },
+    {
+      "source": "JavaStudy/Todo/.classpath",
+      "target": "upstream/java/Todo/.classpath",
+      "sha256": "9681161bc215b55da08e4ad91aa69c3991f5115e1cef9a76045439fa6b29d711",
+      "bytes": 373
+    },
+    {
+      "source": "JavaStudy/Todo/.project",
+      "target": "upstream/java/Todo/.project",
+      "sha256": "2c2fee189842df4df224e74f790ce27aa8436c726b7c9c0797e7e6c0759eff6f",
+      "bytes": 363
+    },
+    {
+      "source": "JavaStudy/Todo/.settings/org.eclipse.core.resources.prefs",
+      "target": "upstream/java/Todo/.settings/org.eclipse.core.resources.prefs",
+      "sha256": "4238e4eafab8309d5f1ee3c167db1e6bf254d5587daa652f1495da7c3942b4c4",
+      "bytes": 55
+    },
+    {
+      "source": "JavaStudy/Todo/.settings/org.eclipse.jdt.core.prefs",
+      "target": "upstream/java/Todo/.settings/org.eclipse.jdt.core.prefs",
+      "sha256": "5f3c7b8bc5f4f3b74a9426803f68e4ecaef5fad73aa3432a6c0cf5c12b3b89fd",
+      "bytes": 767
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/dao/TaskDao.java",
+      "target": "upstream/java/Todo/com.todo/dao/TaskDao.java",
+      "sha256": "a210e342974ecacd54cc9860adf01cd83b88b84f3d4b24e108db1e712c9e7224",
+      "bytes": 3032
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/db.properties.example",
+      "target": "upstream/java/Todo/com.todo/db.properties.example",
+      "sha256": "0df793589d1d43c04e275e98aef69ebb259449a5a30e03fe4b27436f531dba0a",
+      "bytes": 215
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/dto/TaskDto.java",
+      "target": "upstream/java/Todo/com.todo/dto/TaskDto.java",
+      "sha256": "9409af875f4a049aee10132c16eaafdfdce00565b4ced71150bff2e4803ec48a",
+      "bytes": 678
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/main/Main.java",
+      "target": "upstream/java/Todo/com.todo/main/Main.java",
+      "sha256": "eaa21a22d62567ab98b1957577e839504985079b7249a9f9c1d952441508f761",
+      "bytes": 5397
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/service/base/BaseService.java",
+      "target": "upstream/java/Todo/com.todo/service/base/BaseService.java",
+      "sha256": "cd415e0ef0cbddc05ef31ec243c81c358bd786151dcddc8de67a83e0cf1ad328",
+      "bytes": 330
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/service/TaskService.java",
+      "target": "upstream/java/Todo/com.todo/service/TaskService.java",
+      "sha256": "7d56d799203f28b11429340deabc2fd2b4c59348a9eb76dd9fc5c3a25fec132e",
+      "bytes": 2379
+    },
+    {
+      "source": "JavaStudy/Todo/com.todo/util/DbUtil.java",
+      "target": "upstream/java/Todo/com.todo/util/DbUtil.java",
+      "sha256": "f723c860c34baa77af932961aefdfa3bee72663ef697f669fb85e3aae051eefd",
+      "bytes": 1520
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.classpath",
+      "target": "upstream/java/TodoJSP/.classpath",
+      "sha256": "64312024521f6399a85a9eec5df657d1cf25c2de5e6bcbae236da86a8663507e",
+      "bytes": 724
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.project",
+      "target": "upstream/java/TodoJSP/.project",
+      "sha256": "f1bed01a6d9dfa8e9d1799a11377757283ddcffa1e7e7ccbeac08319c1c1abeb",
+      "bytes": 876
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/.jsdtscope",
+      "target": "upstream/java/TodoJSP/.settings/.jsdtscope",
+      "sha256": "c80303ac2eb128e75f8d1d1bf125ef5b5d62e6a50f707bf2b78401b37b06d461",
+      "bytes": 560
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.core.resources.prefs",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.core.resources.prefs",
+      "sha256": "4238e4eafab8309d5f1ee3c167db1e6bf254d5587daa652f1495da7c3942b4c4",
+      "bytes": 55
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.jdt.core.prefs",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.jdt.core.prefs",
+      "sha256": "869bb3101ca5232694060aaab11cd59911abe5708b0bafa7dea27ea3622c9f46",
+      "bytes": 537
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.wst.common.component",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.wst.common.component",
+      "sha256": "601ebabc278130b7c2bcf96dfdb94c69b2645467bd7079e182732171beaaf56a",
+      "bytes": 478
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.wst.common.project.facet.core.xml",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.wst.common.project.facet.core.xml",
+      "sha256": "5746bb091c73307b3bd3077c4dc439d7cf7fda88dcd9f4ea04633a008fc5b8ee",
+      "bytes": 334
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.wst.jsdt.ui.superType.container",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.wst.jsdt.ui.superType.container",
+      "sha256": "46c87f902091fa8a81c02359cbc132eebc31753a70b3130de5a7d760d2f00ffe",
+      "bytes": 49
+    },
+    {
+      "source": "JavaStudy/TodoJSP/.settings/org.eclipse.wst.jsdt.ui.superType.name",
+      "target": "upstream/java/TodoJSP/.settings/org.eclipse.wst.jsdt.ui.superType.name",
+      "sha256": "19734a1b58cabc22cae1f88493289ee94f40ff2b350f7f1b9f7011ea84096916",
+      "bytes": 6
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/DeleteAllServlet.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/DeleteAllServlet.java",
+      "sha256": "cbd71ce1a16bf1f37016c3a7d17b2335f0f104edbc2e3a04d6750ed6f276122a",
+      "bytes": 2832
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/DeleteServlet.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/DeleteServlet.java",
+      "sha256": "dfe597bfd11fa8dc6a711befa201faa873dc6928b2b4f53bcbd8484de689e4b7",
+      "bytes": 3053
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/RegisterServlet.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/RegisterServlet.java",
+      "sha256": "44dfacef973a4c57e84602f0867e8f05f46533227cf479923b3a9b2983728e70",
+      "bytes": 2369
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/UpdateServlet.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/UpdateServlet.java",
+      "sha256": "131cff1146c622ab5671f359600c134141e07a16321b79cab2e65e2aedf9811e",
+      "bytes": 3557
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/ViewServlet.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/ViewServlet.java",
+      "sha256": "a4ec4149b5c5b50d2aeadfe951ad056981213c45a9d4d0ff94ae5c4a5d22986f",
+      "bytes": 1374
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/controller/WebSupport.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/controller/WebSupport.java",
+      "sha256": "dec8e3bcf4130f15d548115ef32a1d607c62c48c8145a2c3bccc393ebff8ae13",
+      "bytes": 1197
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/dao/TaskDao.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/dao/TaskDao.java",
+      "sha256": "6a0f2a7b2f5a3d4d5761731bfcbb9454f66ecc1c3e29026501f80bf79c90e2d5",
+      "bytes": 3056
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/dto/TaskDto.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/dto/TaskDto.java",
+      "sha256": "66dc009035149b76601499988242cb0536877207b5c527e08c327875372269fe",
+      "bytes": 690
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/service/TaskService.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/service/TaskService.java",
+      "sha256": "94e08d4784736dbecf429cc4d71e9a2b2c57c91080bd2553bca2a9d2066aba09",
+      "bytes": 2436
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/com/todojsp/util/DbUtil.java",
+      "target": "upstream/java/TodoJSP/com.todojsp/com/todojsp/util/DbUtil.java",
+      "sha256": "4e118d49f3ac63daf07e560563bd476e4fde900359f0508718f9edce0eed04aa",
+      "bytes": 1532
+    },
+    {
+      "source": "JavaStudy/TodoJSP/com.todojsp/db.properties.example",
+      "target": "upstream/java/TodoJSP/com.todojsp/db.properties.example",
+      "sha256": "0df793589d1d43c04e275e98aef69ebb259449a5a30e03fe4b27436f531dba0a",
+      "bytes": 215
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/index.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/index.jsp",
+      "sha256": "960dda06c720b29f34d3bf0c2873d101dc30c88568e5a0c19d035e257fe9cf27",
+      "bytes": 1058
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/META-INF/MANIFEST.MF",
+      "target": "upstream/java/TodoJSP/src/main/webapp/META-INF/MANIFEST.MF",
+      "sha256": "4e1cfddbc5dd375b247af82e2a4c5f374b9064c640879e869f3acb0b1cc0ca24",
+      "bytes": 36
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/style.css",
+      "target": "upstream/java/TodoJSP/src/main/webapp/style.css",
+      "sha256": "6daf74c12cf91d592f13763390bee700f8191218f8b5368bef7ef0ba13f23a0a",
+      "bytes": 783
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/views/delete.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/views/delete.jsp",
+      "sha256": "602bac3bea6dfcf861a7d7a86841f639d872368152de9105cab1463c90b0d66d",
+      "bytes": 1239
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/views/deleteAll.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/views/deleteAll.jsp",
+      "sha256": "1c63cef83b461c11dbf0a3d430f79d8d7bb2e22693bd870999e5390c1cc77b78",
+      "bytes": 1211
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/views/register.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/views/register.jsp",
+      "sha256": "77f8cafd2de39e433f9189f68fe90c4c1d2c81eb8922dbf5f0a93d44824b2b43",
+      "bytes": 1102
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/views/update.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/views/update.jsp",
+      "sha256": "eb300e7098e286babc39288ebe051ede9543a213fe7f98910bae6fcd803046f7",
+      "bytes": 1584
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/views/view.jsp",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/views/view.jsp",
+      "sha256": "07d949062ec41e6987e9d3c54f87731e37f6a83b18353a6dd2e052bcd95a5036",
+      "bytes": 1808
+    },
+    {
+      "source": "JavaStudy/TodoJSP/src/main/webapp/WEB-INF/web.xml",
+      "target": "upstream/java/TodoJSP/src/main/webapp/WEB-INF/web.xml",
+      "sha256": "15a68ef422e4acbb9f9e2e005404bab9b9cf5fc145add194db8854e2bc9d22a2",
+      "bytes": 642
+    },
+    {
+      "source": "JavaStudy/sql/01-schema.sql",
+      "target": "upstream/java/sql/01-schema.sql",
+      "sha256": "f782bebc92a23751a4fde0cef0a806e0dcab2af8fc63ffb85f9418c7ac39d7d0",
+      "bytes": 448
+    },
+    {
+      "source": "JavaStudy/sql/02-user.example.sql",
+      "target": "upstream/java/sql/02-user.example.sql",
+      "sha256": "832d1d8d333bf6909c28b4b31d1738fb5650f60a93c87aa8c987b1fe35415d93",
+      "bytes": 344
+    },
+    {
+      "source": "JavaStudy/sql/03-sample-data.sql",
+      "target": "upstream/java/sql/03-sample-data.sql",
+      "sha256": "51d62ad8ffd094f8fe979fa35248e85a94b3fb0fa76d5d3cacb30da3a531636a",
+      "bytes": 312
+    },
+    {
+      "source": "JavaStudy/sql/reset-learning-data.sql",
+      "target": "upstream/java/sql/reset-learning-data.sql",
+      "sha256": "75ab6a7fc1977d1a0a2d7343faff98c7a311d17b2d2886a8cba666dbc70aafc1",
+      "bytes": 305
+    },
+    {
+      "source": "JavaStudy/scripts/build-site.mjs",
+      "target": "upstream/java/scripts/build-site.mjs",
+      "sha256": "584f9e82863794da35df07d1f4da64c31529efca1fb212c73956bb8d3929107d",
+      "bytes": 6264
+    },
+    {
+      "source": "JavaStudy/scripts/build.ps1",
+      "target": "upstream/java/scripts/build.ps1",
+      "sha256": "3700d52c7dc13ec15ce2f255f68fba549eb7a1bc631808a731b56aef7699f560",
+      "bytes": 1950
+    },
+    {
+      "source": "JavaStudy/scripts/check-exercises.mjs",
+      "target": "upstream/java/scripts/check-exercises.mjs",
+      "sha256": "3382d62496c149a3194f9cb15902151c9708c2da076ea496053fb09046bb3889",
+      "bytes": 5960
+    },
+    {
+      "source": "JavaStudy/scripts/check.mjs",
+      "target": "upstream/java/scripts/check.mjs",
+      "sha256": "6713c7dd2640de93e9d387069f8b3011cfc83fa2e2b57dee9563fe83be33ac10",
+      "bytes": 2881
+    },
+    {
+      "source": "JavaStudy/scripts/dependencies.ps1",
+      "target": "upstream/java/scripts/dependencies.ps1",
+      "sha256": "94a9f7090d0b1f89dfbe2a5f07e361788ec475bb2ab7ea0ffe03692594233865",
+      "bytes": 1616
+    },
+    {
+      "source": "JavaStudy/scripts/lib.mjs",
+      "target": "upstream/java/scripts/lib.mjs",
+      "sha256": "9d2b4a07b99d9c31a550cce9205313d697d0d10a16a3fc13f09e7e7ccd0a2441",
+      "bytes": 3824
+    },
+    {
+      "source": "JavaStudy/scripts/package.mjs",
+      "target": "upstream/java/scripts/package.mjs",
+      "sha256": "01ba61146a9eb55769074bb37b13e763d9d32f7dbe40bde2fa7788680796d16d",
+      "bytes": 7343
+    },
+    {
+      "source": "JavaStudy/scripts/preview.mjs",
+      "target": "upstream/java/scripts/preview.mjs",
+      "sha256": "8c279771813a14708862ec5cc5db90e45fade684846c2e080837e25345f8d203",
+      "bytes": 1120
+    },
+    {
+      "source": "JavaStudy/verification/CrudChecks.java.template",
+      "target": "upstream/java/verification/CrudChecks.java.template",
+      "sha256": "4f18aa7741a3ad276cab7e23288757c1b7252730a5b393400764e3652cde443a",
+      "bytes": 3739
+    },
+    {
+      "source": "JavaStudy/verification/integration.ps1",
+      "target": "upstream/java/verification/integration.ps1",
+      "sha256": "f7dd081b9fd48ef601d6e436a6a2969d781fb9bf8c6a6eecb4eafe7541e68bfd",
+      "bytes": 1410
+    },
+    {
+      "source": "JavaStudy/verification/README.md",
+      "target": "upstream/java/verification/README.md",
+      "sha256": "5baf8edadf98d10bfaf2498ed1f22998eebfc8ea1f2238acb9a7130f01897e33",
+      "bytes": 2060
+    },
+    {
+      "source": "JavaStudy/verification/site-checks.mjs",
+      "target": "upstream/java/verification/site-checks.mjs",
+      "sha256": "8e90d4c8604e5aa4f0b1208ccc73adf3fcac62913fc3d40ba6a3d78ae227608a",
+      "bytes": 729
+    },
+    {
+      "source": "JavaStudy/verification/web-checks.mjs",
+      "target": "upstream/java/verification/web-checks.mjs",
+      "sha256": "e375f7d16c2a9afca22ab531302806756c8ddfa4609b697cb3d46e4808f77cee",
+      "bytes": 4335
+    },
+    {
+      "source": "JavaStudy/course/console-dto.md",
+      "target": "upstream/java/course/console-dto.md",
+      "sha256": "ea3c6046867633941971d8631c9c555709bf1bb8c7f979914525d7f0bc6fcb5d",
+      "bytes": 2480
+    },
+    {
+      "source": "JavaStudy/course/console-dto.md",
+      "target": "src/content/java/console-dto.md",
+      "sha256": "ea3c6046867633941971d8631c9c555709bf1bb8c7f979914525d7f0bc6fcb5d",
+      "bytes": 2480
+    },
+    {
+      "source": "JavaStudy/course/console-edit.md",
+      "target": "upstream/java/course/console-edit.md",
+      "sha256": "075ddd22958fa942d4f526d5cd72c0f9edc4ba39a3c3403a92f7b9622cb8bd62",
+      "bytes": 2997
+    },
+    {
+      "source": "JavaStudy/course/console-edit.md",
+      "target": "src/content/java/console-edit.md",
+      "sha256": "075ddd22958fa942d4f526d5cd72c0f9edc4ba39a3c3403a92f7b9622cb8bd62",
+      "bytes": 2997
+    },
+    {
+      "source": "JavaStudy/course/console-input.md",
+      "target": "upstream/java/course/console-input.md",
+      "sha256": "06d5d540e7492c223f20ddd6c7b4eb1b4dfaa001107b43dd82f7417a8fee9b63",
+      "bytes": 2607
+    },
+    {
+      "source": "JavaStudy/course/console-input.md",
+      "target": "src/content/java/console-input.md",
+      "sha256": "06d5d540e7492c223f20ddd6c7b4eb1b4dfaa001107b43dd82f7417a8fee9b63",
+      "bytes": 2607
+    },
+    {
+      "source": "JavaStudy/course/console-list.md",
+      "target": "upstream/java/course/console-list.md",
+      "sha256": "be3a7be4beff8151f4aa0b2b25a8697f144295e99e39dbd0344b208eb19d0069",
+      "bytes": 2912
+    },
+    {
+      "source": "JavaStudy/course/console-list.md",
+      "target": "src/content/java/console-list.md",
+      "sha256": "be3a7be4beff8151f4aa0b2b25a8697f144295e99e39dbd0344b208eb19d0069",
+      "bytes": 2912
+    },
+    {
+      "source": "JavaStudy/course/console-menu.md",
+      "target": "upstream/java/course/console-menu.md",
+      "sha256": "76e64e8ec116983c9a87d544f22eaab2e91039108a6b539bb62233723066056a",
+      "bytes": 2434
+    },
+    {
+      "source": "JavaStudy/course/console-menu.md",
+      "target": "src/content/java/console-menu.md",
+      "sha256": "76e64e8ec116983c9a87d544f22eaab2e91039108a6b539bb62233723066056a",
+      "bytes": 2434
+    },
+    {
+      "source": "JavaStudy/course/console-register.md",
+      "target": "upstream/java/course/console-register.md",
+      "sha256": "7724f54ed0ac7653eec45a4c2a37fcc8b6744444b231a153d69afcf6d405bf5b",
+      "bytes": 4835
+    },
+    {
+      "source": "JavaStudy/course/console-register.md",
+      "target": "src/content/java/console-register.md",
+      "sha256": "7724f54ed0ac7653eec45a4c2a37fcc8b6744444b231a153d69afcf6d405bf5b",
+      "bytes": 4835
+    },
+    {
+      "source": "JavaStudy/course/database.md",
+      "target": "upstream/java/course/database.md",
+      "sha256": "db49778dffbd9ba00f50d05fb262c60861d74144dc4b637e444b26a3e58b7ccb",
+      "bytes": 2641
+    },
+    {
+      "source": "JavaStudy/course/database.md",
+      "target": "src/content/java/database.md",
+      "sha256": "db49778dffbd9ba00f50d05fb262c60861d74144dc4b637e444b26a3e58b7ccb",
+      "bytes": 2641
+    },
+    {
+      "source": "JavaStudy/course/exercises.md",
+      "target": "upstream/java/course/exercises.md",
+      "sha256": "58bd9364887eca34966ab9220e05372b0dfb73cc364ef3c212659cb6c694029d",
+      "bytes": 3073
+    },
+    {
+      "source": "JavaStudy/course/exercises.md",
+      "target": "src/content/java/exercises.md",
+      "sha256": "58bd9364887eca34966ab9220e05372b0dfb73cc364ef3c212659cb6c694029d",
+      "bytes": 3073
+    },
+    {
+      "source": "JavaStudy/course/extra.md",
+      "target": "upstream/java/course/extra.md",
+      "sha256": "551213e1e68cc86f6e6095091f5f7be70fd4480413a503e82dbc30a2e2864188",
+      "bytes": 1550
+    },
+    {
+      "source": "JavaStudy/course/extra.md",
+      "target": "src/content/java/extra.md",
+      "sha256": "551213e1e68cc86f6e6095091f5f7be70fd4480413a503e82dbc30a2e2864188",
+      "bytes": 1550
+    },
+    {
+      "source": "JavaStudy/course/glossary.md",
+      "target": "upstream/java/course/glossary.md",
+      "sha256": "f50646057567efdd02b944c35aa6cd487f17df27bf02b5cd260c59db05320946",
+      "bytes": 2555
+    },
+    {
+      "source": "JavaStudy/course/glossary.md",
+      "target": "src/content/java/glossary.md",
+      "sha256": "f50646057567efdd02b944c35aa6cd487f17df27bf02b5cd260c59db05320946",
+      "bytes": 2555
+    },
+    {
+      "source": "JavaStudy/course/index.md",
+      "target": "upstream/java/course/index.md",
+      "sha256": "33cb76e094c62ac4931a6fe78fe0fdd81d2872beb8cbbc5849df0d9c2a513458",
+      "bytes": 2043
+    },
+    {
+      "source": "JavaStudy/course/index.md",
+      "target": "src/content/java/index.md",
+      "sha256": "33cb76e094c62ac4931a6fe78fe0fdd81d2872beb8cbbc5849df0d9c2a513458",
+      "bytes": 2043
+    },
+    {
+      "source": "JavaStudy/course/publishing.md",
+      "target": "upstream/java/course/publishing.md",
+      "sha256": "ff7c21bf74162b374e1dbfa84035c22efae91e5b03e509ad42ce0211f5414ae1",
+      "bytes": 2277
+    },
+    {
+      "source": "JavaStudy/course/publishing.md",
+      "target": "src/content/java/publishing.md",
+      "sha256": "ff7c21bf74162b374e1dbfa84035c22efae91e5b03e509ad42ce0211f5414ae1",
+      "bytes": 2277
+    },
+    {
+      "source": "JavaStudy/course/setup.md",
+      "target": "upstream/java/course/setup.md",
+      "sha256": "1b14838b413dd4877bb6c9ee606c6553922d5755eb4ce8d7cdc958bb1b7ab67c",
+      "bytes": 7171
+    },
+    {
+      "source": "JavaStudy/course/setup.md",
+      "target": "src/content/java/setup.md",
+      "sha256": "1b14838b413dd4877bb6c9ee606c6553922d5755eb4ce8d7cdc958bb1b7ab67c",
+      "bytes": 7171
+    },
+    {
+      "source": "JavaStudy/course/troubleshooting.md",
+      "target": "upstream/java/course/troubleshooting.md",
+      "sha256": "5ff3ee5a7f7397cee2300a01dc7f5176b5e783352fbb395518ff9a183c575452",
+      "bytes": 4260
+    },
+    {
+      "source": "JavaStudy/course/troubleshooting.md",
+      "target": "src/content/java/troubleshooting.md",
+      "sha256": "5ff3ee5a7f7397cee2300a01dc7f5176b5e783352fbb395518ff9a183c575452",
+      "bytes": 4260
+    },
+    {
+      "source": "JavaStudy/course/validation.md",
+      "target": "upstream/java/course/validation.md",
+      "sha256": "102b26ac21f22ac8e070f5d0f8b4329fdf5d2a07fa658bc1b6358bf43f2f3a43",
+      "bytes": 2683
+    },
+    {
+      "source": "JavaStudy/course/validation.md",
+      "target": "src/content/java/validation.md",
+      "sha256": "102b26ac21f22ac8e070f5d0f8b4329fdf5d2a07fa658bc1b6358bf43f2f3a43",
+      "bytes": 2683
+    },
+    {
+      "source": "JavaStudy/course/web-crud.md",
+      "target": "upstream/java/course/web-crud.md",
+      "sha256": "6afb274aec07fb955cfd79b97fe8316b9d7f7531b3e8667c73257674d951ec4b",
+      "bytes": 3637
+    },
+    {
+      "source": "JavaStudy/course/web-crud.md",
+      "target": "src/content/java/web-crud.md",
+      "sha256": "6afb274aec07fb955cfd79b97fe8316b9d7f7531b3e8667c73257674d951ec4b",
+      "bytes": 3637
+    },
+    {
+      "source": "JavaStudy/course/web-flow.md",
+      "target": "upstream/java/course/web-flow.md",
+      "sha256": "f519eaa43e5f45598a829f9033eb805328d99bad30a51fe506fbb947f6bb6f04",
+      "bytes": 3466
+    },
+    {
+      "source": "JavaStudy/course/web-flow.md",
+      "target": "src/content/java/web-flow.md",
+      "sha256": "f519eaa43e5f45598a829f9033eb805328d99bad30a51fe506fbb947f6bb6f04",
+      "bytes": 3466
+    },
+    {
+      "source": "JavaStudy/course/web-register.md",
+      "target": "upstream/java/course/web-register.md",
+      "sha256": "c57f36864567f54f6bbde484498773e925b8bd8439889fc8acd19222a4119967",
+      "bytes": 3998
+    },
+    {
+      "source": "JavaStudy/course/web-register.md",
+      "target": "src/content/java/web-register.md",
+      "sha256": "c57f36864567f54f6bbde484498773e925b8bd8439889fc8acd19222a4119967",
+      "bytes": 3998
+    },
+    {
+      "source": "JavaStudy/README.md",
+      "target": "upstream/java/README.md",
+      "sha256": "45a0b8297e3b72d000b8b667ecd6c3407eece8bdba009388fd3c4bc19e2cc316",
+      "bytes": 4135
+    },
+    {
+      "source": "JavaStudy/DEPENDENCIES.md",
+      "target": "upstream/java/DEPENDENCIES.md",
+      "sha256": "f719a50676f14281b95bb51bd329f3a7e32b7cdd75b374a7c40935a2254a7cd7",
+      "bytes": 1555
+    },
+    {
+      "source": "JavaStudy/PUBLISHING.md",
+      "target": "upstream/java/PUBLISHING.md",
+      "sha256": "691a68ce44d26fc1596cf58b27a508d933ff55f493412576f6cbaa393a52fb26",
+      "bytes": 2862
+    },
+    {
+      "source": "JavaStudy/VALIDATION.md",
+      "target": "upstream/java/VALIDATION.md",
+      "sha256": "932d01c9e1e3ae7dd93fe3dbcee096aee2057694f527ca2d73b417483bd1abac",
+      "bytes": 3652
+    },
+    {
+      "source": "JavaStudy/package.json",
+      "target": "upstream/java/package.json",
+      "sha256": "32bf24abcf695f1428cf96332df2c55596203df4b06c827710297c78bc65e965",
+      "bytes": 378
+    },
+    {
+      "source": "JavaStudy/.gitignore",
+      "target": "upstream/java/.gitignore",
+      "sha256": "11275a259fb5bebb024041503c057df146f6d2f59e98ef5361a625a74921ac02",
+      "bytes": 155
+    },
+    {
+      "source": "JavaStudy/docs/assets/style.css",
+      "target": "upstream/java/site-assets/style.css",
+      "sha256": "235bd1d8eb066c47fef4d78db21e3f27bfabe465ea6d2feaff7f59fe367277d6",
+      "bytes": 6684
+    },
+    {
+      "source": "JavaStudy/docs/assets/app.js",
+      "target": "upstream/java/site-assets/app.js",
+      "sha256": "98b78c2f9009fbf8ca996155dff09424417a7e61e50865195644f068f0455c87",
+      "bytes": 1682
+    },
+    {
+      "source": "JavaStudy/docs/assets/downloads/manifest.json",
+      "target": "upstream/java/original-downloads.json",
+      "sha256": "33f015bf8c143d9fc51acfdae8afe775dcb8702d0a00cf745cdd4d9d7316530b",
+      "bytes": 1795
+    }
+  ]
+}

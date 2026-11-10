@@ -1,0 +1,4 @@
+# Copy to db.properties in the same source folder. Use your local password.
+db.url=jdbc:mysql://127.0.0.1:3306/kadaidb?characterEncoding=UTF-8&serverTimezone=Asia/Tokyo
+db.user=kadaiuser
+db.password=CHANGE_ME_LOCAL

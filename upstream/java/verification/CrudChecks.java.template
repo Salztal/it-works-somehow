@@ -1,0 +1,64 @@
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.List;
+import PREFIXdto.TaskDto;
+import PREFIXservice.TaskService;
+import PREFIXutil.DbUtil;
+
+/** Run only with a disposable database named java_course_verify. */
+public class CLASSNAME {
+    private static int checks;
+    private static void check(boolean ok, String message) {
+        if (!ok) { throw new AssertionError(message); }
+        checks++;
+    }
+    private static TaskDto task(String title, String detail) {
+        TaskDto task = new TaskDto(); task.setTitle(title); task.setDetail(detail); return task;
+    }
+    public static void main(String[] args) throws Exception {
+        try (Connection con = DbUtil.getConnection(true)) {
+            check("java_course_verify".equals(con.getCatalog()), "Disposable DB required");
+            System.out.println("DB=" + con.getMetaData().getDatabaseProductVersion());
+            try (Statement stmt = con.createStatement()) { stmt.executeUpdate("DELETE FROM tasks"); }
+        }
+        TaskService service = new TaskService();
+        check(service.findAll().isEmpty(), "empty list");
+        check(service.registService(task("  日本語 と 空白  ", "詳細 <b>文字</b>")) == 1, "insert");
+        List<TaskDto> tasks = service.findAll();
+        check(tasks.size() == 1, "one row");
+        int id = tasks.get(0).getId();
+        check(service.findById(id).getTitle().equals("日本語 と 空白"), "trim title, keep internal spaces");
+        check(!service.findById(id).getCompleted(), "default status");
+        check(service.findById(id).getDetail().equals("詳細 <b>文字</b>"), "round trip detail");
+        TaskDto edit = task("更新", ""); edit.setId(id); edit.setCompleted(true);
+        check(service.updateService(edit) == 1, "update");
+        check(service.updateService(edit) == 1, "unchanged row still found");
+        check(service.findById(id).getCompleted(), "completed");
+        check(service.findById(id).getDetail().isEmpty(), "clear detail");
+        for (String title : new String[] {"", "　 ", "x".repeat(101)}) {
+            try { service.registService(task(title, "")); throw new AssertionError("invalid title accepted"); }
+            catch (IllegalArgumentException expected) { checks++; }
+        }
+        try { service.registService(task("ok", "x".repeat(1001))); throw new AssertionError("detail too long"); }
+        catch (IllegalArgumentException expected) { checks++; }
+        check(service.registService(task("x".repeat(100), "x".repeat(1000))) == 1, "boundary lengths");
+        check(service.registService(task("null detail", null)) == 1, "optional detail");
+        for (int bad : new int[] {0, -1}) {
+            try { service.findById(bad); throw new AssertionError("invalid id accepted"); }
+            catch (IllegalArgumentException expected) { checks++; }
+        }
+        check(service.findById(Integer.MAX_VALUE) == null, "missing id");
+        edit.setId(Integer.MAX_VALUE);
+        check(service.updateService(edit) == 0, "missing update");
+        check(service.deleteService(Integer.MAX_VALUE) == 0, "missing delete");
+        check(service.deleteService(id) == 1, "delete one");
+        check(service.findAll().size() == 2, "other rows preserved");
+        check(service.deleteAllService() == 2, "delete all count");
+        check(service.deleteAllService() == 0, "delete empty");
+        check(service.findAll().isEmpty(), "empty after delete all");
+        try (Connection a = DbUtil.getConnection(true); Connection b = DbUtil.getConnection(true)) {
+            check(a != b, "connections are independent");
+        }
+        System.out.println("PASS CLASSNAME " + checks + " checks; Java=" + System.getProperty("java.version"));
+    }
+}

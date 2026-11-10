@@ -1,0 +1,20 @@
+{
+  "name": "technical-notes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.23.4" },
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "node scripts/prepare.mjs && node scripts/astro.mjs dev --host 127.0.0.1",
+    "build": "node scripts/prepare.mjs && node scripts/astro.mjs build",
+    "preview": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "check:content": "node scripts/check-content.mjs",
+    "check:types": "node scripts/astro.mjs check",
+    "verify": "node scripts/verify.mjs",
+    "check:base": "node scripts/check-base.mjs"
+  },
+  "dependencies": { "astro": "7.4.7" },
+  "devDependencies": { "@astrojs/check": "0.9.9", "typescript": "5.9.3" }
+}

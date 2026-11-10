@@ -1,0 +1,7 @@
+---
+import { href, entryKey, type Entry } from '../lib/catalog';
+const { items } = Astro.props as { items: Entry[] };
+---
+<ol class="entry-list">
+  {items.map(e => <li><a href={href(e.path)} data-progress-key={entryKey(e)}><span class="entry-number">{e.number}</span><span><strong>{e.label}</strong><span class="entry-description">{e.description}</span></span><span class="entry-arrow" aria-hidden="true">→</span><span class="done-indicator" aria-label="完了"></span></a></li>)}
+</ol>

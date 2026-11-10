@@ -1,0 +1,5 @@
+---
+import Shell from '../layouts/Shell.astro';
+import { href } from '../lib/catalog';
+---
+<Shell title="ページが見つかりません"><div class="utility-page"><p class="eyebrow">404</p><h1>ページが見つかりません</h1><p>目次や検索から、教材を開き直してください。</p><div class="start-links"><a class="button" href={href('/')}>ホームへ戻る</a><a class="button secondary" href={href('/search/')}>教材を検索</a></div></div></Shell>

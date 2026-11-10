@@ -1,0 +1,68 @@
+[
+  {
+    "file": "completed.zip",
+    "bytes": 65526,
+    "sha256": "a2f04a2b4523c99c401d205b542ed01696f669c8f4339f97e0b2e1ea3c21fb28",
+    "entries": 48
+  },
+  {
+    "file": "setup-kit.zip",
+    "bytes": 8514,
+    "sha256": "de1414758920d247d8adc9c2d78ef8a6e27d6800e379813c2c32ccd5fccbcdcf",
+    "entries": 8
+  },
+  {
+    "file": "01-input-start.zip",
+    "bytes": 10869,
+    "sha256": "b8cf659e6cd583a7a705f8e5bf8670637919ed24ca0322dc0f50c97d2b48de4c",
+    "entries": 13
+  },
+  {
+    "file": "02-menu-start.zip",
+    "bytes": 11228,
+    "sha256": "1b9b09e2b9b9d56d33cadfb440df5e4ff63f111cd06e6bbd685e8f16c0ce35b6",
+    "entries": 13
+  },
+  {
+    "file": "03-dto-start.zip",
+    "bytes": 11972,
+    "sha256": "f840cc869cc3de5088ce065dbc6576d06aae4250de5ba46f69410162832f95c6",
+    "entries": 14
+  },
+  {
+    "file": "05-register-start.zip",
+    "bytes": 24880,
+    "sha256": "cb075f75a0a001d76d98934ec2041cec9a14a591d99a1bb242d61a72e0fe13e0",
+    "entries": 19
+  },
+  {
+    "file": "06-list-start.zip",
+    "bytes": 24920,
+    "sha256": "d4a76e6baae015e90e375010844396fded8aee55c29cdee2c0f03baf610855e2",
+    "entries": 19
+  },
+  {
+    "file": "07-edit-start.zip",
+    "bytes": 24785,
+    "sha256": "7cf41d2eb73c43a271098969b3d363ef96fa5ae58a264a98a5caa6f3ea465b08",
+    "entries": 19
+  },
+  {
+    "file": "08-web-flow-start.zip",
+    "bytes": 32784,
+    "sha256": "3ec8a3afee5b487542306efed4c6724eefcc9c320e95fb245a4a25f2d5150129",
+    "entries": 37
+  },
+  {
+    "file": "09-web-register-start.zip",
+    "bytes": 47792,
+    "sha256": "dedaf7b9c6fac200a872f38f2cad22cc3c4964c3809d4615b8c1588a0230efae",
+    "entries": 37
+  },
+  {
+    "file": "10-web-crud-start.zip",
+    "bytes": 48271,
+    "sha256": "359cad64db698a218b8e065ba7dfcb86ae58ecb2ebcc36c6d8c13b2a8b146f0b",
+    "entries": 37
+  }
+]

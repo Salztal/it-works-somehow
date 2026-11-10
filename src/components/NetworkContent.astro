@@ -1,0 +1,30 @@
+---
+import { network } from '../lib/catalog';
+const { id, kind } = Astro.props as { id: string; kind: string };
+const l = network.lessons.find(l => l.id === id);
+const m = network.missions.find(m => m.id === id);
+---
+{kind === 'network' && l && <>
+  <section class="learning-goals" aria-labelledby="goals"><h2 id="goals">この章で学ぶこと</h2><ul>{l.objectives.map(x => <li>{x}</li>)}</ul></section>
+  <h2 id="everyday">身近な例から考える</h2><p>{l.everyday}</p>
+  <h2 id="terms">用語と役割</h2><dl class="terms">{l.terms.map(([name, desc]) => <div><dt>{name}</dt><dd>{desc}</dd></div>)}</dl>
+  <h2 id="diagram">図で見る</h2><figure class="network-diagram"><div set:html={l.diagram}></div><figcaption>構成図：{l.title}</figcaption></figure>
+  <aside class="azure-note"><h2 id="azure">Azureではどうなる？</h2><p>{l.azure}</p></aside>
+  <h2 id="quiz">確認問題</h2><p>選択すると正解と理由を確認できます。何度でも答え直せます。</p>
+  <div class="quiz-list" data-lesson={l.id}>{l.quiz.map((q, qi) => <fieldset class="quiz" data-question={qi} data-correct={q[2]} data-explanation={q[3]}>
+    <legend><span>問 {qi + 1}</span>{q[0]}</legend><div class="choices">{(q[1] as string[]).map((choice, ci) => <button type="button" data-choice={ci} aria-pressed="false"><span aria-hidden="true">{'ABCD'[ci]}</span>{choice}</button>)}</div><p class="feedback" role="status" aria-live="polite"></p>
+    <noscript><details><summary>正解と理由を見る</summary><p>{(q[1] as string[])[q[2] as number]}。{q[3]}</p></details></noscript>
+  </fieldset>)}</div>
+  <h2 id="recall">自分の言葉で説明する</h2><p>ネットワークに詳しくない同僚へ説明するとしたら？入力した内容はこのブラウザに保存され、他のNetwork章でも振り返れます。</p>
+  <div class="recall-list">{network.recall.map(([term, answer], i) => <div><label for={`recall-${i}`}>{term}</label><textarea id={`recall-${i}`} data-recall={term} rows="3" placeholder="役割と具体例を、自分の言葉で"></textarea><details><summary>参考回答を見る</summary><p>{answer}</p></details></div>)}</div>
+</>}
+{kind === 'mission' && m && <>
+  <h2 id="scenario">状況</h2><p>{m.s}</p>
+  <h2 id="diagram">構成図</h2><figure class="network-diagram"><div set:html={m.d}></div><figcaption>ミッション {m.n} の構成</figcaption></figure>
+  <h2 id="requirements">要件を確認する</h2><ul>{m.r.map(x => <li>{x}</li>)}</ul>
+  <h2 id="questions">理由を考える</h2><p>まず自分で考え、次に参考回答と説明を確認しましょう。ミッションは自己確認式です。</p>
+  {m.q.map(([question, answer], i) => <section class="mission-question"><h3>問 {i + 1}　{question}</h3><label class="sr-only" for={`mission-${i}`}>問{i+1}の考え</label><textarea id={`mission-${i}`} data-note={`${id}:${i}`} rows="3" placeholder="考えたことをメモする（ブラウザ内に保存）"></textarea><details><summary>回答と理由を見る</summary><p>{answer}</p></details></section>)}
+</>}
+<h2 id="research">Azureを調べてみる</h2><p>Microsoft Learnなどで、今回の概念と結び付けて調べてみてください。</p>
+<ul class="topic-tags">{['Azure Virtual Network','Azure Subnet','Network Security Group','Route Table','Public IP','Azure DNS'].map(t => <li>{t}</li>)}</ul>
+<ol><li>何をするサービスか</li><li>今回学習したどの概念と関係するか</li><li>どんな場面で利用するか</li><li>利用しない場合、何に困るか</li><li>調べても分からなかったこと</li></ol>

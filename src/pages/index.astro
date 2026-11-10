@@ -1,0 +1,17 @@
+---
+import Shell from '../layouts/Shell.astro';
+import { href } from '../lib/catalog';
+---
+<Shell title="ホーム" wide>
+  <div class="home-intro"><p class="eyebrow">学ぶ・確かめる・振り返る</p><h1>ネットワークとJavaの学習ノート</h1><p>ネットワークとJavaの基礎を整理する学習ノート。<br class="desktop-break" />説明と図解を読み、演習で手を動かしながら進めます。</p></div>
+  <section class="resume-panel" aria-labelledby="resume-title"><div><span class="small-label">学習のつづき</span><h2 id="resume-title" data-resume-title>最初の教材を選んで始めましょう</h2><p data-resume-detail>読んだ章と解いた問題は、このブラウザに記録されます。</p></div><a class="button secondary" data-resume-link href="#courses">教材を選ぶ <span aria-hidden="true">↓</span></a></section>
+  <section id="courses" aria-labelledby="courses-title"><div class="section-heading"><h2 id="courses-title">教材を選ぶ</h2><span>2つの学習コース</span></div>
+    <div class="course-grid">
+      <article class="course-card network-card"><div class="course-card-top"><span class="course-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="12" height="10" rx="1"/><rect x="25" y="26" width="12" height="10" rx="1"/><rect x="3" y="26" width="12" height="10" rx="1"/><path d="M9 13v7h22v6M9 20v6M20 20V8h10"/><circle cx="33" cy="8" r="3"/></svg></span><span class="level">ネットワーク初学者向け</span></div><h3><a href={href('/network/')}>ネットワーク</a></h3><p>通信の仕組みを図でつかむ。<br />IP・DNSから、Azureの構成設計へ。</p><div class="course-facts"><span>6レッスン</span><span>23問の確認問題</span><span>3ミッション</span></div><div class="course-topics"><span>ネットワーク基礎</span><span>Azure</span><span>構成設計</span></div><a class="course-cta" href={href('/network/')}>教材一覧を見る <span aria-hidden="true">→</span></a></article>
+      <article class="course-card java-card"><div class="course-card-top"><span class="course-symbol code-symbol" aria-hidden="true">{`{ }`}</span><span class="level">Javaの初学者向け</span></div><h3><a href={href('/java/')}>Java</a></h3><p>小さなTodoアプリを作る。<br />コンソールから、DB連携・Webアプリへ。</p><div class="course-facts"><span>全10章＋補助資料</span><span>9つの開始コード</span></div><div class="course-topics"><span>Java 17</span><span>MySQL</span><span>Servlet / JSP</span></div><a class="course-cta" href={href('/java/')}>教材一覧を見る <span aria-hidden="true">→</span></a></article>
+    </div>
+  </section>
+  <section class="quick-section" aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">目的から探す</h2></div><div class="quick-grid"><a href={href('/network/basics/')}><span class="quick-number">01</span><strong>通信の基礎を復習する</strong><span>IP・サブネット・DNS・ポート →</span></a><a href={href('/java/setup/')}><span class="quick-number">02</span><strong>Javaの環境を準備する</strong><span>Java・MySQL・Tomcat →</span></a><a href={href('/java/downloads/')}><span class="quick-number">03</span><strong>演習コードを手に入れる</strong><span>開始コード・完成版・SQL →</span></a></div></section>
+  <section class="home-search"><div><h2>知りたい言葉から探す</h2><p>用語・章の名前・本文をまとめて検索できます。</p></div><form action={href('/search/')} role="search"><label class="sr-only" for="home-query">教材を検索</label><input id="home-query" name="q" type="search" placeholder="例：サブネット、DTO、例外" /><button type="submit">検索</button></form></section>
+  <div class="home-note"><span aria-hidden="true">↳</span><p>初めての方は各教材の最初の章から。復習するときは、目次や検索から必要な項目に進めます。</p><a href={href('/progress/')}>学習記録へ →</a></div>
+</Shell>

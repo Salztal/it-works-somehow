@@ -1,0 +1,86 @@
+/* 教材データ: UIの処理は app.js に分離しています。 */
+const lessons = [
+  {
+    id: 'network', number: '01', title: 'Network', subtitle: '通信は「相手」と「道筋」から始まる',
+    objectives: ['クライアント、サーバ、ネットワークの役割を知る', '通信には送信元と宛先があると説明できる'],
+    everyday: 'ネット通販で商品を注文すると、あなたのスマートフォン（送信元）からお店のシステム（宛先）へ注文情報が届きます。ネットワークは、その情報を運ぶ道のようなものです。',
+    terms: [['クライアント', 'サービスを利用する側。例：PCやスマートフォン、ブラウザ。'], ['サーバ', 'サービスを提供する側。例：Webページやデータを置くコンピュータ。'], ['ネットワーク', '機器どうしが情報をやり取りするためのつながり。']],
+    diagram: '<div class="flow-diagram"><div class="node device">Client PC<small>送信元</small></div><div class="arrow"><span>Request</span>→</div><div class="node network">Network<small>情報を運ぶ道</small></div><div class="arrow">→</div><div class="node server">Web Server<small>宛先</small></div></div>',
+    azure: 'Azureでは、仮想マシン（VM）やWebアプリがサーバとして動きます。それらを安全につなぐための土台が、Azureのネットワーク機能です。',
+    quiz: [
+      ['Webサイトを見るためにブラウザを使うPCは、どちらの役割ですか？', ['サーバ', 'クライアント', 'ルータ', 'DNS'], 1, 'ブラウザでサービスを利用するPCはクライアントです。'],
+      ['通信で情報を受け取る相手を何と呼びますか？', ['宛先（Destination）', '送信元', 'ポート', 'サブネット'], 0, '情報を届ける相手は宛先です。'],
+      ['ネットワークの主な役割は何ですか？', ['情報を運ぶ', 'IPを暗記する', '画面を描く', 'データを削除する'], 0, 'ネットワークは機器間で情報をやり取りするための道筋です。']
+    ]
+  },
+  {
+    id: 'ip-subnet', number: '02', title: 'IP Address & Subnet', subtitle: '住所と区画で、通信相手を見つける',
+    objectives: ['IPアドレスが通信相手の識別子であると理解する', 'Subnetがネットワークを論理的に分ける単位だと知る'],
+    everyday: '住所がないと荷物を届けられないように、ネットワーク上の機器にはIPアドレスという住所があります。大きな街を区画に分けるイメージがSubnetです。',
+    terms: [['IPv4アドレス', '機器を識別する数字の住所。例：10.0.1.10。'], ['Private IP', '組織やクラウドの内部で使うアドレス。インターネット全体で直接は使いません。'], ['Network Address', 'ネットワークやSubnetの範囲を表す先頭のアドレス。例：10.0.1.0。'], ['Subnet', '大きなネットワークを用途ごとに論理的に分けた区画。'], ['CIDR', 'ネットワークの範囲を /24 のように表す書き方。計算はここでは扱いません。']],
+    diagram: '<div class="vnet"><div class="vnet-title">Azure Virtual Network <code>10.0.0.0/16</code></div><div class="subnet-row"><div class="subnet web-subnet"><strong>Web Subnet</strong><code>10.0.1.0/24</code><span class="mini-vm">Web VM<br><code>10.0.1.10</code></span></div><div class="subnet db-subnet"><strong>DB Subnet</strong><code>10.0.2.0/24</code><span class="mini-vm">DB VM<br><code>10.0.2.10</code></span></div></div></div>',
+    azure: 'Azureでは、最初にAzure Virtual Network（VNet）という仮想的なネットワークを作り、その中にWeb用・DB用などのSubnetを作れます。',
+    quiz: [
+      ['IPアドレスの主な役割は何ですか？', ['通信相手を識別する', '通信を許可する', '名前をIPへ変換する', '暗号化する'], 0, 'IPアドレスはネットワーク上の機器を識別する住所のようなものです。'],
+      ['Subnetとは何ですか？', ['ネットワークを論理的に分けた区画', 'Webの通信方式', 'サーバの種類', 'ドメイン名'], 0, 'SubnetはVNetなどの大きなネットワークを用途や役割で分ける区画です。'],
+      ['<code>10.0.1.0/24</code> のような表記は何ですか？', ['CIDR表記', 'ポート番号', 'DNS名', 'HTTPヘッダー'], 0, 'CIDR表記はネットワークの範囲を示す方法です。'],
+      ['Azure VNetの中に複数のSubnetを作れますか？', ['作れる', '作れない', '必ず1つだけ', 'DNSが必要'], 0, 'VNet内には用途に合わせて複数のSubnetを作成できます。']
+    ]
+  },
+  {
+    id: 'routing', number: '03', title: 'Gateway & Routing', subtitle: '別の区画へ届けるために、次の行き先を選ぶ',
+    objectives: ['Default Gatewayが最初の受け渡し先になることを知る', 'Routingを「次にどこへ送るか決める仕組み」と説明できる'],
+    everyday: '別の町へ手紙を出すとき、まず近くの郵便局に渡し、その後は宛先に向かう経路で運ばれます。Gatewayは最初の郵便局、Routingは配送経路を選ぶ仕組みに似ています。',
+    terms: [['Default Gateway', '別のネットワークへ行くときに、通常最初に通信を渡す出口。'], ['Routing', '宛先へ届けるため、次にどこへ通信を送るか決める仕組み。'], ['Route', '「この宛先なら、次はここへ送る」という経路ルール。'], ['Destination', '通信の宛先。'], ['Next Hop', '通信を次に渡す相手。']],
+    diagram: '<div class="route-diagram"><div class="node device">Client<code>10.0.1.10</code></div><div class="down-arrow">↓</div><div class="node gateway">Gateway / Router<small>Next Hop を選ぶ</small></div><div class="down-arrow">↓</div><div class="node server">Server<code>10.0.2.20</code></div></div>',
+    azure: 'Azureには基本的な通信経路を自動で扱うAzure system routesがあります。必要に応じて、Route TableやUser Defined Route（UDR）で経路のルールを追加できます。',
+    quiz: [
+      ['別ネットワークへ通信するとき、通常最初に渡す相手は？', ['DNS', 'Default Gateway', 'NSG', 'HTTP'], 1, 'Default Gatewayは、別のネットワークへ出るときの最初の出口です。'],
+      ['Routingとは何ですか？', ['次にどこへ送るか決める仕組み', '通信を暗号化する仕組み', '名前を付ける仕組み', 'IPを発行する仕組み'], 0, 'Routingは宛先への道筋を選び、次の転送先を決めます。'],
+      ['Routeに含まれる考え方として適切なのは？', ['DestinationとNext Hop', 'PortとHTTP', 'DNSとDomain', 'ClientとBrowser'], 0, 'Routeは宛先（Destination）に対して次の転送先（Next Hop）を定めます。']
+    ]
+  },
+  {
+    id: 'dns-port-http', number: '04', title: 'DNS, Port & HTTP', subtitle: '名前から、目的のサービスへたどり着く',
+    objectives: ['DNSが名前をIPアドレスに対応付けることを理解する', 'Portがサーバ上のサービスの入口だと知る'],
+    everyday: 'お店の名前を地図で検索して住所を調べ、建物の目的の窓口へ行く流れを想像してください。DNSは名前から住所を探す地図、Portは建物の窓口番号にあたります。',
+    terms: [['Domain Name', '人が覚えやすい名前。例：example.com。'], ['DNS', 'ドメイン名に対応するIPアドレスを調べる仕組み。'], ['TCP Port', '同じサーバ上で、どのサービスに渡すかを区別する番号。'], ['HTTP', 'Webページをやり取りするための通信方式。通常はTCP 80。'], ['HTTPS', '暗号化されたWeb通信。通常はTCP 443。']],
+    diagram: '<div class="dns-flow"><div class="node domain">example.com</div><div class="arrow">→<span>DNS</span></div><div class="node ip">10.0.3.10</div><div class="arrow">→</div><div class="port-list"><strong>Server</strong><span>TCP 22　SSH</span><span>TCP 80　HTTP</span><span class="port-active">TCP 443 HTTPS</span></div></div>',
+    azure: 'Azureでも、利用者はドメイン名からサービスへアクセスします。DNSでIPアドレスを調べ、対象サーバやサービスのHTTP/HTTPS用Portへ通信が届きます。',
+    quiz: [
+      ['ドメイン名からIPアドレスを調べる仕組みは？', ['DNS', 'NSG', 'Routing', 'Subnet'], 0, 'DNSは、example.comのような名前に対応するIPアドレスを調べます。'],
+      ['HTTPSでよく使われるTCP Portは？', ['22', '80', '443', '1433'], 2, 'HTTPSの標準的なPortはTCP 443です。'],
+      ['Portの役割として最も近いものは？', ['サーバ上のサービスの入口を区別する', 'ネットワークの範囲を分ける', '名前をIPに変換する', '宛先までの道を選ぶ'], 0, 'Portは同じIPアドレスのサーバで、どのサービスに通信を渡すかを区別します。'],
+      ['Webサイトにアクセスする流れとして適切なのは？', ['名前 → DNS → IP Address → Server → Port', 'Port → DNS → 名前 → Server', 'Subnet → DNS → NSG', 'IP → CIDR → HTTP'], 0, 'まずDNSで名前からIPを調べ、サーバの適切なPortへアクセスします。']
+    ]
+  },
+  {
+    id: 'firewall-nsg', number: '05', title: 'Firewall & NSG', subtitle: '届くことと、通してよいことは別',
+    objectives: ['通信可能な経路と通信許可が別の問題だと理解する', 'NSGがAzure上の通信ルールを定義する仕組みだと知る'],
+    everyday: '建物の住所が分かって入口まで行けても、入館許可がなければ中へ入れません。Firewallは、誰がどの入口を使えるか決める警備員のような役割です。',
+    terms: [['Firewall', '定めたルールに基づき、通信を許可（Allow）または拒否（Deny）する仕組み。'], ['Inbound', '外部から対象へ入ってくる通信。'], ['Outbound', '対象から外部へ出ていく通信。'], ['Source', '通信の送信元。'], ['Destination', '通信の宛先。'], ['Protocol / Port', '通信の種類とサービスの入口番号。ルールの条件に使います。']],
+    diagram: '<div class="security-diagram"><div class="node internet">Internet</div><div class="down-arrow allow">↓ TCP/443<br><small>Allow</small></div><div class="node web-server">Web Server</div><div class="down-arrow allow">↓ TCP/1433<br><small>Allow（Webからのみ）</small></div><div class="node database">Database</div><div class="deny-line">Internet ─ ─ ─ ✕ Database 直接アクセスは Deny</div></div>',
+    azure: 'Network Security Group（NSG）は、Azureネットワーク上で通信を許可・拒否するルールを定義する仕組みです。Subnetやネットワーク インターフェースに関連付けて使えます。',
+    quiz: [
+      ['IPアドレスが分かれば、必ず通信できますか？', ['いいえ。許可ルールも必要な場合がある', 'はい。必ず通信できる', 'DNSがあれば必ずできる', 'CIDR次第で必ずできる'], 0, '経路があってもFirewallやNSGのルールで拒否されることがあります。'],
+      ['Inboundとは何ですか？', ['外部から対象へ入る通信', '対象から外部へ出る通信', '名前を解決すること', 'Subnetを作ること'], 0, 'Inboundは対象リソースに入ってくる通信です。'],
+      ['Azureで通信のAllow/Denyルールを定義する仕組みは？', ['Network Security Group', 'DNS Zone', 'Route Table', 'Virtual Network'], 0, 'NSGは送信元、宛先、Protocol、Portなどを条件に通信を制御します。'],
+      ['InternetからDatabaseへ直接アクセスさせないために考えることは？', ['Databaseへの不要なInbound通信をDenyする', 'DBのIPを公開する', 'HTTPSをPort 22にする', 'Subnetを削除する'], 0, 'DBへの不要な直接Inboundを許可しないルールを考えることが重要です。']
+    ]
+  },
+  {
+    id: 'challenge', number: '06', title: 'Azure Network Challenge', subtitle: 'ひとつの構成図で、知識をつなげよう',
+    objectives: ['VNet、Subnet、IP、Routing、DNS、NSGの役割をつなげて考える', 'WebとDBを分ける基本的な理由を説明できる'],
+    everyday: 'ここまで学んだ「住所（IP）」「区画（Subnet）」「道案内（Routing）」「入館ルール（NSG）」を、ひとつの施設に当てはめて考えてみましょう。',
+    terms: [['VNet', 'Azure内に作る、アプリケーション用の仮想ネットワーク。'], ['Public IP', 'インターネット側から到達するために使うIPアドレス。'], ['Web VM', 'Webサイトを提供する仮想マシン。'], ['DB VM', 'データベースを動かす仮想マシン。'], ['NSG', '必要な通信だけを通すためのルール。']],
+    diagram: '<div class="challenge"><div class="internet-top">Internet<br><span>↓</span><br>Public IP<br><span>↓</span></div><div class="vnet"><div class="vnet-title">Azure Virtual Network <code>10.0.0.0/16</code></div><div class="subnet-row"><div class="subnet web-subnet"><strong>Web Subnet</strong><code>10.0.1.0/24</code><span class="mini-vm">Web VM<br><code>10.0.1.10</code><small>HTTPS: 443</small></span></div><div class="between"><span>Routing</span>→<br><small>TCP/1433</small></div><div class="subnet db-subnet"><strong>DB Subnet</strong><code>10.0.2.0/24</code><span class="mini-vm">DB VM<br><code>10.0.2.10</code><small>DB service</small></span></div></div></div><p class="diagram-note">NSG: Internet → Web VM は HTTPS を許可。Internet → DB VM は直接許可しない。</p></div>',
+    azure: 'この構成では、VNetが全体のネットワーク、SubnetがWeb用とDB用の区画です。Routingが別Subnetへの道筋を扱い、NSGが必要な通信だけを許可します。利用者はDNSで名前からPublic IPを調べてWebへ接続します。',
+    quiz: [
+      ['この構成でVNetとは何ですか？', ['Azure内の仮想ネットワーク全体', 'Web VMだけ', 'DBのPort番号', 'ドメイン名'], 0, 'VNetはAzure内に作る仮想ネットワークの土台です。'],
+      ['<code>10.0.1.10</code> は何を表していますか？', ['Web VMのPrivate IPアドレス', 'VNet全体のCIDR', 'HTTPSのPort', 'DNSサーバ名'], 0, '10.0.1.10はWeb Subnet内にあるWeb VMを識別するPrivate IPです。'],
+      ['Web VMとDB VMは同じSubnetですか？', ['いいえ。別のSubnet', 'はい。同じSubnet', 'DNSによって変わる', 'Portが同じなら同じ'], 0, 'Web VMは10.0.1.0/24、DB VMは10.0.2.0/24という別のSubnetにあります。'],
+      ['別Subnetへの通信で関係する仕組みは？', ['Routing', 'DNSだけ', 'CIDRだけ', 'HTTPだけ'], 0, '異なるネットワーク間の通信には、次にどこへ送るかを決めるRoutingが関係します。'],
+      ['Webサイト名からIPを調べる仕組みは？', ['DNS', 'NSG', 'Gateway', 'Subnet'], 0, 'DNSがドメイン名をIPアドレスに対応付けます。']
+    ]
+  }
+];
