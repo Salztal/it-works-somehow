@@ -12,7 +12,7 @@ const current = document.body.dataset.current;
 if (current && keys.has(current)) { state.last = current; save(); }
 function render() {
   document.querySelectorAll<HTMLElement>('[data-progress-key]').forEach(el => { const done = !!state.completed[el.dataset.progressKey!]; el.classList.toggle('is-done', done); const indicator = el.querySelector('.done-indicator'); if (indicator) { indicator.textContent = done ? '✓' : ''; indicator.setAttribute('aria-hidden', String(!done)); } });
-  for (const area of ['network','java','security']) {
+  for (const area of ['network','java','security','git']) {
     const list = entries.filter(e => e.area === area), count = list.filter(e => state.completed[entryKey(e)]).length;
     document.querySelectorAll(`[data-course-count="${area}"]`).forEach(el => el.textContent = `${count} / ${list.length}`);
     document.querySelectorAll<HTMLProgressElement>(`[data-course-progress="${area}"]`).forEach(el => { el.value = count; el.setAttribute('aria-label', `${areaLabel(area)}の完了 ${count} / ${list.length}`); });

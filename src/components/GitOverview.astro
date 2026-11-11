@@ -1,0 +1,8 @@
+---
+import {gitLessons,gitMissions,gitPath,units,rescueCases} from '../lib/git';
+import {href} from '../lib/catalog';
+const {section}=Astro.props as {section?:string};
+---
+{!section&&<><div class="notice"><strong>覚えなくていい。必要なときに探せる。</strong><p>事故ったら、まず状態を確認する。コマンドの名前を知らなくても、やりたいことから探せます。</p></div><h2 class="list-heading">Gitで何をしたい？</h2><div class="git-intents">{['普段の操作','変更を整理する','やらかした'].map(group=><section><h3>{group}</h3><ul>{rescueCases.filter(c=>c.group===group).map(c=><li><a href={href(`/git/rescue/#${c.id}`)}>{c.title} →</a></li>)}</ul></section>)}</div><div class="start-links"><a class="button" href={href(gitPath('g01'))}>最初から学ぶ →</a><a class="button secondary" href={href('/git/lab/')}>状態が変わる操作教材 →</a><a href={href('/git/comparisons/')}>図で比較する →</a></div><p>全15レッスン・30問・5ミッション（判断10問）。通常カリキュラムのみ。実リポジトリを変更しない演習で、操作した結果を確かめます。</p></>}
+{units.map((u,i)=>!section||section===`unit-${i+1}`?<section><h2 class="list-heading">Unit {i+1}：{u}</h2><ol class="git-course-list">{gitLessons.filter(l=>l.unit===i+1).map(l=><li><a href={href(gitPath(l.id))} data-progress-key={`git:${l.id}`}><span>{l.number}</span><strong>{l.title}</strong><small>{l.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>:null)}
+{(!section||section==='exercises')&&<section><h2 class="list-heading">実践ミッション</h2><ol class="git-course-list">{gitMissions.map(m=><li><a href={href(gitPath(m.id))} data-progress-key={`git:${m.id}`}><span>{m.number}</span><strong>{m.title}</strong><small>{m.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>}

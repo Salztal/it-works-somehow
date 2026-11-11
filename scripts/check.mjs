@@ -1,3 +1,6 @@
+import { gitLessons } from '../src/content/git/course.ts';
+import { gitMissions } from '../src/content/git/missions.ts';
+import { rescueCases } from '../src/content/git/rescue.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -58,7 +61,7 @@ const javaRows=JSON.parse(fs.readFileSync(path.join(root,'src/content/java-pages
 const network=JSON.parse(fs.readFileSync(path.join(root,'src/content/network/course.json'),'utf8'));
 const additions=['foundations','missions'].flatMap(f=>JSON.parse(fs.readFileSync(path.join(root,`src/content/network/${f}.json`),'utf8')));
 const security=['basic-01-03','basic-04-06','advanced','lunatic'].flatMap(f=>JSON.parse(fs.readFileSync(path.join(root,`src/content/security/${f}.json`),'utf8')));
-if(search.length!==javaRows.length+network.lessons.length+network.missions.length+additions.length+security.length || search.some(e=>!e.text||!e.url.startsWith(base))) fail('Incomplete search index');
+if(search.length!==javaRows.length+network.lessons.length+network.missions.length+additions.length+security.length+gitLessons.length+gitMissions.length+rescueCases.length || search.some(e=>!e.text||!e.url.startsWith(base))) fail('Incomplete search index');
 for(const entry of search) resolve(entry.url,path.join(dist,'index.html'));
 const result={base,pages:html.length,references:links,assetReferences:assets,learnerZips:manifest.length,zipEntries,searchDocuments:search.length,status:'PASS'};
 fs.mkdirSync(path.join(root,'.local'),{recursive:true});fs.writeFileSync(path.join(root,'.local/check-result.json'),JSON.stringify(result,null,2)+'\n');

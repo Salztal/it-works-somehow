@@ -1,0 +1,6 @@
+const cases=[...document.querySelectorAll<HTMLDetailsElement>('[data-rescue-case]')];
+for(const c of cases){const select=c.querySelector<HTMLSelectElement>('[data-case-state]')!;const render=()=>c.querySelectorAll<HTMLElement>('[data-route]').forEach(el=>el.hidden=el.dataset.route!==select.value);select.addEventListener('change',render);render();}
+const input=document.querySelector<HTMLInputElement>('#git-rescue-query')!;
+input.addEventListener('input',()=>{const words=input.value.normalize('NFKC').toLowerCase().trim().split(/\s+/).filter(Boolean);let count=0;for(const c of cases){c.hidden=!words.every(w=>(c.dataset.search||'').normalize('NFKC').toLowerCase().includes(w));if(!c.hidden)count++;}document.querySelector('[data-rescue-count]')!.textContent=`${count}件の状況が見つかりました。`;document.querySelectorAll<HTMLElement>('[data-rescue-group]').forEach(group=>group.hidden=![...group.querySelectorAll<HTMLDetailsElement>('[data-rescue-case]')].some(c=>!c.hidden));});
+const openHash=()=>{const id=decodeURIComponent(location.hash.slice(1));const c=cases.find(c=>c.id===id);if(c){input.value='';input.dispatchEvent(new Event('input'));c.open=true;c.scrollIntoView({block:'start'});}};
+window.addEventListener('hashchange',openHash);openHash();

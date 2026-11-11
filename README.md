@@ -1,8 +1,10 @@
 # 技術学習ノート
 
-Azure Network BasicsとJava Studyを統合し、Securityを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
+Azure Network BasicsとJava Studyを統合し、Security・Gitを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。生成ページは102、本文検索の対象は79教材です。
+Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。生成ページは132、本文検索の対象は119件です。
+
+Git Phase 4の[調査・設計](docs/git-phase4-design.md)、[一次資料・仕様確認](docs/git-phase4-sources.md)、[実装・検証結果と未確認事項](docs/git-phase4-verification.md)を参照してください。実ブラウザでの操作検収は、追加指示によりGitへ上げた後へ延期しています。Commit・Push・公開は行っていません。
 
 Network Phase 3の[調査・設計](docs/network-phase3-design.md)、[一次資料・仕様更新](docs/network-phase3-sources.md)、[実装・検証結果と制約](docs/network-phase3-verification.md)を参照してください。Commit・Push・公開は別途指示されるまで行いません。
 
@@ -39,11 +41,11 @@ pnpm build
 pnpm preview
 ```
 
-- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto、Network追加教材・全採点分岐・TCP6事例・CIDR境界・VLAN/DHCP/ルート/PAT/DNS/障害判定の照合。
-- `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
+- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto、Network追加教材・全採点分岐・TCP6事例・CIDR境界・VLAN/DHCP/ルート/PAT/DNS/障害判定、Git40問全160分岐・v1互換性・DAGモデル・実Git44時点の照合。実Git照合は新規の一時リポジトリだけで行い、合成作者情報を子プロセスに渡します。
+- `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`、`check:security`、`check:network`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
+- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -65,6 +67,10 @@ src/content/java/          講義Markdown（編集対象）
 src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
 src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
+src/content/git/           15講義・5ミッション・20 QA・一次資料（独自原稿）
+src/lib/git-model.ts        Git操作の限定モデル（実リポジトリへの接続なし）
+src/pages/git/              状況別QA・比較・操作教材
+public/samples/git/        新規一時環境だけに作るローカル練習補助
 src/lib/catalog.ts         URL・分野・目次の定義
 src/lib/client.ts          検索・記録・問題判定の小さな共通処理
 src/lib/progress.ts        v1記録形式の検証・問題判定（純粋関数）
@@ -93,6 +99,8 @@ Javaの新しいページは`src/content/java/<slug>.md`へ追加し、`java-pag
 `migration-manifest.json`はPhase 1の原本照合用です。既存の移行ファイルを意図的に変更すると`check:content`が停止します。原ハッシュは失わず変更の理由と新ハッシュを変更記録へ残し、検証基準も同じ変更として更新してください。新規教材を追加するだけなら既存原本のハッシュ更新は不要です。
 
 Networkの既存原稿は`src/content/network/course.json`に維持します。移行した23問・3ミッションは原本照合を行うため、既存内容の変更は教材レビューと検証基準の更新を伴います。新規の編集対象は`foundations.json`（07〜24章）、`missions.json`（M4〜M7）、`sources.json`（資料台帳）、`src/lib/network-model.ts`（操作判定）、`network-client.ts`（表示制御）、`NetworkFoundation.astro`と`NetworkLab.astro`です。問題の正解indexは選択肢の元の順番を基準にし、IDと問題順は進捗キーとして維持してください。共通のv1保存形式は変更していません。
+
+Gitの編集対象は`src/content/git/unit1.ts`〜`unit5.ts`、`missions.ts`、`rescue.ts`、`sources.ts`です。IDと問題順を維持し、資料の確認日・関連キーを更新します。追加後は`check:git`と`check:git-real`を実行してください。操作教材のモデルは明記した限定範囲で実Gitと照合します。
 
 詳しくは[移行・拡張設計](docs/02-migration.md)を参照してください。
 

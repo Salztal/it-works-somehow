@@ -1,0 +1,12 @@
+---
+import {gitLessons,gitMissions,gitPath,sources} from '../lib/git';
+import {href} from '../lib/catalog';
+import GitSections from './GitSections.astro';
+import GitQuestions from './GitQuestions.astro';
+const {id}=Astro.props as {id:string};
+const l=gitLessons.find(l=>l.id===id),m=gitMissions.find(m=>m.id===id),item=(l||m)!;
+---
+{l?<><section class="learning-goals"><h2 id="situation">こんなときに困る</h2><p>{l.situation}</p><ul>{l.goals.map(g=><li>{g}</li>)}</ul><p>前提：{l.number==='G01'?'Gitが使える練習環境。Git経験は不要です。':'前のUnit、または関連教材を参照。実ファイルを扱う練習は使い捨て環境で行います。'}</p></section><h2 id="inspect">まず状態を確認する</h2><p>最初は読む操作です。実行結果を見て、守りたい内容と公開範囲を整理します。</p><pre><code>{l.inspect}</code></pre><GitSections sections={l.sections}/><h2 id="practice">練習と確認</h2><p><strong>やってみる：</strong>{l.practice.task}</p><p><strong>期待する結果：</strong>{l.practice.expected}</p><p class="notice"><strong>間違えた場合：</strong>{l.practice.recovery}</p><GitQuestions id={id} questions={l.quiz}/></>:<><h2 id="situation">状態と目的</h2><p><strong>状態：</strong>{m!.state}</p><p><strong>目的：</strong>{m!.goal}</p><h2 id="inspect">調査してから判断する</h2><pre><code>{m!.inspect}</code></pre><GitQuestions id={id} questions={m!.choices}/><GitSections sections={m!.steps}/><h2 id="verify">結果の検証と報告</h2><p><strong>結果の確認：</strong>{m!.verify}</p><p><strong>報告する内容：</strong>{m!.report}</p><p class="notice"><strong>復旧の限界・前提：</strong>{m!.limit}</p><label for="mission-reason">あなたならどう判断する？ 状態・目的・理由を残す</label><textarea id="mission-reason" data-recall={`${id}:reason`} rows="4"></textarea></>}
+<div class="start-links">{item.lab&&<a class="button secondary" href={href(`/git/lab/?scenario=${item.lab}`)}>この状況を安全に練習する →</a>}<a href={href('/git/rescue/')}>Git救命救急センター →</a><a href={href('/git/comparisons/')}>操作前後を比較する →</a></div>
+<h2 id="sources">関連教材・参考資料</h2><ul>{item.related.map(id=>{const other=[...gitLessons,...gitMissions].find(x=>x.id===id)!;return <li><a href={href(gitPath(id))}>{other.number} {other.title}</a></li>;})}</ul><p>説明・図・問題は独自執筆。図のID・ファイルは教材用です。実コマンドの対象ID・パス・開始条件を確認してください。GitHub固有の操作は区別して記載しています。</p><ol class="references">{item.sources.map(k=>{const r=sources[k];return <li><a href={r.url}>{r.title}</a><br/>{r.publisher} ／ {r.version}<br/>確認日：<time datetime={r.checked}>{r.checked}</time></li>;})}</ol>
+<label for="lesson-note">この教材のメモ（ブラウザ内に保存）</label><textarea id="lesson-note" data-note={`git:${id}`} rows="4"></textarea>

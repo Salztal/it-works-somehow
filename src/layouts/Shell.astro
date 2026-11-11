@@ -2,9 +2,10 @@
 import '../styles/site.css';
 import { entries, href, areaLabel, entryKey } from '../lib/catalog';
 interface Props { title: string; description?: string; area?: string; current?: string; wide?: boolean }
-const { title, description = 'ネットワーク・Java・Securityを、基礎から順に学ぶ技術学習ノート。', area, current, wide = false } = Astro.props;
+const { title, description = 'ネットワーク・Java・Security・Gitを、基礎から順に学ぶ技術学習ノート。', area, current, wide = false } = Astro.props;
 const groups = area === 'network'
   ? [['basics', '入門 · 既存01〜05章'], ['unit-a','Unit A · 通信の基本構造'],['unit-b','Unit B · IPと配布'],['unit-c','Unit C · 経路とNAT'],['unit-d','Unit D · TCPとUDP'],['unit-e','Unit E · 名前解決と解析'],['unit-f','Unit F · 設計と障害対応'],['azure', '応用 · Azure構成設計'], ['exercises', '7つのミッション']]
+  : area === 'git' ? [['unit-1','Unit 1 · 基本的な考え方'],['unit-2','Unit 2 · 毎日の開発'],['unit-3','Unit 3 · 履歴の整理'],['unit-4','Unit 4 · 必要な変更だけ'],['unit-5','Unit 5 · 実務と事故対応'],['exercises','5つの実践ミッション']]
   : area === 'security' ? [['basics','BASIC · 基礎'],['advanced','ADVANCED · 設計と調査'],['lunatic','LUNATIC · 技術実験']]
   : [['setup', '準備する'], ['lessons', '講義を読む'], ['exercises', '演習で確かめる']];
 ---
@@ -25,6 +26,7 @@ const groups = area === 'network'
           <a href={href('/network/')} aria-current={area === 'network' ? 'true' : undefined}>ネットワーク</a>
           <a href={href('/java/')} aria-current={area === 'java' ? 'true' : undefined}>Java</a>
           <a href={href('/security/')} aria-current={area === 'security' ? 'true' : undefined}>Security</a>
+          <a href={href('/git/')} aria-current={area === 'git' ? 'true' : undefined}>Git</a>
           <a href={href('/progress/')} aria-current={Astro.url.pathname.endsWith('/progress/') ? 'page' : undefined}>学習記録</a>
         </nav>
         <a class="search-link" aria-label="教材を検索" href={href('/search/')}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>教材を検索</span><kbd>/</kbd></a>
@@ -38,6 +40,7 @@ const groups = area === 'network'
             <a class="course-name" href={href(`/${area}/`)}>{areaLabel(area)}<span>教材一覧 ↗</span></a>
             <nav aria-label={`${areaLabel(area)}の章目次`}>
               {groups.map(([section, label]) => <div class="nav-group"><p>{label}</p>{entries.filter(e => e.area === area && e.section === section).map(e => <a class="chapter-link" href={href(e.path)} aria-current={current === entryKey(e) ? 'page' : undefined} data-progress-key={entryKey(e)}><span class="chapter-number">{e.number}</span><span>{e.label}</span><span class="done-indicator" aria-label="完了"></span></a>)}</div>)}
+              {area === 'git' && <div class="nav-group"><p>目的から探す・練習する</p><a class="chapter-link" href={href('/git/rescue/')}>Git救命救急センター →</a><a class="chapter-link" href={href('/git/lab/')}>状態が変わる操作教材 →</a><a class="chapter-link" href={href('/git/comparisons/')}>操作前後の比較 →</a></div>}
               {area === 'java' && <a class="download-nav" href={href('/java/downloads/')}>↓ 教材ダウンロード</a>}
             </nav>
             <div class="sidebar-progress"><span>この教材の進捗</span><strong data-course-count={area}>0 / {entries.filter(e => e.area === area).length}</strong><progress data-course-progress={area} value="0" max={entries.filter(e => e.area === area).length}></progress><a href={href('/progress/')}>学習記録を確認する →</a></div>
@@ -46,7 +49,7 @@ const groups = area === 'network'
       </aside>}
       <main id="main" tabindex="-1"><slot /></main>
     </div>
-    <footer class="site-footer"><div><a href={href('/')}>技術学習ノート</a><span>ネットワーク / Java / Security</span></div><a href={href('/about/')}>このサイトと教材の出典</a></footer>
+    <footer class="site-footer"><div><a href={href('/')}>技術学習ノート</a><span>ネットワーク / Java / Security / Git</span></div><a href={href('/about/')}>このサイトと教材の出典</a></footer>
     <div id="storage-status" class="storage-status" role="status" hidden></div>
     <script>import '../lib/client';</script>
   </body>

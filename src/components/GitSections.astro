@@ -1,0 +1,5 @@
+---
+import type { Section } from '../content/git/types';
+const {sections}=Astro.props as {sections:Section[]};
+---
+{sections.map(s=><section><h2 id={s.id}>{s.title}</h2>{s.paragraphs.map(p=><p>{p}</p>)}{s.graph&&<figure class="git-static-graph"><pre><code>{s.graph}</code></pre><figcaption>点はコミット、線は親子関係。A等は図の記号で、実際のコミットIDではありません。</figcaption></figure>}{s.table&&<div class="table-scroll" role="region" aria-label={`${s.title}の比較表`} tabindex="0"><table><thead><tr>{s.table.headers.map(h=><th scope="col">{h}</th>)}</tr></thead><tbody>{s.table.rows.map(row=><tr>{row.map((v,i)=>i===0?<th scope="row">{v}</th>:<td>{v}</td>)}</tr>)}</tbody></table></div>}{s.code&&<pre><code>{s.code}</code></pre>}</section>)}

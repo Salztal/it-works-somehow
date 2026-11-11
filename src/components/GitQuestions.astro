@@ -1,0 +1,6 @@
+---
+import type { Question } from '../content/git/types';
+const {id,questions}=Astro.props as {id:string;questions:Question[]};
+---
+<h2 id="quiz">選んで判断する</h2><p>操作の名前より、状態と目的を判断しましょう。回答は既存の学習記録に保存されます。</p>
+<div class="quiz-list" data-lesson={id}>{questions.map((q,i)=><fieldset class="quiz" data-question={i} data-correct={q.correct} data-reasons={JSON.stringify(q.explanations)}><legend><span>問 {i+1}</span>{q.question}</legend><div class="choices">{q.choices.map((c,ci)=><button type="button" data-choice={ci} aria-pressed="false"><span aria-hidden="true">{'ABCD'[ci]}</span>{c}</button>)}</div><p class="feedback" role="status" aria-live="polite"></p><details><summary>結果と全選択肢の理由</summary><p>正解：{q.choices[q.correct]}</p><ul>{q.choices.map((c,ci)=><li><strong>{c}</strong>：{q.explanations[ci]}</li>)}</ul></details></fieldset>)}</div>

@@ -2,9 +2,11 @@ import javaRows from '../content/java-pages.json';
 import network from '../content/network/course.json';
 import security from '../generated/security-catalog.json';
 import { foundations, networkMissions, networkUnits } from './network';
+import gitCatalog from '../generated/git-catalog.json';
+import { units } from '../content/git/types';
 const levelSection = (level: string) => level === 'BASIC' ? 'basics' : level.toLowerCase();
 export { network };
-export type Entry = { id: string; area: 'network' | 'java' | 'security'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security'; description: string; level?: string };
+export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git'; description: string; level?: string };
 const networkLabels = ['ネットワークの役割', 'IPアドレスとサブネット', 'ゲートウェイとルーティング', 'DNS・ポート・HTTP', 'ファイアウォールとNSG', 'Azureの構成を考える'];
 const legacyNetworkEntries = network.lessons.map((l, i) => ({ id: l.id, area: 'network' as const, section: i < 5 ? 'basics' : 'azure', label: networkLabels[i], number: l.number, path: `/network/${i < 5 ? 'basics' : 'azure'}/${l.id}/`, kind: 'network' as const, description: l.subtitle }));
 export { javaRows };
@@ -16,8 +18,12 @@ export const entries: Entry[] = [
   ...networkMissions.map(m=>({id:m.id,area:'network' as const,section:'exercises',label:m.title,number:m.number,path:`/network/exercises/${m.id}/`,kind:'network-mission' as const,description:m.description})),
   ...javaRows.map(([id, label, number, section, description]) => ({ id, area: 'java' as const, section, label, number, path: id === 'setup' ? '/java/setup/' : `/java/${section}/${id}/`, kind: 'java' as const, description })),
   ...security.map(l => ({ id: l.id, area: 'security' as const, section: levelSection(l.level), label: l.title, number: l.number, path: `/security/${levelSection(l.level)}/${l.id}/`, kind: 'security' as const, description: l.description, level: l.level })),
+  ...gitCatalog.map(l=>({id:l.id,area:'git' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'git' as const,description:l.description})),
 ];
 export const sections = [
+  {path:'/git/',area:'git',label:'Git実務講座',description:'やりたいこと・困った状況から、安全な操作とその結果を学ぶ15レッスンと5ミッション。'},
+  ...units.map((u,i)=>({path:`/git/unit-${i+1}/`,area:'git',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`Git実務講座：${u}を3レッスンで学びます。`})),
+  {path:'/git/exercises/',area:'git',section:'exercises',label:'Gitの実践ミッション',description:'状態・目的・選択肢・結果・理由を確かめる5つの事故対応。'},
   { path: '/security/', area: 'security', label: 'Security', description: '情報セキュリティの基礎、設計と調査、プロトコルの実験を10ユニット・30レッスンで学びます。' },
   { path: '/security/basics/', area: 'security', section: 'basics', label: 'Security BASIC', description: 'CIAとリスクから、攻撃、防御、暗号、認証、組織的な管理まで。6ユニット・18レッスン。' },
   { path: '/security/advanced/', area: 'security', section: 'advanced', label: 'Security ADVANCED', description: 'TLS・PKI、認証基盤とメール、脆弱性管理とインシデント分析。3ユニット・9レッスン。' },
@@ -32,5 +38,5 @@ export const sections = [
   { path: '/java/exercises/', area: 'java', section: 'exercises', label: 'Javaの演習', description: '各章の開始コードで実装し、完成条件を確かめます。' },
 ];
 export function href(path: string) { return import.meta.env.BASE_URL.replace(/\/$/, '') + path; }
-export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : 'Java';
+export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : 'Java';
 export const entryKey = (e: Entry) => `${e.area}:${e.id}`;
