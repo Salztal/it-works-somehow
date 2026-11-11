@@ -1,0 +1,184 @@
+{
+  "tcp": {
+    "title": "RFC 9293 — Transmission Control Protocol (TCP)",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc9293",
+    "version": "2022-08 / STD 7, §3.3・3.4・3.5・3.6・3.10",
+    "checked": "2026-11-11"
+  },
+  "timer": {
+    "title": "RFC 6298 — Computing TCP’s Retransmission Timer",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc6298",
+    "version": "2011-06",
+    "checked": "2026-11-11"
+  },
+  "arp": {
+    "title": "RFC 826 — An Ethernet Address Resolution Protocol",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc826",
+    "version": "1982-11（更新：5227・5494）",
+    "checked": "2026-11-11"
+  },
+  "cidr": {
+    "title": "RFC 4632 — Classless Inter-domain Routing (CIDR)",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc4632",
+    "version": "2006-08 / BCP 122",
+    "checked": "2026-11-11"
+  },
+  "p2p": {
+    "title": "RFC 3021 — Using 31-Bit Prefixes on IPv4 Point-to-Point Links",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc3021",
+    "version": "2000-12",
+    "checked": "2026-11-11"
+  },
+  "ip6": {
+    "title": "RFC 8200 — Internet Protocol, Version 6 (IPv6) Specification",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc8200",
+    "version": "2017-07 / STD 86（更新：9673）",
+    "checked": "2026-11-11"
+  },
+  "nd": {
+    "title": "RFC 4861 — Neighbor Discovery for IP version 6",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc4861",
+    "version": "2007-09（更新一覧はリンク先・調査記録参照）",
+    "checked": "2026-11-11"
+  },
+  "slaac": {
+    "title": "RFC 4862 — IPv6 Stateless Address Autoconfiguration",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc4862",
+    "version": "2007-09（更新：7527・9762）",
+    "checked": "2026-11-11"
+  },
+  "dhcp": {
+    "title": "RFC 2131 — Dynamic Host Configuration Protocol",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc2131",
+    "version": "1997-03（更新：3396・4361・5494・6842）",
+    "checked": "2026-11-11"
+  },
+  "nat": {
+    "title": "RFC 3022 — Traditional IP Network Address Translator",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc3022",
+    "version": "2001-01 / Informational・歴史的基礎",
+    "checked": "2026-11-11"
+  },
+  "udp": {
+    "title": "RFC 768 — User Datagram Protocol",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc768",
+    "version": "1980-08 / STD 6",
+    "checked": "2026-11-11"
+  },
+  "dns": {
+    "title": "RFC 1034 — Domain names — concepts and facilities",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc1034",
+    "version": "1987-11 / STD 13（多数の更新あり）",
+    "checked": "2026-11-11"
+  },
+  "dnswire": {
+    "title": "RFC 1035 — Domain names — implementation and specification",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc1035",
+    "version": "1987-11 / STD 13（多数の更新あり）",
+    "checked": "2026-11-11"
+  },
+  "dnstcp": {
+    "title": "RFC 7766 — DNS Transport over TCP — Implementation Requirements",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc7766",
+    "version": "2016-03（5966を廃止、8490・9103で更新）",
+    "checked": "2026-11-11"
+  },
+  "icmp": {
+    "title": "RFC 792 — Internet Control Message Protocol",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc792",
+    "version": "1981-09（更新：950・4884・6633・6918）",
+    "checked": "2026-11-11"
+  },
+  "mtu": {
+    "title": "RFC 1191 — Path MTU discovery",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc1191",
+    "version": "1990-11",
+    "checked": "2026-11-11"
+  },
+  "mtu6": {
+    "title": "RFC 8201 — Path MTU Discovery for IP version 6",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc8201",
+    "version": "2017-07 / STD 87",
+    "checked": "2026-11-11"
+  },
+  "ieee": {
+    "title": "IEEE 802.1Q — Bridges and Bridged Networks",
+    "publisher": "IEEE 802.1",
+    "url": "https://1.ieee802.org/maintenance/802-1q-2022-rev/",
+    "version": "802.1Q-2022・公開規格情報",
+    "checked": "2026-11-11"
+  },
+  "lan": {
+    "title": "IEEE 802 LAN/MAN Standards Committee",
+    "publisher": "IEEE 802",
+    "url": "https://www.ieee802.org/",
+    "version": "802.3 / 802.11 ワーキンググループ公開情報（確認日現在）",
+    "checked": "2026-11-11"
+  },
+  "ports": {
+    "title": "Service Name and Transport Protocol Port Number Registry",
+    "publisher": "IANA",
+    "url": "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml",
+    "version": "更新型レジストリ（2026-11-10更新を確認）",
+    "checked": "2026-11-11"
+  },
+  "ws": {
+    "title": "Wireshark User’s Guide — Building Display Filter Expressions",
+    "publisher": "Wireshark Foundation",
+    "url": "https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html",
+    "version": "オンライン版 §6.4（確認日現在）",
+    "checked": "2026-11-11"
+  },
+  "ipa": {
+    "title": "基本情報・応用情報・ネットワークスペシャリスト試験シラバス",
+    "publisher": "IPA",
+    "url": "https://www.ipa.go.jp/shiken/syllabus/gaiyou.html",
+    "version": "FE 9.2 / AP 7.2 / NW 4.1（学習範囲のみ）",
+    "checked": "2026-11-11"
+  },
+  "azure": {
+    "title": "Azure virtual network traffic routing",
+    "publisher": "Microsoft Learn",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview",
+    "version": "オンライン版（確認日現在・Azure固有の応用）",
+    "checked": "2026-11-11"
+  },
+  "pflag": {
+    "title": "RFC 9762 — Using Router Advertisements to Signal the Availability of DHCPv6 Prefix Delegation to Clients",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc9762",
+    "version": "2025-06（4861・4862を更新）",
+    "checked": "2026-11-11"
+  },
+  "rdnss": {
+    "title": "RFC 8106 — IPv6 Router Advertisement Options for DNS Configuration",
+    "publisher": "IETF / RFC Editor",
+    "url": "https://www.rfc-editor.org/info/rfc8106",
+    "version": "2017-03（6106を廃止）",
+    "checked": "2026-11-11"
+  },
+  "tcpdump": {
+    "title": "tcpdump manual — official source",
+    "publisher": "The Tcpdump Group",
+    "url": "https://raw.githubusercontent.com/the-tcpdump-group/tcpdump/master/tcpdump.1.in",
+    "version": "master / man page date 2026-09-10（確認日現在）",
+    "checked": "2026-11-11"
+  }
+}

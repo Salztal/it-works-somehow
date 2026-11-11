@@ -1,0 +1,9 @@
+---
+import {networkUnits,foundations} from '../lib/network';
+import {href} from '../lib/catalog';
+---
+<section class="prose network-guide"><h2>学習の進め方</h2><p>初めてなら既存01〜05章で全体像をつかみ、Unit A〜Fで仕組みと観測を深め、既存06章のAzure構成設計と7ミッションへ進みます。既存のIP・ルーティング・DNSと新規章は、入門と詳説の関係です。章番号と既存の学習記録は維持しています。</p><div class="start-links"><a class="button secondary" href={href('/network/basics/network/')}>入門01章から</a><a class="button" href={href('/network/unit-a/n07-models/')}>TCP/IP詳説07章から</a><a class="button secondary" href={href('/network/unit-d/n17-tcp-handshake/#lab')}>TCPを操作する</a></div>
+<h2>Unit A〜F：ベンダー非依存のTCP/IP</h2><ul>{networkUnits.map(u=><li><a href={href(`/network/${u.id}/`)}>Unit {u.letter}：{u.title}</a>（{foundations.filter(l=>l.unit===u.letter).map(l=>l.number).join('・')}章）</li>)}</ul>
+<h2>既存教材との接続</h2><p>IP・サブネットは02→10章、ルーティングは03→13・14章、DNSとポートは04→16・19章の順に深められます。下の一覧では既存01〜06章を維持しています。Azureの用語へは06章から応用します。仮想ネットワークと物理VLANは同一の仕組みではありません。</p><p>Securityの<a href={href('/security/advanced/s07-01/')}>TLS</a>・<a href={href('/security/advanced/s07-03/')}>PKI</a>へ進む前にTCP確立を学んでください。今後のMail・Server・Web基盤・基盤共通サービスは別Phaseです。今回のDNS・ポート・TLS・経路の前提を再利用し、本格講座や未実装のリンクは追加しません。</p>
+<h2>出典と仕様の更新</h2><p>確認日：2026-11-11。TCPはRFC 793の後継であるRFC 9293、DNSのTCP要件はRFC 5966の後継RFC 7766、IPv6はRFC 2460の後継RFC 8200を採用します。RFC 8200は9673、NDPの4861とSLAACの4862には追加更新があります。各章に参照名・版・確認日を付記し、調査記録に更新一覧と教材への影響を残しています。RFC 3022は歴史的なNATの基礎です。IPAのFE 9.2・AP 7.2・NW 4.1は範囲確認に使用し、仕様の動作判定はRFC等に基づきます。</p>
+<h2>章とミッションの一覧</h2></section>

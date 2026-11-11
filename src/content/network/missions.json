@@ -1,0 +1,599 @@
+[
+  {
+    "id": "nm4-subnet",
+    "number": "M4",
+    "title": "サブネットを設計する",
+    "description": "端末とGWの数・増加・範囲の重複から設計理由を説明します。",
+    "goals": [
+      "必要アドレス数を見積もる",
+      "境界・重複・環境予約を根拠に設計する"
+    ],
+    "prerequisites": [
+      "10章：IPv4とCIDR"
+    ],
+    "sections": [
+      {
+        "id": "concept",
+        "title": "状況と要件",
+        "paragraphs": [
+          "文書例の192.0.2.0/24を部門A・B・管理用に分けます。一般的なIPv4 LANで、各サブネットの先頭と末尾はホストに割り当てず、GWを各1アドレス使います。クラウド固有の追加予約はこの問題ではありません。",
+          "部門Aは端末50台、将来さらに5台。部門Bは端末20台。管理用は端末10台です。必要数はAが56（55端末+GW）、Bが21、管理が11です。ネットワーク同士は重複させず、残りの領域も示してください。"
+        ],
+        "table": {
+          "headers": [
+            "用途",
+            "台数・条件"
+          ],
+          "rows": [
+            [
+              "A",
+              "端末50 + 増加5 + GW1"
+            ],
+            [
+              "B",
+              "端末20 + GW1"
+            ],
+            [
+              "管理",
+              "端末10 + GW1"
+            ],
+            [
+              "候補プール",
+              "192.0.2.0/24。大きなサブネットから配置する"
+            ]
+          ]
+        }
+      }
+    ],
+    "example": {
+      "title": "設計図を作る",
+      "paragraphs": [
+        "A・B・管理をそれぞれVLAN10・20・30に対応させ、ゲートウェイを各範囲の最初のホスト候補とします。図は「A—VLAN10—L3機器—VLAN20—B」、管理はVLAN30としてL3機器に接続します。VLAN分割とIP範囲の分割を別々に記入してください。"
+      ]
+    },
+    "pitfalls": [
+      "必要台数にGWと将来増加を含める。",
+      "範囲を確保してもルーティング・フィルタが自動で設定されるわけではない。"
+    ],
+    "tasks": [
+      [
+        "範囲とサイズを決め、各GW・ホスト範囲・ブロードキャストを書いてください。",
+        "一例：A=192.0.2.0/26（GW .1、候補.1〜.62、BC .63）、B=192.0.2.64/27（GW .65、候補.65〜.94、BC .95）、管理=192.0.2.96/28（GW .97、候補.97〜.110、BC .111）。GW分を除いた端末容量は61・29・13。"
+      ],
+      [
+        "Aに/27を選ぶと何が不足しますか？",
+        "/27は通常ホスト候補30個で、必要な56個に届かない。端末だけ50個と見積もっても不足。/26なら候補62個で条件を満たす。"
+      ],
+      [
+        "未使用範囲と追加確認事項を説明してください。",
+        "この例の未使用は192.0.2.112〜255で、単一CIDRでは表せない。.112/28と.128/25などに分けられる。重複、VLAN対応、往復経路、ACL、DHCPスコープを確認する。Azureへ移す場合はサービスの予約数を改めて確認。"
+      ]
+    ],
+    "quiz": [
+      {
+        "question": "Aに必要な最小の通常LANサイズは？",
+        "choices": [
+          "/28",
+          "/27",
+          "/26",
+          "/32"
+        ],
+        "correct": 2,
+        "explanations": [
+          "候補14個で不足する。",
+          "候補30個で56個に不足する。",
+          "候補62個で56個を満たす。",
+          "単一アドレスでLANを構成する条件ではない。"
+        ]
+      },
+      {
+        "question": "B=192.0.2.64/27のブロードキャストは？",
+        "choices": [
+          "192.0.2.95",
+          "192.0.2.94",
+          "192.0.2.127",
+          "192.0.2.64"
+        ],
+        "correct": 0,
+        "explanations": [
+          "64〜95の末尾95である。",
+          "94は通常の最後のホスト候補。",
+          "127は別の/26境界と混同している。",
+          "64はネットワークアドレス。"
+        ]
+      },
+      {
+        "question": "候補62個の/26でGWが1つなら端末候補は？",
+        "choices": [
+          "64",
+          "62",
+          "60",
+          "61"
+        ],
+        "correct": 3,
+        "explanations": [
+          "総数から予約とGWを引く。",
+          "GWもホスト候補の1つを使う。",
+          "この条件ではGWは1個だけ。",
+          "62−1=61。追加の環境予約は別途確認。"
+        ]
+      }
+    ],
+    "related": [
+      "network:n10-subnet",
+      "network:n14-static-routing",
+      "network:challenge"
+    ],
+    "references": [
+      {
+        "title": "RFC 4632 — Classless Inter-domain Routing (CIDR)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc4632",
+        "version": "2006-08 / BCP 122",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "RFC 3021 — Using 31-Bit Prefixes on IPv4 Point-to-Point Links",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc3021",
+        "version": "2000-12",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Azure virtual network traffic routing",
+        "publisher": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview",
+        "version": "オンライン版（確認日現在・Azure固有の応用）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "lab": "subnet"
+  },
+  {
+    "id": "nm5-tcp",
+    "number": "M5",
+    "title": "TCP接続の状態とパケットを読み解く",
+    "description": "最終ACK損失とFIN終了を両端の状態・SEQ/ACKから説明します。",
+    "goals": [
+      "損失時の両端の非対称な状態を読む",
+      "データ・SYN・FINの消費番号を計算する"
+    ],
+    "prerequisites": [
+      "17章：TCPハンドシェイク",
+      "18章：累積ACK"
+    ],
+    "sections": [
+      {
+        "id": "concept",
+        "title": "状況と合成ログ",
+        "paragraphs": [
+          "Client ISN=1000、Server ISN=9000、データなしの通常接続です。SYN/ACKまではClientへ到着しましたが、最終ACKが途中で1回失われました。これは実採取ではない合成テキストです。",
+          "両端のキャプチャを照合すると、Clientには最終ACK送信、ServerにはそのACK受信なしとSYN/ACK再送が記録されています。操作教材で「最終ACKを1回損失」を選び、各時点の状態を書き出してください。"
+        ],
+        "table": {
+          "headers": [
+            "観測点",
+            "事実"
+          ],
+          "rows": [
+            [
+              "Client",
+              "SYN送信 SEQ1000、SYN/ACK受信 SEQ9000 ACK1001"
+            ],
+            [
+              "Client",
+              "ACK送信 SEQ1001 ACK9001"
+            ],
+            [
+              "途中",
+              "最終ACKを1回損失"
+            ],
+            [
+              "Server",
+              "SYN/ACKを同じSEQ9000で再送"
+            ]
+          ]
+        }
+      }
+    ],
+    "example": {
+      "title": "状態を左右に書く",
+      "paragraphs": [
+        "ClientとServerの列を作り、送信・受信・タイマーを別行へ記入します。単一の「接続済み」表示にまとめず、どちらの端点が何を知っているかに注目します。"
+      ]
+    },
+    "pitfalls": [
+      "純粋なACKをデータ1バイトとして数えない。",
+      "ClientのESTABLISHEDをServerも成立済みと読み替えない。"
+    ],
+    "tasks": [
+      [
+        "最終ACK損失直後の両端の状態と、その理由は？",
+        "Clientは妥当なSYN/ACKの処理でESTABLISHED、Serverは自分のSYNの確認待ちでSYN-RECEIVED。送信したという事実と相手の受理は異なる。"
+      ],
+      [
+        "Serverの再送とClientの再応答の番号は？",
+        "ServerはSYN/ACK SEQ=9000 ACK=1001を再送。ClientはACK SEQ=1001 ACK=9001を再度送る。SYN再送は同じシーケンス空間なので9001から新しいSYNを始めない。"
+      ],
+      [
+        "確立後Clientが100バイト送って受理され、その後FINを送る場合の番号は？",
+        "データはSEQ=1001〜1100、Server ACK=1101。Client FINのSEQ=1101、確認ACK=1102。データなしの操作例のFIN=1001と混同しない。RSTは受理可能なら中断で、FIN終了と別。"
+      ]
+    ],
+    "quiz": [
+      {
+        "question": "最終ACK損失直後のServer状態は？",
+        "choices": [
+          "ESTABLISHED",
+          "SYN-RECEIVED",
+          "TIME-WAIT",
+          "CLOSED"
+        ],
+        "correct": 1,
+        "explanations": [
+          "自分のSYNへの最終確認をまだ受けていない。",
+          "SYN受理後、自分のSYN確認を待つ。",
+          "正常終了の段階ではない。",
+          "1回損失しただけでは即終了しない。"
+        ]
+      },
+      {
+        "question": "SYN/ACKの再送でServerのSYN SEQは？",
+        "choices": [
+          "9001へ増やす",
+          "0へリセット",
+          "9000のまま",
+          "1001へ置換"
+        ],
+        "correct": 2,
+        "explanations": [
+          "再送を新規SYN消費と数えない。",
+          "接続を新しく始める例ではない。",
+          "同じSYNを同じ番号で再送する。",
+          "1001はClientへのACKである。"
+        ]
+      },
+      {
+        "question": "100バイト後FIN=1101に対するACKは？",
+        "choices": [
+          "1102",
+          "1101",
+          "1001",
+          "9001"
+        ],
+        "correct": 0,
+        "explanations": [
+          "FINが1つ消費し次に期待する番号は1102。",
+          "FINをまだ確認していない値。",
+          "データの100バイト分も加える。",
+          "Server方向のシーケンス空間と区別する。"
+        ]
+      }
+    ],
+    "related": [
+      "network:n17-tcp-handshake",
+      "network:n18-tcp-reliability",
+      "security:s07-01"
+    ],
+    "references": [
+      {
+        "title": "RFC 9293 — Transmission Control Protocol (TCP)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9293",
+        "version": "2022-08 / STD 7, §3.3・3.4・3.5・3.6・3.10",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "RFC 6298 — Computing TCP’s Retransmission Timer",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc6298",
+        "version": "2011-06",
+        "checked": "2026-11-11"
+      }
+    ],
+    "lab": "tcp"
+  },
+  {
+    "id": "nm6-path",
+    "number": "M6",
+    "title": "VLAN・ルート・NATの通信経路を判断する",
+    "description": "L2から最長一致、PATの逆変換まで往復を追います。",
+    "goals": [
+      "VLANとルーティングの境界を説明する",
+      "NATの前後と戻りを整合させる"
+    ],
+    "prerequisites": [
+      "09章：VLAN",
+      "13〜15章：ルートとNAT"
+    ],
+    "sections": [
+      {
+        "id": "concept",
+        "title": "構成と条件",
+        "paragraphs": [
+          "PC=192.0.2.10/24（VLAN10、GW192.0.2.1）。SWのトランクはVLAN10と20を許可。R1は両VLANのL3機能と必要な許可を持ちます。別VLAN20にはDNSがあり、Webは198.51.100.20:443/TCPです。",
+          "R1の経路表に198.51.100.0/24→NAT-A、198.51.0.0/16→R2、0.0.0.0/0→R3があります。NAT-AはPCのTCP50000を203.0.113.5:40000へ変換し、外部Webへの往復経路と許可はある条件です。"
+        ],
+        "table": {
+          "headers": [
+            "PC→SW→R1→NAT-A→Web",
+            "役割"
+          ],
+          "rows": [
+            [
+              "VLAN10",
+              "PCがARPするのは192.0.2.1"
+            ],
+            [
+              "R1",
+              "最長一致で/24を選ぶ"
+            ],
+            [
+              "NAT-A",
+              "192.0.2.10:50000 ↔ 203.0.113.5:40000"
+            ],
+            [
+              "戻り",
+              "NAT-Aで逆変換し、R1からVLAN10へ"
+            ]
+          ]
+        }
+      }
+    ],
+    "example": {
+      "title": "二つの問い合わせを分ける",
+      "paragraphs": [
+        "最初のDNS問い合わせはVLAN20のDNSへ、次のTCP接続は外部Webへ向かいます。図にそれぞれ違う矢印を書き、DNSの成功だけで外部へのPATを通ることまで確認済みにしないでください。"
+      ]
+    },
+    "pitfalls": [
+      "MAC宛先を外部Webにしない。次ホップGWへ渡す。",
+      "戻りがNAT-Aの対応表へ届く条件も必要。"
+    ],
+    "tasks": [
+      [
+        "PCが最初にARPする相手とVLAN間通信の条件を説明してください。",
+        "外部Webも別VLANのDNSも、PCから見た次ホップは通常GW192.0.2.1。ARPはVLAN10内。DNSへはR1のL3転送と戻り・許可が必要。"
+      ],
+      [
+        "Webへの経路はどれですか？なぜですか？",
+        "198.51.100.20は3つに一致するが、/24が最も具体的でNAT-Aを選ぶ。表の順やデフォルトの次ホップを優先しない。"
+      ],
+      [
+        "PAT前後と応答の逆変換を5タプルで説明してください。",
+        "送信前192.0.2.10:50000→198.51.100.20:443/TCP、変換後203.0.113.5:40000→同サーバ。応答は同サーバ:443→203.0.113.5:40000、逆変換で192.0.2.10:50000へ。別NATへ戻ると対応がない可能性。"
+      ]
+    ],
+    "quiz": [
+      {
+        "question": "Webへ送るPCのEthernet宛先は通常？",
+        "choices": [
+          "WebのMAC",
+          "R3のMACを直接",
+          "VLAN20のDNSのMAC",
+          "VLAN10側GWのMAC"
+        ],
+        "correct": 3,
+        "explanations": [
+          "Webは同一リンクにいない。",
+          "PCのリンク上の次ホップから送る。",
+          "DNSフローとは別である。",
+          "次ホップ192.0.2.1のMACである。"
+        ]
+      },
+      {
+        "question": "R1が198.51.100.20へ使う経路は？",
+        "choices": [
+          "/0→R3",
+          "/24→NAT-A",
+          "/16→R2",
+          "MACテーブルの先頭"
+        ],
+        "correct": 1,
+        "explanations": [
+          "具体的な一致がある。",
+          "最長プレフィックス一致で24が最大。",
+          "/24の方がより具体的。",
+          "L3宛先検索とMAC学習を混同しない。"
+        ]
+      },
+      {
+        "question": "応答がPAT逆変換後に持つ宛先は？",
+        "choices": [
+          "203.0.113.5:40000",
+          "198.51.100.20:443",
+          "192.0.2.10:50000",
+          "192.0.2.10:443"
+        ],
+        "correct": 2,
+        "explanations": [
+          "逆変換前の外側宛先。",
+          "外部Webは応答の送信元。",
+          "元の内部タプルへ戻す。",
+          "サーバポートを内部Clientポートに置換しない。"
+        ]
+      }
+    ],
+    "related": [
+      "network:n09-switch-vlan",
+      "network:n13-routing",
+      "network:n15-nat",
+      "network:challenge"
+    ],
+    "references": [
+      {
+        "title": "IEEE 802.1Q — Bridges and Bridged Networks",
+        "publisher": "IEEE 802.1",
+        "url": "https://1.ieee802.org/maintenance/802-1q-2022-rev/",
+        "version": "802.1Q-2022・公開規格情報",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "RFC 4632 — Classless Inter-domain Routing (CIDR)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc4632",
+        "version": "2006-08 / BCP 122",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "RFC 3022 — Traditional IP Network Address Translator",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc3022",
+        "version": "2001-01 / Informational・歴史的基礎",
+        "checked": "2026-11-11"
+      }
+    ],
+    "lab": "routing"
+  },
+  {
+    "id": "nm7-outage",
+    "number": "M7",
+    "title": "Webサイト接続障害の原因を切り分ける",
+    "description": "ログを根拠に原因仮説・次の検査・修正後の確認を説明します。",
+    "goals": [
+      "失敗した層と正常確認済みの層を分ける",
+      "誤答の根拠も検討し次の観測を提案する"
+    ],
+    "prerequisites": [
+      "19〜24章：名前解決・解析・障害対応"
+    ],
+    "sections": [
+      {
+        "id": "concept",
+        "title": "状況と証拠",
+        "paragraphs": [
+          "利用者は「Webが開かない」と報告しています。対象名はwww.example.test。下の観測は同一時刻の対象フローで、時刻同期と両方向キャプチャ範囲は確認済みです。合成した学習用ログであり実サイトの障害記録ではありません。",
+          "構成はClient（VLAN10）—GW—境界フィルタ/NAT—Web。DNSリゾルバは社内にあります。DNS回答とSYN送信、境界での拒否、Web側での未到着を照合してください。"
+        ],
+        "table": {
+          "headers": [
+            "観測位置",
+            "記録"
+          ],
+          "rows": [
+            [
+              "DNS",
+              "A=198.51.100.20 / TTL60で正常回答"
+            ],
+            [
+              "Client",
+              "TCP50000→443 SYNを反復、SYN/ACKなし"
+            ],
+            [
+              "境界",
+              "該当フローが規則deny-443に一致"
+            ],
+            [
+              "Web",
+              "該当SYNなし、別の許可済み試験は正常"
+            ]
+          ]
+        }
+      }
+    ],
+    "example": {
+      "title": "根拠と検査計画",
+      "paragraphs": [
+        "「DNSは正常回答、TCP確立前で停止、境界で該当拒否」という3点を根拠にします。無応答だけでフィルタと断定したわけではありません。操作教材ではDNS設定・戻り経路・TLS名・アプリの別ケースへ切り替え、同じ症状から違う調査先になることを確かめます。"
+      ]
+    },
+    "pitfalls": [
+      "全許可にして直すだけでは、必要な変更範囲も原因も曖昧になる。",
+      "IP直打ちでTLS名や仮想ホストが変わることを無視しない。"
+    ],
+    "tasks": [
+      [
+        "最も整合する原因と、他の仮説より優先する根拠は？",
+        "対象フローの境界フィルタ拒否。正常DNS回答、SYN再送、境界deny、Web未到着が整合する。DNS成功だけならキャッシュ誤り等も残るが、ここでは期待IPも一致し具体的な拒否がある。"
+      ],
+      [
+        "変更前に追加で確認すること、最小の修正は？",
+        "宛先サービス・送信元・ポートが要件どおりか、denyの時刻・方向・対象フローを確認。必要な送信元から対象WebのTCP443だけを設計どおり許可し、戻りのステート/経路/NATも確認する。"
+      ],
+      [
+        "再試験と、もしTLS名エラーに変わった場合の次の対応は？",
+        "同じ名前でDNS→TCPの両端ログ→TLS→HTTPを確認。TLS名エラーなら接続名と証明書SAN・配信先を照合する。これは次段階へ進んだ別の失敗であり、証明書検証を無効化して解決としない。"
+      ]
+    ],
+    "quiz": [
+      {
+        "question": "今回DNSキャッシュ削除より優先するのは？",
+        "choices": [
+          "TCP443の対象拒否規則の確認",
+          "全クライアント再インストール",
+          "全VLANを統合",
+          "証明書検証の無効化"
+        ],
+        "correct": 0,
+        "explanations": [
+          "対象拒否という具体的証拠を検証する。",
+          "影響が大きく証拠から原因を絞れていない。",
+          "分割の要件を壊す前に対象フローを調べる。",
+          "TCP確立前の失敗を直せず安全性も損なう。"
+        ]
+      },
+      {
+        "question": "修正後の検査として適切なのは？",
+        "choices": [
+          "pingだけで完了",
+          "DNSだけで完了",
+          "同じフローのTCP・TLS・HTTPまで確認",
+          "エラーログを全削除"
+        ],
+        "correct": 2,
+        "explanations": [
+          "pingとWebではプロトコルが違う。",
+          "上位の条件がまだ残る。",
+          "利用者の操作成功と通信の証拠を確認する。",
+          "比較と再発調査に必要な情報を失う。"
+        ]
+      },
+      {
+        "question": "TLS名エラーが出た場合に確認するものは？",
+        "choices": [
+          "DHCPのDORA順だけ",
+          "接続名と証明書SAN・配信先",
+          "TCPを全再送させるだけ",
+          "SYNのISNを0へ固定"
+        ],
+        "correct": 1,
+        "explanations": [
+          "名前認証の不一致を直接は説明しない。",
+          "正しい相手の証明書かを検証する。",
+          "確立後の名前エラーの修正にはならない。",
+          "ISNはTLSの接続名検証とは別。"
+        ]
+      }
+    ],
+    "related": [
+      "network:n24-troubleshooting",
+      "network:n21-packet-analysis",
+      "security:s07-03",
+      "security:s09-02"
+    ],
+    "references": [
+      {
+        "title": "RFC 9293 — Transmission Control Protocol (TCP)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9293",
+        "version": "2022-08 / STD 7, §3.3・3.4・3.5・3.6・3.10",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "RFC 1034 — Domain names — concepts and facilities",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc1034",
+        "version": "1987-11 / STD 13（多数の更新あり）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Wireshark User’s Guide — Building Display Filter Expressions",
+        "publisher": "Wireshark Foundation",
+        "url": "https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html",
+        "version": "オンライン版 §6.4（確認日現在）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "lab": "troubleshoot"
+  }
+]

@@ -1,0 +1,28 @@
+---
+import { tcpScenarios, outageCases, dhcpSteps, mappings } from '../lib/network-model';
+const {kind}=Astro.props as {kind:string};
+---
+<div class="security-lab network-lab" data-network-lab={kind}>
+  <p class="lab-scope">外部通信をしない教育用の限定モデルです。実機のTCPスタックやネットワーク全体を完全再現するものではありません。すべて手動操作でき、再生アニメーションはありません。</p>
+  {kind==='tcp'?<>
+    <label>通信事例<select data-field="scenario" aria-label="通信事例">{Object.entries(tcpScenarios).map(([value,label])=><option value={value}>{label}</option>)}</select></label>
+    <p>この教材内にフォーカスがあり、入力欄以外では ← / → で前後、Home / End で最初・最後へ移動できます。</p>
+    <div class="lab-actions"><button class="button secondary" type="button" data-action="first">最初へ</button><button class="button secondary" type="button" data-action="prev">前のステップ</button><button class="button" type="button" data-action="next">次のステップ</button></div>
+    <label>ステップへ移動<select data-field="step" aria-label="TCPのステップへ移動"><option>JavaScriptで操作可能になります</option></select></label>
+    <div class="tcp-peers" aria-label="現在の両端の状態"><section><h3>Client</h3><p data-client-state>CLOSED</p><p data-client-numbers>初期SEQ=1000</p></section><section><h3>Server</h3><p data-server-state>CLOSED</p><p data-server-numbers>初期SEQ=9000</p></section></div>
+    <div class="lab-result" role="status" aria-live="polite" aria-atomic="true" data-result></div>
+    <div class="table-scroll tcp-timeline" role="region" aria-label="ClientとServerの時系列（横にスクロールできます）" tabindex="0"><table><caption>上から下が時間順。送信・受信・損失を別行で表示</caption><thead><tr><th scope="col">段階</th><th scope="col">Client</th><th scope="col">通信・事象</th><th scope="col">Server</th></tr></thead><tbody data-timeline></tbody></table></div>
+    <details><summary>モデルの範囲とTCP / TLSの違い</summary><p>RFC 9293 §3.4・3.5・3.10に基づく、データなし・1接続の代表例です。同時オープン、同時クローズ、TCPオプション、輻輳制御、OS固有の回復処理は省略します。RTOと打切り回数は説明値です。通常のTCP受信でClientは妥当なSYN/ACKを処理するとESTABLISHEDになりACKを形成します。TIME-WAITはServer FIN受信から開始します。</p><p>TCPはバイト列の転送、TLSはその上での暗号化・相手認証等です。TCP ESTABLISHEDだけではTLS確立やアプリ成功を意味しません。TLSのclose_notifyとTCP FINも別です。本文にSecurityのTLS・PKI教材へのリンクがあります。</p></details>
+  </>:<form data-lab-form>
+    {kind==='subnet'&&<><label>IPv4/CIDR<input name="cidr" value="192.0.2.70/26" required maxlength="18" spellcheck="false" /></label><p>/0〜/32を扱います。/31はP2P、/32は単一アドレスです。</p></>}
+    {kind==='vlan'&&<><label>送信元VLAN<input name="source" type="number" min="1" max="4094" step="1" value="10" required /></label><label>宛先VLAN<input name="destination" type="number" min="1" max="4094" step="1" value="20" required /></label><label class="lab-check"><input name="routed" type="checkbox"/>L3機能・端末GW・往復経路・許可がそろっている</label><p>図：PC-A（VLAN10）—SW—L3 GW—SW—PC-B（宛先VLAN）。同一VLAN内のポート転送は可能と仮定します。</p></>}
+    {kind==='routing'&&<><label>宛先IPv4<input name="destination" value="10.20.30.9" required maxlength="15" spellcheck="false"/></label><label>ルート表（1行にCIDR、半角カンマ、次ホップ/出口）<textarea name="routes" rows="5" required maxlength="4096">{'0.0.0.0/0,R0\n10.0.0.0/8,R1\n10.20.0.0/16,R2\n10.20.30.0/24,R3'}</textarea></label><p>同一プレフィックスの複数経路の採用・ECMPは省略。先頭順ではなく最長一致で判定します。</p></>}
+    {kind==='dhcp'&&<><label class="lab-check"><input name="remote" type="checkbox" checked/>Serverは別サブネット</label><label class="lab-check"><input name="relay" type="checkbox" checked/>DHCPリレーと往復経路・UDP許可あり</label><label>DORA段階<select name="stage">{dhcpSteps.map((s,i)=><option value={i}>{s}</option>)}</select></label><label>ACK後のリース（秒）<input name="lease" type="number" min="8" max="86400" step="1" value="3600" required/></label><label>ACK後の経過（秒、更新に応答なしの例）<input name="elapsed" type="number" min="0" max="172800" step="1" value="0" required/></label></>}
+    {kind==='nat'&&<><p>固定のTCP通信先：198.51.100.20:443、外側IP：203.0.113.5。相手固定の簡略モデルです。</p><ul>{mappings.map(m=><li>{m.inside}:{m.insidePort} ↔ 203.0.113.5:{m.outsidePort}</li>)}</ul><label>追跡方向<select name="direction"><option value="out">内部から外部へ</option><option value="in">外部から応答（固定相手のTCP443）</option></select></label><label>送信元IP（内部端末、または応答元サーバ）<input name="address" value="192.0.2.10" required maxlength="15"/></label><label>送信時：内部ポート / 応答時：到着先の外側ポート<input name="port" type="number" min="1" max="65535" step="1" value="50000" required/></label></>}
+    {kind==='dns'&&<><p>www.example.test → 198.51.100.20の通常の正キャッシュ。再帰・権威の全サーバは必要なときに応答できる前提です。</p><label>取得時TTL（秒）<input name="ttl" type="number" min="0" max="86400" step="1" value="60" required/></label><label>取得からの経過（秒）<input name="elapsed" type="number" min="0" max="172800" step="1" value="20" required/></label><label class="lab-check"><input name="truncated" type="checkbox"/>再問い合わせのUDP応答がTC=1</label><label class="lab-check"><input name="tcpAllowed" type="checkbox" checked/>TCP53を利用可能</label></>}
+    {kind==='troubleshoot'&&<><label>観測ケース<select name="caseId" data-case-select>{outageCases.map(c=><option value={c.id}>{c.title}</option>)}</select></label><pre class="lab-bytes" data-case-logs>{outageCases[0].logs.join('\n')}</pre><label>証拠に最も整合する調査先<select name="answer"><option value="filter">境界のフィルタ</option><option value="dns">端末のDNS設定</option><option value="return">戻り経路</option><option value="tls">TLSの名前と証明書</option><option value="app">プロキシ・上流アプリ</option></select></label><p>先に根拠と次の検査を教材末尾のメモに書き、判断結果と比べましょう。</p></>}
+    <button class="button" type="submit">{kind==='troubleshoot'?'証拠と判断を照合する':'条件から結果を確認する'}</button><div class="lab-result" role="status" aria-live="polite" aria-atomic="true" data-result>条件を変更し、ボタンで確認してください。</div>
+  </form>}
+  <noscript><p>操作機能にはJavaScriptが必要です。本文の例・表・確認問題の解説はそのまま読めます。</p></noscript>
+</div>
+<script>import '../lib/network-client';</script>

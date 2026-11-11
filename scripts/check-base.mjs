@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
 for(const base of ['/','/it-works-somehow/']) {
-  for(const script of ['prepare.mjs','astro.mjs','check.mjs','check-content.mjs','check-security.mjs','check-http.mjs']) {
+  for(const script of ['prepare.mjs','astro.mjs','check.mjs','check-content.mjs','check-security.mjs','check-network.mjs','check-http.mjs']) {
     const r=spawnSync(process.execPath,[path.join(root,'scripts',script),...(script==='astro.mjs'?['build']:[])],{cwd:root,stdio:'inherit',env:{...process.env,BASE_PATH:base}});
     if(r.status!==0)process.exit(r.status||1);
   }

@@ -4,7 +4,7 @@ import { entries, href, areaLabel, entryKey } from '../lib/catalog';
 interface Props { title: string; description?: string; area?: string; current?: string; wide?: boolean }
 const { title, description = 'ネットワーク・Java・Securityを、基礎から順に学ぶ技術学習ノート。', area, current, wide = false } = Astro.props;
 const groups = area === 'network'
-  ? [['basics', '基礎を学ぶ'], ['azure', 'Azure・構成設計'], ['exercises', '演習で確かめる']]
+  ? [['basics', '入門 · 既存01〜05章'], ['unit-a','Unit A · 通信の基本構造'],['unit-b','Unit B · IPと配布'],['unit-c','Unit C · 経路とNAT'],['unit-d','Unit D · TCPとUDP'],['unit-e','Unit E · 名前解決と解析'],['unit-f','Unit F · 設計と障害対応'],['azure', '応用 · Azure構成設計'], ['exercises', '7つのミッション']]
   : area === 'security' ? [['basics','BASIC · 基礎'],['advanced','ADVANCED · 設計と調査'],['lunatic','LUNATIC · 技術実験']]
   : [['setup', '準備する'], ['lessons', '講義を読む'], ['exercises', '演習で確かめる']];
 ---

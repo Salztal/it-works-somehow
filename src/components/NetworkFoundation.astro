@@ -1,0 +1,17 @@
+---
+import { networkAdditions } from '../lib/network';
+import { entries, entryKey, href } from '../lib/catalog';
+import NetworkLab from './NetworkLab.astro';
+const { id } = Astro.props as {id:string};
+const l=networkAdditions.find(l=>l.id===id)!;
+---
+<section class="learning-goals"><h2 id="goals">学習目標と前提知識</h2><ul>{l.goals.map(g=><li>{g}</li>)}</ul><h3>前提知識</h3><ul>{l.prerequisites.map(p=><li>{p}</li>)}</ul></section>
+{l.sections.map(s=><section><h2 id={s.id}>{s.title}</h2>{s.paragraphs.map(p=><p>{p}</p>)}{s.table&&<div class="table-scroll" role="region" aria-label={s.title+'の比較表'} tabindex="0"><table><thead><tr>{s.table.headers.map(h=><th scope="col">{h}</th>)}</tr></thead><tbody>{s.table.rows.map(row=><tr>{row.map((cell,i)=>i===0?<th scope="row">{cell}</th>:<td>{cell}</td>)}</tr>)}</tbody></table></div>}</section>)}
+<section><h2 id="example">具体的な通信例</h2>{l.example.paragraphs.map(p=><p>{p}</p>)}</section>
+{l.lab&&<section><h2 id="lab">操作して確かめる</h2><NetworkLab kind={l.lab}/></section>}
+{l.tasks&&<section><h2 id="reasoning">理由と設計を書く</h2><p>先に判断と根拠、次に確認したい証拠を書いてください。自由記述は自己確認式です。入力は既存の学習記録と同じ形式で保存します。</p>{l.tasks.map(([question,answer],i)=><section class="mission-question"><h3>問{i+1}　{question}</h3><label for={`reason-${i}`}>判断・根拠・確認方法</label><textarea id={`reason-${i}`} data-note={`${id}:${i}`} rows="4"></textarea><details><summary>参考回答・誤りやすい判断</summary><p>{answer}</p></details></section>)}</section>}
+<section><h2 id="pitfalls">よくある誤解</h2><ul>{l.pitfalls.map(p=><li>{p}</li>)}</ul></section>
+<h2 id="quiz">{l.tasks?'判断を確認する':'確認問題'}</h2><p>選択すると採点と理由を表示します。全選択肢の説明も確認できます。</p>
+<div class="quiz-list" data-lesson={id}>{l.quiz.map((q,qi)=><fieldset class="quiz" data-question={qi} data-correct={q.correct} data-reasons={JSON.stringify(q.explanations)}><legend><span>問{qi+1}</span>{q.question}</legend><div class="choices">{q.choices.map((choice,ci)=><button type="button" data-choice={ci} aria-pressed="false"><span aria-hidden="true">{'ABCD'[ci]}</span>{choice}</button>)}</div><p class="feedback" role="status" aria-live="polite"></p><details><summary>正解と全選択肢の理由</summary><p>正解：{q.choices[q.correct]}</p><ul>{q.choices.map((choice,i)=><li><strong>{choice}</strong>：{q.explanations[i]}</li>)}</ul></details></fieldset>)}</div>
+<section><h2 id="sources">関連教材・一次資料</h2><ul>{l.related.map(k=>{const e=entries.find(e=>entryKey(e)===k);return e&&<li><a href={href(e.path)}>{e.number} {e.label}</a></li>;})}</ul><p>図・例・問題は独自作成です。文書用アドレスと合成ログを使います。IPAシラバスは範囲の参考、動作はRFC等の一次仕様で照合しています。更新・廃止関係の概要はNetworkの学習ガイドにも記載しています。</p><ol class="references">{l.references.map(r=><li><a href={r.url}>{r.title}</a><br/>発行元：{r.publisher} ／ 版・年月：{r.version}<br/>確認日：<time datetime={r.checked}>{r.checked}</time></li>)}</ol></section>
+<label for="lesson-note">この教材の説明を自分の言葉で残す（ブラウザ内に保存）</label><textarea id="lesson-note" data-note={`network:${id}`} rows="4"></textarea>
