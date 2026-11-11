@@ -1,0 +1,7 @@
+---
+import TestLabPage from '../../../components/TestLabPage.astro';
+import {labs} from '../../../content/test-design/labs';
+export function getStaticPaths(){return labs.map(([lab])=>({params:{lab},props:{kind:lab}}));}
+const {kind}=Astro.props;
+---
+<TestLabPage kind={kind}/>

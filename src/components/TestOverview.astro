@@ -1,0 +1,9 @@
+---
+import {testLessons,testMissions,testPath,units} from '../lib/test-design';
+import {intents,labs} from '../content/test-design/labs';
+import {href} from '../lib/catalog';
+const {section}=Astro.props as {section?:string};
+---
+{!section&&<><p class="notice">仕様を読んで疑問を持ち、何を確認し、何が未確認かを説明するための講座です。若手SE向けの通常15講義・5ミッション・60問。例は全て架空で、資格試験対策や公式教材ではありません。</p><h2>何を確認したい？</h2><ul class="test-intents">{intents.map(i=><li><strong>{i.title}</strong><div><a href={href(testPath(i.lesson))}>関連講義</a><a href={href(`/test-design/lab/${i.lab}/`)}>操作教材</a><a href={href(testPath(i.mission))}>実践ミッション</a></div></li>)}</ul><div class="start-links"><a class="button" href={href(testPath('td-t01'))}>T01から学ぶ →</a><a class="button secondary" href={href('/test-design/templates/')}>実務テンプレート3種 ↓</a></div><details><summary>操作教材を一覧から選ぶ</summary><ul>{labs.map(([key,label])=><li><a href={href(`/test-design/lab/${key}/`)}>{label}</a></li>)}</ul></details></>}
+{units.map((u,i)=>(!section||section===`unit-${i+1}`)&&<section><h2 class="list-heading">Unit {i+1}：{u}</h2><ol class="git-course-list">{testLessons.filter(l=>l.unit===i+1).map(l=><li><a href={href(testPath(l.id))} data-progress-key={`test-design:${l.id}`}><span>{l.number}</span><strong>{l.title}</strong><small>{l.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>)}
+{(!section||section==='exercises')&&<section><h2 class="list-heading">実践ミッション</h2><ol class="git-course-list">{testMissions.map(m=><li><a href={href(testPath(m.id))} data-progress-key={`test-design:${m.id}`}><span>{m.number}</span><strong>{m.title}</strong><small>{m.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>}

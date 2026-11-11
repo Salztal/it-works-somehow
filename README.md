@@ -1,8 +1,10 @@
 # 技術学習ノート
 
-Azure Network BasicsとJava Studyを統合し、Security・Gitを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
+Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計を追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。生成ページは132、本文検索の対象は119件です。
+Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。生成ページは169、本文検索の対象は148件です。
+
+テスト設計 Phase 5の[調査・設計](docs/test-design-phase5-design.md)、[一次資料・適用版](docs/test-design-phase5-sources.md)、[実装・検証結果と未確認事項](docs/test-design-phase5-verification.md)を参照してください。学習記録のversion 1と保存先は維持。Commit・Push・本番公開は行っていません。
 
 Git Phase 4の[調査・設計](docs/git-phase4-design.md)、[一次資料・仕様確認](docs/git-phase4-sources.md)、[実装・検証結果と未確認事項](docs/git-phase4-verification.md)を参照してください。実ブラウザでの操作検収は、追加指示によりGitへ上げた後へ延期しています。Commit・Push・公開は行っていません。
 
@@ -41,11 +43,11 @@ pnpm build
 pnpm preview
 ```
 
-- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto、Network追加教材・全採点分岐・TCP6事例・CIDR境界・VLAN/DHCP/ルート/PAT/DNS/障害判定、Git40問全160分岐・v1互換性・DAGモデル・実Git44時点の照合。実Git照合は新規の一時リポジトリだけで行い、合成作者情報を子プロセスに渡します。
-- `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
+- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto、Network追加教材・全採点分岐・TCP6事例・CIDR境界・VLAN/DHCP/ルート/PAT/DNS/障害判定、Git40問全160分岐・v1互換性・DAGモデル・実Git44時点の照合、テスト設計60問全240分岐・独立期待値・16ルール・20状態イベント・網羅計算・組み合わせ・依存経路・Todo改修の照合。実Git照合は新規の一時リポジトリだけで行い、合成作者情報を子プロセスに渡します。
+- `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・テスト設計・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
+- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -68,6 +70,9 @@ src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
 src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
 src/content/git/           15講義・5ミッション・20 QA・一次資料（独自原稿）
+src/content/test-design/   15講義・5ミッション・60問・一次資料・配布テンプレート原本
+src/lib/test-design-*.ts   仕様オラクル・正常/不具合入り対象・設計モデル・表示処理
+src/pages/test-design/    8種類の操作教材とテンプレート配布
 src/lib/git-model.ts        Git操作の限定モデル（実リポジトリへの接続なし）
 src/pages/git/              状況別QA・比較・操作教材
 public/samples/git/        新規一時環境だけに作るローカル練習補助

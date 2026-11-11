@@ -1,0 +1,10 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import {href} from '../../lib/catalog';
+const templates=[
+ {file:'viewpoints.csv',title:'テスト観点表',headers:['対象機能','要求・仕様の参照','観点','対象条件','リスク','テスト技法','関連するテストケース'],example:['金額チェック','AMOUNT-01','上限値の受理','1000000円','正当な申請を拒否する','境界値分析','TC-003']},
+ {file:'test-cases.csv',title:'テストケース表',headers:['テストID','対象機能','前提条件','操作・入力','期待結果','実施結果','証跡','備考'],example:['TC-003','金額チェック','下書き・申請者','1000000を送信','受理・保存1件','未実施','未採取','上限を含む仕様']},
+ {file:'defect-report.csv',title:'不具合報告書',headers:['不具合ID','概要','発生環境','再現手順','期待結果','実際結果','発生頻度','影響範囲','証跡','修正確認結果'],example:['BUG-001','上限額が拒否される','合成ラボ・不具合入り版','1000000を実行','受理','範囲エラー','毎回','上限額の申請','ラボ比較結果','未確認']}
+];
+---
+<Shell title="実務向けテンプレート" area="test-design"><div class="utility-page prose security-prose test-prose"><p class="eyebrow">設計の理由と結果を残す</p><h1>実務向けテンプレート</h1><p class="notice">個人学習向けの合成例です。特定企業の正式な業務標準や規格準拠を意味しません。実際の利用では組織の手順に合わせて調整してください。</p><p>CSVはUTF-8。最初の行は項目名、次の行は架空の記入例です。記入例をコピーし、仕様参照→観点→ケース→結果→不具合を対応付けます。実施していない結果は未実施、期待値の未確定は確認待ちと記します。</p>{templates.map(t=><section><h2>{t.title}</h2><a class="button secondary" href={href(`/downloads/test-design/${t.file}`)} download>{t.title} CSVを保存 ↓</a><div class="table-scroll" role="region" aria-label={`${t.title}の記入例`} tabindex="0"><table><caption>項目と架空の記入例</caption><thead><tr><th scope="col">項目</th><th scope="col">例</th></tr></thead><tbody>{t.headers.map((h,i)=><tr><th scope="row">{h}</th><td>{t.example[i]}</td></tr>)}</tbody></table></div></section>)}<p><a href={href('/downloads/test-design/templates.md')} download>3種類をまとめたMarkdown版と使い方を保存 ↓</a></p><h2>記入するときの確認</h2><ul><li>期待結果は仕様から先に定義し、実際結果と分ける。</li><li>証跡は対象版・条件・結果を結び付ける。画面だけで保存を保証しない。</li><li>合成データを使用し、秘密情報や実業務ログを記載しない。</li></ul><p><a href={href('/test-design/unit-5/td-t13/')}>T13 テスト仕様書と証跡</a> · <a href={href('/test-design/unit-5/td-t14/')}>T14 不具合報告と再テスト</a> · <a href={href('/test-design/lab/capstone/')}>総合演習</a></p></div></Shell>

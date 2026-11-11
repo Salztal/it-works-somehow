@@ -1,0 +1,10 @@
+---
+import Shell from '../layouts/Shell.astro';
+import TestLab from './TestLab.astro';
+import {labs} from '../content/test-design/labs';
+import {testLessons,testPath,sources} from '../lib/test-design';
+import {href} from '../lib/catalog';
+const {kind='omissions'}=Astro.props as {kind?:string};
+const title=labs.find(([key])=>key===kind)![1];
+---
+<Shell title={title} area="test-design"><div class="utility-page security-prose test-prose"><nav class="breadcrumbs" aria-label="パンくずリスト"><a href={href('/test-design/')}>テスト設計</a><span>/</span><span aria-current="page">{title}</span></nav><h1>{title}</h1><nav class="test-lab-nav" aria-label="操作教材を選ぶ">{labs.map(([key,label])=><a href={href(`/test-design/lab/${key}/`)} aria-current={key===kind?'page':undefined}>{label}</a>)}</nav><TestLab kind={kind}/><h2>関連講義</h2><ul>{testLessons.filter(l=>l.lab===kind).map(l=><li><a href={href(testPath(l.id))}>{l.number} {l.title}</a></li>)}</ul><p><a href={href('/test-design/exercises/')}>5つの実践ミッション →</a> · <a href={href('/test-design/templates/')}>設計と報告のテンプレート →</a></p><h2>教材の範囲と出典</h2><p>独自の架空仕様とモデルです。JSTQB・ISTQB・IPAの公式教材ではありません。実務上の推奨や図の簡略化は本教材によるものです。シラバスの著作権はISTQBおよび著者、日本語訳はJSTQBに帰属します。</p><ul class="references">{['jstqb','ctfl',...(kind==='pairwise'?['nist']:[]),...(kind==='coverage'?['ipa-fe']:[])].map(k=>{const r=sources[k];return <li><a href={r.url}>{r.title}</a> — {r.publisher} ／ {r.version} ／ 確認日 {r.checked}</li>;})}</ul></div></Shell>

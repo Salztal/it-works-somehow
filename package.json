@@ -16,6 +16,7 @@
     "check:types": "node scripts/astro.mjs check",
     "verify": "node scripts/verify.mjs",
     "check:base": "node scripts/check-base.mjs",
+    "check:test-design": "node scripts/check-test-design.mjs",
     "check:git": "node scripts/check-git.mjs",
     "check:git-real": "node scripts/check-git-real.mjs"
   },

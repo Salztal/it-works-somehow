@@ -2,13 +2,13 @@
 import Shell from '../layouts/Shell.astro';
 import EntryList from '../components/EntryList.astro';
 import { entries, href, areaLabel } from '../lib/catalog';
-const areas = ['network','java','security','git'];
+const areas = ['network','java','security','git','test-design'];
 ---
 <Shell title="学習記録" wide><div class="utility-page progress-page">
 <p class="eyebrow">読んだ章を振り返る</p><h1>学習記録</h1><p class="lead">完了した章、問題の回答、自由記述をこのブラウザに保存します。</p>
 <section class="resume-panel"><div><span class="small-label">最後に開いた章</span><h2 data-resume-title>まだ学習記録がありません</h2><p data-resume-detail>教材を開くと、ここから再開できます。</p></div><a class="button secondary" data-resume-link href={href('/')}>教材を選ぶ →</a></section>
 <div class="progress-summaries">{areas.map(area => <div><h2>{areaLabel(area)}</h2><strong data-course-count={area}>0 / {entries.filter(e=>e.area === area).length}</strong><progress data-course-progress={area} value="0" max={entries.filter(e=>e.area === area).length}></progress></div>)}</div>
 <p>一覧に <span class="example-done">✓</span> が付いた章は完了済みです。各章の末尾で完了と取り消しを切り替えられます。</p>
-<details class="record-tools"><summary>記録のバックアップ・読込み・リセット</summary><p>ブラウザのデータを消す前や、別の端末へ移るときはJSONを書き出してください。読込みは現在の記録を置き換えます。この統合サイトのNetwork拡張前・Security・Git追加前のversion 1バックアップも読めます。URLの異なる移行元サイトの記録は自動では移行されません。</p><div class="tool-buttons"><button class="button secondary" id="export-progress" type="button">JSONを書き出す</button><label class="button secondary file-button" for="import-progress">JSONを読み込む</label><input id="import-progress" type="file" accept="application/json,.json" /><button class="button danger" id="reset-progress" type="button">全記録をリセット</button></div><p id="record-status" role="status"></p></details>
+<details class="record-tools"><summary>記録のバックアップ・読込み・リセット</summary><p>ブラウザのデータを消す前や、別の端末へ移るときはJSONを書き出してください。読込みは現在の記録を置き換えます。この統合サイトのNetwork拡張前・Security・Git・テスト設計追加前のversion 1バックアップも読めます。URLの異なる移行元サイトの記録は自動では移行されません。</p><div class="tool-buttons"><button class="button secondary" id="export-progress" type="button">JSONを書き出す</button><label class="button secondary file-button" for="import-progress">JSONを読み込む</label><input id="import-progress" type="file" accept="application/json,.json" /><button class="button danger" id="reset-progress" type="button">全記録をリセット</button></div><p id="record-status" role="status"></p></details>
 {areas.map(area => <><h2 class="list-heading">{areaLabel(area)}</h2><EntryList items={entries.filter(e=>e.area === area)} /></>)}
 <noscript><p>記録の保存と表示にはJavaScriptが必要です。</p></noscript></div></Shell>

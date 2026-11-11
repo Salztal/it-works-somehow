@@ -4,9 +4,11 @@ import security from '../generated/security-catalog.json';
 import { foundations, networkMissions, networkUnits } from './network';
 import gitCatalog from '../generated/git-catalog.json';
 import { units } from '../content/git/types';
+import testCatalog from '../generated/test-design-catalog.json';
+import {units as testUnits} from '../content/test-design/types';
 const levelSection = (level: string) => level === 'BASIC' ? 'basics' : level.toLowerCase();
 export { network };
-export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git'; description: string; level?: string };
+export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git' | 'test-design'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git' | 'test-design'; description: string; level?: string };
 const networkLabels = ['ネットワークの役割', 'IPアドレスとサブネット', 'ゲートウェイとルーティング', 'DNS・ポート・HTTP', 'ファイアウォールとNSG', 'Azureの構成を考える'];
 const legacyNetworkEntries = network.lessons.map((l, i) => ({ id: l.id, area: 'network' as const, section: i < 5 ? 'basics' : 'azure', label: networkLabels[i], number: l.number, path: `/network/${i < 5 ? 'basics' : 'azure'}/${l.id}/`, kind: 'network' as const, description: l.subtitle }));
 export { javaRows };
@@ -19,8 +21,12 @@ export const entries: Entry[] = [
   ...javaRows.map(([id, label, number, section, description]) => ({ id, area: 'java' as const, section, label, number, path: id === 'setup' ? '/java/setup/' : `/java/${section}/${id}/`, kind: 'java' as const, description })),
   ...security.map(l => ({ id: l.id, area: 'security' as const, section: levelSection(l.level), label: l.title, number: l.number, path: `/security/${levelSection(l.level)}/${l.id}/`, kind: 'security' as const, description: l.description, level: l.level })),
   ...gitCatalog.map(l=>({id:l.id,area:'git' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'git' as const,description:l.description})),
+  ...testCatalog.map(l=>({id:l.id,area:'test-design' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'test-design' as const,description:l.description})),
 ];
 export const sections = [
+  {path:'/test-design/',area:'test-design',label:'テスト設計',description:'何を確認し、何が未確認かを説明する。5ユニット・15講義・5ミッション・60問で、仕様からテスト観点を設計します。'},
+  ...testUnits.map((u,i)=>({path:`/test-design/unit-${i+1}/`,area:'test-design',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`テスト設計：${u}を3講義と操作教材で学びます。`})),
+  {path:'/test-design/exercises/',area:'test-design',section:'exercises',label:'テスト設計の実践ミッション',description:'境界・条件・状態・変更・十分性を判断する5件の架空案件。'},
   {path:'/git/',area:'git',label:'Git実務講座',description:'やりたいこと・困った状況から、安全な操作とその結果を学ぶ15レッスンと5ミッション。'},
   ...units.map((u,i)=>({path:`/git/unit-${i+1}/`,area:'git',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`Git実務講座：${u}を3レッスンで学びます。`})),
   {path:'/git/exercises/',area:'git',section:'exercises',label:'Gitの実践ミッション',description:'状態・目的・選択肢・結果・理由を確かめる5つの事故対応。'},
@@ -38,5 +44,5 @@ export const sections = [
   { path: '/java/exercises/', area: 'java', section: 'exercises', label: 'Javaの演習', description: '各章の開始コードで実装し、完成条件を確かめます。' },
 ];
 export function href(path: string) { return import.meta.env.BASE_URL.replace(/\/$/, '') + path; }
-export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : 'Java';
+export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : area === 'test-design' ? 'テスト設計' : 'Java';
 export const entryKey = (e: Entry) => `${e.area}:${e.id}`;
