@@ -3,6 +3,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { method } from '../upstream/java/scripts/lib.mjs';
 const root = path.resolve(import.meta.dirname, '..');
+await import('./prepare-security.mjs');
 const java = path.join(root, 'upstream/java');
 fs.mkdirSync(path.join(root,'public/licenses'),{recursive:true});
 fs.copyFileSync(path.join(root,'upstream/network/LICENSE'),path.join(root,'public/licenses/azure-network-basics.txt'));

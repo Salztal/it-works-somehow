@@ -1,0 +1,20 @@
+---
+import { security, demos } from '../lib/security';
+import { entries, entryKey, href } from '../lib/catalog';
+import SecurityLab from './SecurityLab.astro';
+const { id } = Astro.props as { id: string };
+const l = security.find(l => l.id === id)!;
+---
+<section class="learning-goals" aria-labelledby="goals"><h2 id="goals">このレッスンで理解する内容</h2><ul>{l.goals.map(g => <li>{g}</li>)}</ul><h3>前提知識</h3><ul>{l.prerequisites.map(p => <li>{p}</li>)}</ul></section>
+{l.sections.map(s => <section><h2 id={s.id}>{s.title}</h2>{s.paragraphs.map(p => <p>{p}</p>)}{s.flow && <figure class="network-diagram security-flow"><ol>{s.flow.map(step => <li>{step}</li>)}</ol><figcaption>{s.title}：説明用の流れ</figcaption></figure>}{s.table && <div class="table-scroll" role="region" aria-label={`${s.title}の比較表`} tabindex="0"><table><thead><tr>{s.table.headers.map(h => <th scope="col">{h}</th>)}</tr></thead><tbody>{s.table.rows.map(row => <tr>{row.map((cell,i) => i === 0 ? <th scope="row">{cell}</th> : <td>{cell}</td>)}</tr>)}</tbody></table></div>}{s.code && <pre><code>{s.code}</code></pre>}</section>)}
+<section><h2 id="example">具体例：{l.example.title}</h2>{l.example.paragraphs.map(p => <p>{p}</p>)}{l.example.code && <pre><code>{l.example.code}</code></pre>}</section>
+{demos[id] && <section><h2 id="lab">操作して確かめる</h2><SecurityLab kind={demos[id]} /></section>}
+{id === 's10-01' && <section><h2 id="pcap">合成PCAPのヘッダーを解析する</h2><p>ブラウザ内の一覧とWiresharkなどで同じデータを確認できます。外部接続を行わず、文書用IPと手作りのレコードを収めた合成サンプルです。暗号化レコードの本文は不透明なダミーバイトで、有効なAEAD暗号文や実通信の記録ではありません。復号用秘密はありません。</p><p><a href={href('/samples/security/tls13-synthetic.pcap')} download>合成PCAPをダウンロード</a> · <a href={href('/samples/security/tls13-synthetic.json')}>レコード一覧（JSON）</a></p><pre><code>{'Wireshark表示フィルター: tls || tcp.port == 443\nClientHello: supported_versions=0x0304, key_share=X25519\nServerHello: supported_versions=0x0304, cipher=0x1301\n後続: type=23 / legacy_record_version=0x0303（本文は観測不可）'}</code></pre><p>ファイルを開き、ClientHelloとServerHelloの拡張を比較します。レコードヘッダーの0x0303だけでTLS 1.2と判断せずsupported_versionsを確認してください。TCPの1パケットとTLSの1メッセージは一般に一致しません。このサンプルは読みやすく一部を1レコードずつ区切っています。実通信としての接続成功や復号は検証対象ではありません。</p></section>}
+<section><h2 id="pitfalls">間違いやすいポイント</h2><ul>{l.pitfalls.map(p => <li>{p}</li>)}</ul></section>
+<h2 id="quiz">確認問題</h2><p>選択すると採点します。全選択肢の理由も開いて確認できます。回答は学習記録に保存されます。</p>
+<div class="quiz-list" data-lesson={id}>{l.quiz.map((q,qi) => <fieldset class="quiz" data-question={qi} data-correct={q.correct} data-reasons={JSON.stringify(q.explanations)}>
+  <legend><span>問 {qi+1}</span>{q.question}</legend><div class="choices">{q.choices.map((choice,ci) => <button type="button" data-choice={ci} aria-pressed="false"><span aria-hidden="true">{'ABCD'[ci]}</span>{choice}</button>)}</div><p class="feedback" role="status" aria-live="polite"></p>
+  <details><summary>正解・全選択肢の理由</summary><p>正解：{q.choices[q.correct]}</p><ul>{q.choices.map((choice,i) => <li><strong>{choice}</strong>：{q.explanations[i]}</li>)}</ul></details>
+</fieldset>)}</div>
+<section><h2 id="sources">関連教材・参考資料</h2><ul>{l.related.map(k => { const e = entries.find(e => entryKey(e) === k); return e && <li><a href={href(e.path)}>{e.area === 'security' ? `${e.number} ` : ''}{e.label}</a></li>; })}</ul><p>説明・図解・問題は本サイト独自のものです。規格の事実と「推奨」と記した運用上の助言を区別しています。参照先の更新も確認してください。</p><ol class="references">{l.references.map(r => <li><a href={r.url}>{r.title}</a><br />発行元：{r.publisher} ／ 版・発行年月：{r.version}<br />確認日：<time datetime={r.checked}>{r.checked}</time></li>)}</ol></section>
+<label for="lesson-note">このレッスンのメモ（ブラウザ内に保存）</label><textarea id="lesson-note" data-note={`security:${id}`} rows="4"></textarea>

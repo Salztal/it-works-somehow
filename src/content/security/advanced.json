@@ -1,0 +1,1314 @@
+[
+  {
+    "id": "s07-01",
+    "number": "07-01",
+    "unit": "07",
+    "unitTitle": "TLSとPKIの詳細",
+    "level": "ADVANCED",
+    "title": "TLS 1.3ハンドシェイク",
+    "description": "鍵の合意、相手の認証、通信内容の保護をメッセージごとに分けて追います。",
+    "prerequisites": [
+      "04-01 共通鍵暗号と公開鍵暗号",
+      "04-03 デジタル署名・電子証明書・PKI",
+      "TCPとHTTPの基本"
+    ],
+    "goals": [
+      "通常の証明書認証ハンドシェイクを順に説明する",
+      "CertificateVerifyとFinishedの検証対象を区別する",
+      "暗号スイートが指定するものを説明する"
+    ],
+    "sections": [
+      {
+        "id": "mechanism",
+        "title": "ClientHelloからServerHelloまで",
+        "paragraphs": [
+          "TLSは、アプリケーションが渡すバイト列に機密性と完全性を与え、接続相手を認証するためのプロトコルです。現在のTLS 1.3本体はRFC 9846で、RFC 8446を置き換えています。ここでは再開やクライアント証明書を使わない、(EC)DHEとサーバー証明書による接続を扱います。",
+          "ClientHelloには対応バージョン、暗号スイート、supported_groups、key_shareなどを入れます。サーバーは共通に使える方式を選び、ServerHelloに選択結果と自分のkey_shareを返します。共有秘密そのものをネットワークに送るのではなく、公開値と自分だけが持つ一時秘密値から同じ秘密を計算します。必要なkey_shareがない場合はHelloRetryRequestで再提案を求めることがあります。",
+          "TLS_AES_128_GCM_SHA256という暗号スイートはAEADとHKDF等で用いるハッシュを示します。証明書の署名方式や鍵交換グループを一括で指定する名前ではありません。ServerHello後は導出したハンドシェイク用鍵で後続メッセージを保護します。"
+        ],
+        "flow": [
+          "C → S: ClientHello（提案・公開key_share）",
+          "S → C: ServerHello（選択・公開key_share）",
+          "S → C: {EncryptedExtensions, Certificate, CertificateVerify, Finished}",
+          "C → S: {Finished}",
+          "C ↔ S: [Application Data]（アプリ用鍵）"
+        ]
+      },
+      {
+        "id": "authentication",
+        "title": "署名とFinishedは何を確認するか",
+        "paragraphs": [
+          "Certificateは公開鍵と名前を結び付ける証明書を運びます。証明書の署名検証と接続先名の照合だけで、相手が今回の接続に参加している証拠が揃うわけではありません。CertificateVerifyはコンテキストを付けたハンドシェイクのトランスクリプトに署名し、対応する秘密鍵の所持をこの接続に結び付けます。",
+          "Finishedはfinished_keyを使うMACです。双方が同じハンドシェイク内容と鍵導出結果を持つことを確認します。署名とMACでは鍵の共有関係が違います。検証に失敗した場合はアプリケーションの通信を続けません。推奨：検証処理は成熟したTLSライブラリに任せ、証明書警告を無条件に無視する設定で問題を隠さないでください。"
+        ]
+      },
+      {
+        "id": "early-data",
+        "title": "再開と0-RTTの注意点",
+        "paragraphs": [
+          "セッションチケットによるPSK再開は、毎回証明書認証を繰り返す接続と異なります。PSKに(EC)DHEを併用するかによって性質も変わります。0-RTT early dataは完了前に送れる代わりにリプレイを受ける可能性があり、通常の1-RTT通信と同じ保証ではありません。",
+          "利用例：同じ利用者の一覧取得を早くしたくても、GETなら何でも安全とは限りません。アクセスのたびに課金や状態更新が発生するAPIをearly dataで許可すると、再送が業務上の二重処理になります。アプリ側の意味とサーバー側のリプレイ対策を含めて適否を判断します。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "証明書は正しいのに接続が失敗する",
+      "paragraphs": [
+        "架空のサービスで証明書チェーンと名前の検証は成功しましたが、CertificateVerifyが失敗しました。この時点で『証明書が正しいので続行する』とは判断できません。証明書は鍵と名前の結び付けを示し、CertificateVerifyは今回のやり取りへの署名を確認するためです。",
+        "調査では、失敗したメッセージ、提示された署名方式、クライアントとサーバーの実装ログを確認します。秘密鍵やセッション秘密を一般の問い合わせ欄に貼り付ける必要はありません。"
+      ]
+    },
+    "pitfalls": [
+      "ServerHello以降の保護されたハンドシェイクと、アプリ用鍵によるデータ通信は鍵段階が異なる。",
+      "TLSは経路を保護する。受信後のサーバー内処理やブラウザ内XSSの安全まで保証しない。"
+    ],
+    "quiz": [
+      {
+        "question": "証明書チェーンは有効だがCertificateVerifyの署名検証が失敗した。適切な判断は？",
+        "choices": [
+          "チェーンが有効なので続行する",
+          "接続を中断し、署名方式とトランスクリプト等を調べる",
+          "Finishedを省略する",
+          "HTTPに切り替えて認証する"
+        ],
+        "correct": 1,
+        "explanations": [
+          "チェーンだけでは今回の接続での秘密鍵所持を確認できません。",
+          "署名検証失敗は無視できず、失敗段階を分けて原因を調べます。",
+          "Finishedは別の鍵確認であり、省略してよい理由になりません。",
+          "HTTPへの切替は接続の安全性を回復しません。"
+        ]
+      },
+      {
+        "question": "TLS_AES_128_GCM_SHA256の名前から直接分かるのは？",
+        "choices": [
+          "証明書がRSAであること",
+          "鍵交換が必ずX25519であること",
+          "AEADがAES-128-GCMで、ハッシュがSHA-256であること",
+          "サーバーが業務上信頼できること"
+        ],
+        "correct": 2,
+        "explanations": [
+          "証明書と署名方式は暗号スイート名とは別に扱います。",
+          "グループは別途交渉します。",
+          "TLS 1.3の暗号スイートはAEADとハッシュを定めます。",
+          "暗号パラメータは業務上の信用を示しません。"
+        ]
+      },
+      {
+        "question": "0-RTTで状態を更新するAPIを受け付ける前に考えるべきことは？",
+        "choices": [
+          "リプレイされたときに二重処理が起きないか",
+          "証明書の表示色だけ",
+          "ポート番号が443かだけ",
+          "暗号化されていれば再送は不可能なので不要"
+        ],
+        "correct": 0,
+        "explanations": [
+          "暗号文が再利用される可能性を業務の意味まで含めて評価します。",
+          "表示色はリプレイの影響を判定しません。",
+          "ポート番号はearly dataのリプレイ保証を変えません。",
+          "暗号化とリプレイ耐性は別の性質です。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "The Transport Layer Security (TLS) Protocol Version 1.3",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9846/",
+        "version": "RFC 9846, 2026-07（RFC 8446を廃止）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s07-02",
+      "security:s07-03",
+      "security:s10-01"
+    ]
+  },
+  {
+    "id": "s07-02",
+    "number": "07-02",
+    "unit": "07",
+    "unitTitle": "TLSとPKIの詳細",
+    "level": "ADVANCED",
+    "title": "鍵交換・鍵導出・Forward Secrecy",
+    "description": "ECDHEの共有秘密から、方向別・用途別の鍵が作られる理由を学びます。",
+    "prerequisites": [
+      "07-01 TLS 1.3ハンドシェイク",
+      "ハッシュとMACの基本"
+    ],
+    "goals": [
+      "鍵交換と鍵導出を区別する",
+      "HKDFの入力と用途分離を説明する",
+      "Forward Secrecyの成立条件と限界を説明する"
+    ],
+    "sections": [
+      {
+        "id": "exchange",
+        "title": "一時鍵による共有秘密の合意",
+        "paragraphs": [
+          "楕円曲線上の基点Gと一時秘密スカラーa、bを考えます。クライアントはA=aG、サーバーはB=bGを公開します。双方はaB=bA=abGを計算できますが、公開値AとBから秘密値a、bを求めるのが困難なパラメータを使います。実際のX25519等では符号化や入力検査も仕様の一部で、この式だけを実装してよいわけではありません。",
+          "ECDHEは共有秘密を作りますが、単独では相手の身元を保証しません。攻撃者が公開値を差し替える問題には、証明書、CertificateVerify、Finishedを含めたハンドシェイク全体で対処します。鍵交換、認証、データ暗号化の役割を別々に見てから組み合わせるのが設計上の要点です。",
+          "RFC 9846は、接続をまたいだKeyShare値の再利用を禁止しています。一時秘密値を毎接続新しく作り、使い回さないことが前提です。鍵使用上限に達する前のKeyUpdateも仕様上の要件です。"
+        ],
+        "flow": [
+          "公開: A=aG, B=bG",
+          "各端点: Z=aB=bA",
+          "HKDF-Extract: 秘密を段階的に取り込む",
+          "HKDF-Expand-Label: 用途・方向・文脈を分離",
+          "AEAD: key / IV とレコード番号から通信を保護"
+        ]
+      },
+      {
+        "id": "derivation",
+        "title": "HKDFとトランスクリプトの結び付き",
+        "paragraphs": [
+          "共有秘密Zをそのまま全用途のAES鍵にしません。TLS 1.3の鍵スケジュールはHKDF-ExtractでPSKや(EC)DHEの秘密を取り込み、HKDF-Expand-Labelでラベルとトランスクリプトのハッシュを使って用途別に導出します。PSKを使わない場合も定義されたゼロ値等を使う経路があり、単純な『Zを一回ハッシュする』処理ではありません。",
+          "ハンドシェイク用とアプリ用、クライアント送信用とサーバー送信用を分離します。同じ鍵とnonceの組合せをAEADで再利用しないよう、レコード番号とIVからnonceを計算し、鍵ごとの使用上限も守ります。KeyUpdateは次の通信秘密を導出しますが、新しいECDHE交換を毎回行う処理ではありません。"
+        ]
+      },
+      {
+        "id": "secrecy",
+        "title": "何が後から漏れても守れるのか",
+        "paragraphs": [
+          "Forward Secrecyは、長期認証鍵が後日漏れても、消去済みの一時秘密から作った過去のセッション鍵を復元しにくい性質です。条件として安全な一時鍵生成、適切な消去、アルゴリズムの前提が必要です。TLS 1.3の証明書認証による(EC)DHE接続では、サーバーの証明書秘密鍵だけで保存済み通信を復号できません。",
+          "一方、動作中の端点からtraffic secretを盗まれれば、その秘密で保護された通信が危険です。PSKのみの鍵交換やearly dataは同じ性質ではありません。さらに、将来十分に強い量子計算機が古典的な鍵交換を解ける状況は、長期鍵の漏えいとは別の脅威です。推奨：鍵更新の有無だけを見ず、どの秘密の漏えいに耐える設計かを書き出します。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "保存PCAPと証明書秘密鍵",
+      "paragraphs": [
+        "架空の検証室でTLS 1.3のパケットとサーバー証明書秘密鍵を保存しました。通常のECDHE接続では、これだけではアプリケーションデータを復号できません。解析用のセッション秘密ログが必要な方式では、それ自体が通信内容を開示できる機密情報になります。",
+        "本サイトの合成PCAPにはセッション秘密を添付しません。実環境のキー・ログを教材へアップロードしないでください。"
+      ]
+    },
+    "pitfalls": [
+      "ECDHEのEはephemeral（一時的）を表す。証明書の鍵を毎接続更新するという意味ではない。",
+      "Forward Secrecyは侵害中の端点や弱い乱数まで救済しない。"
+    ],
+    "quiz": [
+      {
+        "question": "証明書の長期秘密鍵だけが後日漏えいした。消去済み一時鍵を使った通常のECDHE接続について妥当なのは？",
+        "choices": [
+          "過去通信が必ず全て復号される",
+          "過去の共有秘密は長期秘密鍵だけからは通常復元できない",
+          "現在の端点侵害も防げる",
+          "証明書失効が不要になる"
+        ],
+        "correct": 1,
+        "explanations": [
+          "ECDHEの共有秘密は証明書秘密鍵から直接作りません。",
+          "一時秘密を消去するForward Secrecyの狙いです。",
+          "侵害中のメモリからtraffic secret等が盗まれる危険は残ります。",
+          "今後のなりすまし防止のため失効や鍵交換等の対応は必要です。"
+        ]
+      },
+      {
+        "question": "HKDFで方向と用途を分ける主な理由は？",
+        "choices": [
+          "全方向で同じkey/nonceを使うため",
+          "証明書を省略するため",
+          "同じ秘密素材から異なる文脈の鍵を分離するため",
+          "公開鍵を秘密にするため"
+        ],
+        "correct": 2,
+        "explanations": [
+          "同一のkey/nonce再利用を避ける設計です。",
+          "鍵導出は証明書による認証を代替しません。",
+          "ラベルや文脈を使い鍵の用途を分離します。",
+          "公開鍵の秘匿を目的としません。"
+        ]
+      },
+      {
+        "question": "KeyUpdateを行えば必ず新しいECDHE共有秘密が加わるか？",
+        "choices": [
+          "はい、毎回Certificateを送る",
+          "はい、DNSから共有秘密を得る",
+          "はい、証明書公開鍵を変更する",
+          "いいえ、現在の通信秘密から次の通信秘密を導出する"
+        ],
+        "correct": 3,
+        "explanations": [
+          "KeyUpdateは証明書認証のやり直しではありません。",
+          "DNSはこの導出の秘密入力ではありません。",
+          "証明書更新とは別の機能です。",
+          "鍵更新と新たな鍵交換は区別します。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "The Transport Layer Security (TLS) Protocol Version 1.3, §7",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9846/",
+        "version": "RFC 9846, 2026-07",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "HMAC-based Extract-and-Expand Key Derivation Function (HKDF)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc5869/",
+        "version": "RFC 5869, 2010-05",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s04-01",
+      "security:s10-03"
+    ]
+  },
+  {
+    "id": "s07-03",
+    "number": "07-03",
+    "unit": "07",
+    "unitTitle": "TLSとPKIの詳細",
+    "level": "ADVANCED",
+    "title": "証明書チェーン・信頼点・失効確認",
+    "description": "署名が正しいだけでは足りない証明書検証を、信頼点・名前・期限・失効に分けます。",
+    "prerequisites": [
+      "04-03 PKI",
+      "07-01 TLSハンドシェイク"
+    ],
+    "goals": [
+      "信頼点からのパス検証と接続先識別を区別する",
+      "CRLとOCSPの役割と運用上の限界を説明する"
+    ],
+    "sections": [
+      {
+        "id": "path",
+        "title": "信頼点を出発点にする",
+        "paragraphs": [
+          "サーバーがleafと中間CA証明書を送ると、クライアントは手元の信頼点へ到達する候補パスを構築します。ルートが自己署名できることは、信頼する根拠になりません。OSやアプリの管理者があらかじめ受け入れた信頼点が検証の入力です。サーバーが任意のルートを送っても、それだけで信頼ストアは増えません。",
+          "RFC 5280のパス検証では各署名、期限、basicConstraints、keyUsage、nameConstraints、ポリシー、pathLenConstraint、理解必須のcritical拡張等を扱います。CA証明書が署名できる用途であることと、leafがサーバー認証に使えることも別々に確認します。クロス署名により候補パスが複数になる場合があり、ファイルの並びを単純にたどるだけではありません。"
+        ],
+        "flow": [
+          "信頼ストアの信頼点",
+          "中間CAの制約・署名・期限",
+          "leafの用途・署名・期限",
+          "期待する接続先名とSAN等の照合",
+          "適用方針に基づく失効確認"
+        ]
+      },
+      {
+        "id": "identity",
+        "title": "有効な証明書と接続先名の一致",
+        "paragraphs": [
+          "パスが有効でも、shop.exampleの接続にmail.example用の証明書は使えません。TLSサービスの識別はRFC 9525などの規則に従い、アプリが期待する名前と証明書の識別子を照合します。DNS照会結果のIPが同じ、画面に企業名がある、といった理由で名前照合を省略しません。 RFC 9525ではDNS名をsubjectAltNameのdNSNameで検証し、subjectのCommon Nameへフォールバックしません。",
+          "推奨：独自の文字列比較でワイルドカードを実装せず、利用するプロトコルとライブラリの検証APIを使います。有効期限の検査には正しい時刻が必要です。期限エラーを解決するために端末の時計を意図的に戻すと、別の検証も壊れます。"
+        ]
+      },
+      {
+        "id": "revocation",
+        "title": "CRL・OCSP・staplingの違い",
+        "paragraphs": [
+          "CRLはCAが失効証明書の一覧を署名して配布する方式、OCSPは個々の証明書の状態に対する署名付き応答を返す方式です。OCSPのgoodは、その応答範囲で失効を把握していないという意味で、接続先の業務上の正しさを保証しません。応答の署名、権限、thisUpdate/nextUpdate等も確認します。",
+          "OCSP staplingではサーバーがCA等の応答を添付し、クライアントからの問い合わせを減らせます。問い合わせ不能時に失敗させるか継続するかは実装・方針に依存し、全ブラウザが毎接続OCSPを問い合わせるとは言えません。短命証明書やブラウザの配布失効情報等、運用も異なります。証明書更新や失効の設計では可用性、プライバシー、検知まで含めて評価します。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "中間CA不足と名前不一致を切り分ける",
+      "paragraphs": [
+        "架空のTLS終端を切り替えた後、一部端末だけ失敗する場合、キャッシュの有無により中間証明書不足が隠れている可能性があります。提示チェーンとクライアントの信頼点を確認します。",
+        "チェーンを直しても名前不一致が残るなら別の原因です。アクセスURL、SNIによる証明書選択、leafのSANを順に照合し、一つのエラーを直しただけで検証全体が成功したとしません。"
+      ]
+    },
+    "pitfalls": [
+      "CA署名の検証成功と、接続相手の秘密鍵所持の確認は別の処理。",
+      "失効情報の取得成功だけでなく、署名と鮮度を確認する。"
+    ],
+    "quiz": [
+      {
+        "question": "サーバーが未知の自己署名ルートまで送った。正しい扱いは？",
+        "choices": [
+          "送られたので必ず信頼する",
+          "自己署名が正しければ信頼する",
+          "事前に受け入れた信頼点へのパスを検証する",
+          "期限だけを見て受け入れる"
+        ],
+        "correct": 2,
+        "explanations": [
+          "送信者自身に信頼点の追加を任せられません。",
+          "自己署名は自己整合性を示すだけです。",
+          "信頼点は検証側の方針で決まります。",
+          "期限は信頼の根拠を代替しません。"
+        ]
+      },
+      {
+        "question": "パス検証は成功したがSANはmail.example、接続先はshop.example。適切なのは？",
+        "choices": [
+          "接続先名の検証に失敗させる",
+          "IPが同じなら許可する",
+          "証明書を受け取れたので許可する",
+          "OCSPがgoodなら名前照合を省略する"
+        ],
+        "correct": 0,
+        "explanations": [
+          "期待するサービス名との照合が必要です。",
+          "同一IPに複数サービスを置けます。",
+          "受信自体は身元の一致を示しません。",
+          "失効状態は名前の一致を補いません。"
+        ]
+      },
+      {
+        "question": "OCSP staplingの説明として適切なのは？",
+        "choices": [
+          "サーバー自身の無署名宣言を信じる",
+          "CA署名と鮮度の検査を不要にする",
+          "全ブラウザに毎接続の外部問い合わせを強制する",
+          "サーバーが署名付き状態応答を添え、クライアントが検証する"
+        ],
+        "correct": 3,
+        "explanations": [
+          "応答の署名と応答者の権限を検証します。",
+          "添付されても検証を省けません。",
+          "staplingは問い合わせを減らす仕組みです。",
+          "配布経路が変わっても応答の検証が必要です。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Internet X.509 PKI Certificate and CRL Profile",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc5280/",
+        "version": "RFC 5280, 2008-05（更新RFCあり・参照ページに列挙）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Service Identity in TLS",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9525/",
+        "version": "RFC 9525, 2023-11（RFC 6125後継）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "X.509 Internet PKI Online Certificate Status Protocol - OCSP",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc6960/",
+        "version": "RFC 6960, 2013-06（RFC 8954/9654で更新）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s04-03",
+      "security:s07-01"
+    ]
+  },
+  {
+    "id": "s08-01",
+    "number": "08-01",
+    "unit": "08",
+    "unitTitle": "認証基盤とメールセキュリティ",
+    "level": "ADVANCED",
+    "title": "OAuth 2.0・OpenID Connect",
+    "description": "アクセス権の委譲とログインを分け、Authorization CodeとPKCEの検証点を追います。",
+    "prerequisites": [
+      "05-01 認証・認可",
+      "HTTPリダイレクトとTLS"
+    ],
+    "goals": [
+      "OAuthの4役とOIDCの追加機能を説明する",
+      "認可コード横取りとトークン取り違えの対策を判断する"
+    ],
+    "sections": [
+      {
+        "id": "roles",
+        "title": "OAuthは権限の委譲、OIDCは認証の層",
+        "paragraphs": [
+          "OAuth 2.0は、利用者が持つリソースへの限定的アクセスをクライアントに委譲する認可フレームワークです。resource owner、client、authorization server、resource serverを区別します。『写真印刷アプリに写真の読取りだけを許す』とき、写真サービスのパスワードそのものをアプリに渡す必要を減らせます。",
+          "OpenID ConnectはOAuth 2.0の上に認証の層を定義し、ID Tokenなどを使ってクライアントへ認証結果を伝えます。Access TokenはAPI向けの権限であり、任意のAccess Tokenをログインの証明として扱うことはできません。ID Tokenの署名が正しくても、issuer、audience、有効期限などが自分の用途に合うことを検証します。"
+        ],
+        "table": {
+          "headers": [
+            "情報",
+            "主な受け手",
+            "目的"
+          ],
+          "rows": [
+            [
+              "認可コード",
+              "clientのトークン交換処理",
+              "短命・一回限りの交換用"
+            ],
+            [
+              "Access Token",
+              "resource server",
+              "限定されたAPIへのアクセス"
+            ],
+            [
+              "ID Token",
+              "OIDC client",
+              "そのclient向けの認証結果"
+            ]
+          ]
+        }
+      },
+      {
+        "id": "code-pkce",
+        "title": "Authorization Code + PKCEの流れ",
+        "paragraphs": [
+          "クライアントは予測困難なcode_verifierを用意し、S256ならそのSHA-256のbase64url表現をcode_challengeとして認可要求に入れます。認可サーバーは利用者を認証し同意等を確認した後、登録済みredirect_uriへ認可コードを返します。クライアントはTLSでトークンエンドポイントへコードとverifierを渡し、認可サーバーはchallengeとの対応を確認します。",
+          "PKCEはコードを横取りした者による交換を難しくします。公開クライアントに共通のclient_secretを埋め込んでも機密にはなりません。この例ではstateで要求と応答を結び、OIDCのnonceも使う防御設計にします。Code Flowでnonce自体は省略可能ですが、送った場合はID Tokenの値が一致するか検証が必要です。RFC 9700は、認可サーバーの対応を確認したPKCEをCSRF防御に使う条件も示します。redirect_uriの厳密な照合やissuer取り違え防止も必要で、PKCEだけで全脅威を解消しません。"
+        ],
+        "flow": [
+          "client → AS: code_challenge + redirect_uri + state（OIDCはscope=openid等）",
+          "利用者 ↔ AS: 認証・同意等",
+          "AS → client: code + state",
+          "client → AS: code + code_verifier",
+          "AS → client: Access Token / 必要に応じID Token"
+        ]
+      },
+      {
+        "id": "design",
+        "title": "トークンを漏らさない設計",
+        "paragraphs": [
+          "現行のセキュリティBCPであるRFC 9700を参照し、パスワードをクライアントへ渡すResource Owner Password Credentials Grantを新規設計に採用しません。トークンをURLやアクセスログに残す設計も避けます。scope、audience、有効期間、Refresh Tokenの保護は、侵害時の影響を限定するために設計します。",
+          "推奨：検証済みのOIDCライブラリを使い、署名アルゴリズムの許可リスト、信頼するissuerと鍵の取得元を固定します。ブラウザから来たユーザーIDや未検証JWTをそのまま認証結果にしません。認証後もAPIで対象データに対する認可を実施します。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "別アプリ向けID Tokenの流用",
+      "paragraphs": [
+        "アプリA向けaudienceのID TokenをアプリBが受け取りました。署名が同じ信頼するissuerのものでも、B向けの認証結果ではありません。Bはaudience等を検証して拒否します。",
+        "これは『JWTは署名検証すればよい』という設計の欠陥例です。署名検証は発行者と完全性を確かめる一部であり、受け手・文脈・期限を別途確認します。"
+      ]
+    },
+    "pitfalls": [
+      "OAuthの利用者認証画面があることと、OAuth自体をログイン仕様として使えることは異なる。",
+      "state、nonce、PKCEは役割が重なる部分もあるが、値を適当に置換してよいものではない。"
+    ],
+    "quiz": [
+      {
+        "question": "写真API用Access Tokenを受け取っただけで、自作アプリのログイン成功とする設計は？",
+        "choices": [
+          "どのトークンでも署名があれば十分",
+          "OAuthはログイン専用なので正しい",
+          "APIへの権限と自分向け認証結果を混同している",
+          "scopeを増やせば必ず安全"
+        ],
+        "correct": 2,
+        "explanations": [
+          "受け手と用途の検証も必要です。",
+          "OAuthは認可フレームワークです。",
+          "ログインにはOIDCなどで自分向け認証結果を検証します。",
+          "過大なscopeはむしろ影響を広げます。"
+        ]
+      },
+      {
+        "question": "認可コードだけを横取りした攻撃者に対しPKCE S256が有効な理由は？",
+        "choices": [
+          "コードを無期限にするから",
+          "verifierの所持をトークン交換時に確認するから",
+          "TLSを無効にするから",
+          "client_secretを全利用者に公開するから"
+        ],
+        "correct": 1,
+        "explanations": [
+          "コードは短命で一回限りです。",
+          "認可要求のchallengeと交換時verifierを結び付けます。",
+          "TLSは引き続き必要です。",
+          "秘密を公開する仕組みではありません。"
+        ]
+      },
+      {
+        "question": "署名が正しく、期限内だがaudienceが別アプリのID Tokenは？",
+        "choices": [
+          "受け入れる",
+          "issuerを確認しなくてよい",
+          "APIのパスワードとして保存する",
+          "自分向けではないので拒否する"
+        ],
+        "correct": 3,
+        "explanations": [
+          "署名だけでは受け手の一致を保証しません。",
+          "issuerも検証項目です。",
+          "ID TokenはAPI用パスワードではありません。",
+          "受け手・発行者・期限・必要なnonce等を確認します。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "The OAuth 2.0 Authorization Framework",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc6749/",
+        "version": "RFC 6749, 2012-10（RFC 9700等で更新）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Best Current Practice for OAuth 2.0 Security",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9700/",
+        "version": "RFC 9700 / BCP 240, 2025-01",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Proof Key for Code Exchange by OAuth Public Clients",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc7636/",
+        "version": "RFC 7636, 2015-09",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "OpenID Connect Core 1.0 incorporating errata set 2",
+        "publisher": "OpenID Foundation",
+        "url": "https://openid.net/specs/openid-connect-core-1_0.html",
+        "version": "1.0 / errata set 2, 2023-12-15",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s05-01",
+      "java:web-flow"
+    ]
+  },
+  {
+    "id": "s08-02",
+    "number": "08-02",
+    "unit": "08",
+    "unitTitle": "認証基盤とメールセキュリティ",
+    "level": "ADVANCED",
+    "title": "SMTP・メール配送・STARTTLS",
+    "description": "MXから配送先を探し、接続ごとのTLS保護とメール自体の認証を分けます。",
+    "prerequisites": [
+      "DNS・ポートの基本",
+      "07-01 TLS"
+    ],
+    "goals": [
+      "SMTP envelopeとメッセージヘッダーを区別する",
+      "STARTTLSの切替とダウングレード対策を説明する"
+    ],
+    "sections": [
+      {
+        "id": "delivery",
+        "title": "MXとstore-and-forward",
+        "paragraphs": [
+          "送信アプリがメールを投稿すると、送信側MTAは宛先ドメインのMXを調べ、配送先ホストを決めます。MXのpreferenceは数値が小さいほど優先です。ホスト名からA/AAAAを引いて接続します。中継サーバーは受け取ったメールをキューに保持して次へ送り、一時的失敗なら再試行するstore-and-forwardの仕組みです。",
+          "SMTPのMAIL FROMとRCPT TOは配送用envelopeです。DATAに含まれるFrom/Toヘッダーは表示用の情報で、両者は一致するとは限りません。メーリングリスト、転送、バウンス等を理解するにもこの区別が必要です。MXが示すのは宛先の配送先であり、送信者の身元証明ではありません。"
+        ],
+        "flow": [
+          "MUA → 投稿サーバー（MSA）",
+          "送信MTA → DNS: 宛先MX → A/AAAA",
+          "送信MTA → 受信MTA: SMTP配送",
+          "受信側: 保存・フィルター",
+          "MUA: メールボックスから閲覧"
+        ]
+      },
+      {
+        "id": "starttls",
+        "title": "同じTCP接続をTLSへ切り替える",
+        "paragraphs": [
+          "STARTTLSでは、最初にSMTPで接続しEHLOへの応答で拡張を確認します。STARTTLSを送って220応答を受けたらTLSハンドシェイクへ移り、成功後にSMTP状態をリセットして改めてEHLOします。TLS開始前の能力一覧をそのまま信用し続けません。これは最初からTLSで接続するimplicit TLSとは開始手順が違います。",
+          "機会的TLSのみの配送では、暗号化できない場合に平文へ戻る運用があり、経路上の攻撃者がSTARTTLS広告を消すダウングレードの懸念があります。推奨：要件に応じMTA-STSやDNSSECを前提とするDANE等で受信側ポリシーと認証を強化します。MTA-STSはHTTPS取得・キャッシュするポリシーに依存し、初回発見や期限等の運用条件もあります。単に機能を有効化しただけで全配送を保証しません。"
+        ],
+        "table": {
+          "headers": [
+            "段階",
+            "操作",
+            "注意"
+          ],
+          "rows": [
+            [
+              "TLS前",
+              "EHLO / STARTTLS / 220",
+              "まだ通信内容は保護されない"
+            ],
+            [
+              "切替",
+              "TLSハンドシェイク",
+              "証明書等を適用方針で検証"
+            ],
+            [
+              "TLS後",
+              "再EHLO / MAIL FROM…",
+              "TLS前の状態を捨てる"
+            ]
+          ]
+        }
+      },
+      {
+        "id": "limits",
+        "title": "ホップ間の暗号化が守る範囲",
+        "paragraphs": [
+          "メールは複数のサーバーを通るため、各ホップのTLSは送信者から受信者までの一続きの暗号化ではありません。中継サーバーや保存先は通常メッセージを扱えます。内容を端末間で保護するS/MIME等の仕組みや、SPF/DKIM/DMARCのドメイン認証とは別に考えます。",
+          "利用例：『TLSで届いたからFromの本人が送った』とは判定できません。TLSはそのSMTP接続相手との経路を保護しており、表示Fromのドメイン整合性はメール認証で評価します。SMTP AUTHも投稿クライアントをサーバーが認証する仕組みで、全受信メールの表示Fromを自動保証するわけではありません。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "小さいMX値と大きいMX値",
+      "paragraphs": [
+        "架空の宛先example.testにMX 10 mx1.example.testとMX 20 mx2.example.testがあるなら、通常は10を先に試します。10が一時的に利用できないとき、別候補を試せます。実験ではDNSやSMTPへ実際の問い合わせは行いません。",
+        "配送ログにTLS成立が記録されても、その後の迷惑メール判定、DKIM検証、メールボックスへの保存成功までを意味しません。SMTP応答、キューID、各処理のログを分けて追います。"
+      ]
+    },
+    "pitfalls": [
+      "MXの数値は大きいほど優先ではない。",
+      "STARTTLSによる暗号化とSPF/DKIM/DMARCによるドメイン認証を混同しない。"
+    ],
+    "quiz": [
+      {
+        "question": "MX 10 とMX 50が利用できる場合、通常先に試すのは？",
+        "choices": [
+          "10",
+          "50",
+          "文字数の短いホスト",
+          "Fromのユーザー名と同じホスト"
+        ],
+        "correct": 0,
+        "explanations": [
+          "preferenceは小さい値が優先です。",
+          "大きい値が優先ではありません。",
+          "ホスト名長は優先条件ではありません。",
+          "表示Fromは宛先MXの選択基準ではありません。"
+        ]
+      },
+      {
+        "question": "STARTTLSでTLSが成立した直後のSMTP処理は？",
+        "choices": [
+          "TLS前の能力一覧を永続的に使う",
+          "TLS前のSMTP状態をリセットし再EHLOする",
+          "TLS鍵をMAIL FROMに書く",
+          "証明書を本文として送る"
+        ],
+        "correct": 1,
+        "explanations": [
+          "TLS前の広告は改変の可能性もあり引き継ぎません。",
+          "保護された接続で能力を改めて確認します。",
+          "鍵をSMTP envelopeに書きません。",
+          "証明書の検証はTLSの段階で行います。"
+        ]
+      },
+      {
+        "question": "全ホップでTLSを使ったメールの説明として適切なのは？",
+        "choices": [
+          "表示Fromが必ず本人",
+          "中継MTAは内容を一切読めない",
+          "各ホップの経路は保護されるが、端末間暗号化とは別",
+          "SPF検証が不要"
+        ],
+        "correct": 2,
+        "explanations": [
+          "TLSは表示Fromの認証ではありません。",
+          "中継時は通常平文を扱います。",
+          "ホップごとの保護範囲を区別します。",
+          "SPF等は異なる目的の検証です。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Simple Mail Transfer Protocol",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc5321/",
+        "version": "RFC 5321, 2008-10（RFC 7504で更新）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "SMTP Service Extension for Secure SMTP over TLS",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc3207/",
+        "version": "RFC 3207, 2002-02（RFC 7817で更新）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "SMTP MTA Strict Transport Security (MTA-STS)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc8461/",
+        "version": "RFC 8461, 2018-09",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s08-03",
+      "security:s10-02"
+    ]
+  },
+  {
+    "id": "s08-03",
+    "number": "08-03",
+    "unit": "08",
+    "unitTitle": "認証基盤とメールセキュリティ",
+    "level": "ADVANCED",
+    "title": "SPF・DKIM・DMARCとメール認証",
+    "description": "送信IP、署名ドメイン、表示Fromの整合を別々に評価します。",
+    "prerequisites": [
+      "08-02 メール配送",
+      "ハッシュ・署名・DNSの基礎"
+    ],
+    "goals": [
+      "SPFとDKIMが何を検証するか説明する",
+      "DMARCのaligned passをケースで判定する",
+      "転送・書換え・類似ドメインの限界を判断する"
+    ],
+    "sections": [
+      {
+        "id": "spf-dkim",
+        "title": "IPの許可とメッセージ署名",
+        "paragraphs": [
+          "SPFは、SMTP接続元IPがMAIL FROM等のドメインから送信を許可されているかをDNSポリシーで評価します。通常の表示Fromそのものを検査する方式ではありません。転送先から見る接続元が変わると、正当なメールでも元ドメインのSPFに失敗することがあります。SPFのpass以外にもfail、softfail、neutral、none、temperror、permerror等があり、全てを同じ意味にしません。",
+          "DKIMは、d=で示す署名ドメインの鍵をselectorとDNSから探し、署名対象ヘッダーと本文ハッシュ等を検証します。canonicalizationで一部の表現差は吸収できますが、メーリングリストによる本文追記等は署名を壊すことがあります。署名対象の範囲を確認する必要があり、DKIM passだけで送信者個人や内容の無害性を保証しません。"
+        ],
+        "table": {
+          "headers": [
+            "方式",
+            "主な検証対象",
+            "単独では分からないこと"
+          ],
+          "rows": [
+            [
+              "SPF",
+              "接続元IPとenvelope等のドメイン",
+              "表示Fromとの一致、本文の完全性"
+            ],
+            [
+              "DKIM",
+              "d=ドメインの署名と署名対象内容",
+              "個人の本人性、表示Fromとの一致"
+            ],
+            [
+              "DMARC",
+              "表示FromとSPF/DKIMのalignment",
+              "類似ドメイン、本文の安全性"
+            ]
+          ]
+        }
+      },
+      {
+        "id": "alignment",
+        "title": "DMARCは整合する成功を要求する",
+        "paragraphs": [
+          "DMARCは表示Fromのドメインと、SPFまたはDKIMで認証したドメインのalignmentを評価します。『SPFがpassかつaligned』または『少なくとも一つのDKIMがpassかつaligned』なら認証判定はpassです。両方の成功を必須にはしませんし、無関係なドメインのpassを採用しません。",
+          "現行本体RFC 9989はRFC 7489等を置き換えます。relaxed alignmentの組織ドメイン判定やポリシー発見はDNS Tree Walkを扱うため、末尾2ラベル一致で実装しません。この教材の操作例はstrict完全一致に限定し、DNS問い合わせやPublic Suffix判定の代替にはしません。p=none/quarantine/rejectは失敗時に受信側へ求める扱いで、最終処理は受信側のローカル方針にも依存します。"
+        ]
+      },
+      {
+        "id": "operation",
+        "title": "導入と調査で見るべき限界",
+        "paragraphs": [
+          "推奨：正当な外部配信サービスや転送経路を棚卸しし、集約レポートなどで状況を確認してからポリシーを強めます。いきなりrejectにすると、設定漏れした正規メールも影響を受けます。Authentication-Resultsは信頼できる受信境界が付けたものを利用し、外部から同名ヘッダーを付ければ信用される設計にしません。",
+          "攻撃者が自分の類似ドメインでSPF/DKIM/DMARCを正しく設定しても、ブランドなりすましは可能です。表示名だけで判断しないUIや、重要操作を別経路で確認する運用も必要です。認証passと迷惑メールでないことは別の判断です。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "転送でSPF失敗、DKIMは整合して成功",
+      "paragraphs": [
+        "表示Fromがauthor.example、転送によりSPFはfail、DKIM d=author.exampleはpassだったとします。strictでもDKIMがalignedなので、DMARCの認証判定はpassです。",
+        "一方、SPF passのドメインがrelay.exampleでDKIM d=mailer.exampleもpassでも、表示Fromと整合しなければDMARC passとはなりません。下のシミュレーターで両ケースを比較できます。"
+      ]
+    },
+    "pitfalls": [
+      "SPFとDKIMのどちらかがpassというだけでは足りず、その成功がFromとalignedである必要がある。",
+      "DMARCポリシーにrejectと書かれても全受信者が必ず同じ処理を行う保証ではない。"
+    ],
+    "quiz": [
+      {
+        "question": "From=a.example、SPF fail、DKIM d=a.exampleがpass。strict alignmentのDMARC認証結果は？",
+        "choices": [
+          "SPFがfailなので必ずfail",
+          "両方passでないのでfail",
+          "DKIMがalignedで成功しpass",
+          "DNSSECを有効にすれば初めてpass"
+        ],
+        "correct": 2,
+        "explanations": [
+          "SPFだけが唯一の成功経路ではありません。",
+          "aligned SPFとaligned DKIMはOR条件です。",
+          "表示FromとDKIMドメインが一致し署名検証に成功しています。",
+          "この判定のOR条件をDNSSECが変更しません。"
+        ]
+      },
+      {
+        "question": "From=a.example、SPF pass=b.example、DKIM pass=c.example。strictでは？",
+        "choices": [
+          "認証は成功していてもalignmentがなくDMARC fail",
+          "二つpassなので必ずDMARC pass",
+          "SPFが本文を保証する",
+          "DKIMがFromを自動で書き換える"
+        ],
+        "correct": 0,
+        "explanations": [
+          "認証したドメインが表示Fromと整合していません。",
+          "passの数ではなく整合を評価します。",
+          "SPFは本文の完全性を保証しません。",
+          "DKIMは書換え機能ではありません。"
+        ]
+      },
+      {
+        "question": "DMARC passの類似ドメインから届く詐欺メールについて妥当なのは？",
+        "choices": [
+          "DMARC規格上あり得ない",
+          "passなら内容も無害",
+          "同じ表示名なら同じ組織",
+          "認証passと内容・ブランドの信頼判断は別"
+        ],
+        "correct": 3,
+        "explanations": [
+          "攻撃者自身のドメインは正しく認証できます。",
+          "有害な内容にも有効な認証は付けられます。",
+          "表示名は同一組織の証明ではありません。",
+          "ドメイン認証の保証範囲を越えて信用しません。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc7208/",
+        "version": "RFC 7208, 2014-04（RFC 7372/8553/8616で更新）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "DomainKeys Identified Mail (DKIM) Signatures",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc6376/",
+        "version": "RFC 6376, 2011-09（RFC 8301/8463等で更新）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Domain-based Message Authentication, Reporting, and Conformance (DMARC)",
+        "publisher": "IETF / RFC Editor",
+        "url": "https://www.rfc-editor.org/info/rfc9989/",
+        "version": "RFC 9989, 2026-05（RFC 7489等の後継）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s08-02",
+      "security:s02-03"
+    ]
+  },
+  {
+    "id": "s09-01",
+    "number": "09-01",
+    "unit": "09",
+    "unitTitle": "脆弱性管理とインシデント分析",
+    "level": "ADVANCED",
+    "title": "CVE・CWE・CVSS・脆弱性の優先順位付け",
+    "description": "識別子・原因分類・深刻度を区別し、自分の資産と悪用状況から対応を決めます。",
+    "prerequisites": [
+      "01-02 リスク",
+      "06-01 防御の配置"
+    ],
+    "goals": [
+      "CVE/CWE/CVSSを使い分ける",
+      "スコアに公開状況・悪用・業務影響を加えて優先度を判断する"
+    ],
+    "sections": [
+      {
+        "id": "identifiers",
+        "title": "番号、弱点の型、深刻度は別の情報",
+        "paragraphs": [
+          "CVEは公開された脆弱性を共通の識別子で参照する仕組みです。CVE番号の年や連番から深刻度を読めるわけではなく、対象製品・バージョン・設定とアドバイザリーを確認します。CWEはSQLインジェクションや認可不足等、脆弱性の原因になり得る弱点の型を整理します。同じCWEに複数のCVEが対応することがあります。",
+          "CVSSは脆弱性の技術的深刻度を表現する共通方式です。バージョンとベクトルをスコアと一緒に残すことで、攻撃条件や影響の前提を追えます。数値だけを保存すると、どの評価基準で何を想定したか失われます。CVSS v3.1とv4.0の数値を同じ計算結果として扱いません。"
+        ],
+        "table": {
+          "headers": [
+            "項目",
+            "答える問い",
+            "単独では不足する点"
+          ],
+          "rows": [
+            [
+              "CVE",
+              "どの脆弱性か",
+              "自分の資産が影響するか"
+            ],
+            [
+              "CWE",
+              "どんな弱点の型か",
+              "個別製品の修正方法"
+            ],
+            [
+              "CVSS",
+              "技術的深刻度はどの程度か",
+              "実際の悪用・事業上の優先度"
+            ]
+          ]
+        }
+      },
+      {
+        "id": "scoring",
+        "title": "CVSS v4.0と環境の文脈",
+        "paragraphs": [
+          "CVSS v4.0にはBase、Threat、Environmental、Supplementalのメトリクス群があります。Baseは時間や利用環境に比較的依存しない性質、Threatは悪用の成熟度、Environmentalは利用側の重要度や環境の差を扱います。Supplementalは追加の文脈を伝えますが、数値スコアを変更しません。ベンダーのBaseだけを自組織のリスクそのものと呼ばないでください。",
+          "優先度には、影響するバージョンの有無、インターネット公開、認証要否、既知の悪用、到達可能性、重要データ、代替策、修正による停止影響を加えます。CISA KEVは実際に悪用されたと把握される脆弱性を知る材料で、未掲載なら悪用されていないと保証するリストではありません。"
+        ]
+      },
+      {
+        "id": "workflow",
+        "title": "修正して終わりにしない",
+        "paragraphs": [
+          "推奨：資産台帳と依存ライブラリを更新し、検知→影響確認→暫定対策→修正計画→適用→検証を担当者と期限付きで管理します。パッチがない場合は公開範囲の制限や機能停止等を検討し、その対策がどの経路を塞ぎ何を残すか記録します。WAFを置いた事実だけで修正済みにしません。",
+          "適用後はバージョンや設定の確認に加え、実行中プロセスの再起動、全ノードへの反映、機能の回帰、監視の再開を確認します。既に悪用の形跡があればパッチだけでは侵入後の永続化や漏えいを取り除けず、インシデント調査へつなげます。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "CVSSが少し低い公開サーバーを先に直す",
+      "paragraphs": [
+        "教材用の架空脆弱性AはCVSS 9.8で隔離された検証機のみ、Bは8.1で公開認証基盤に存在し既知の悪用があります。Bを緊急封じ込めと修正の対象にする合理性があります。Aも放置せず隔離の有効性を確認して期限を決めます。",
+        "ここでの数値と製品は実在のCVE事例ではありません。単純に9.8より8.1を常に先に直すというルールでもなく、実環境の前提を比較する練習です。"
+      ]
+    },
+    "pitfalls": [
+      "CVSSは侵害確率や事業損失額を直接計算する値ではない。",
+      "影響なしの判断も、バージョン・構成・到達性等の根拠を記録する。"
+    ],
+    "quiz": [
+      {
+        "question": "CWEとCVEの関係で適切なのは？",
+        "choices": [
+          "CWEは個別脆弱性の連番",
+          "CVEは公開脆弱性の識別、CWEは弱点の型",
+          "同じCWEならパッチも必ず同じ",
+          "CVSSが10ならCVE番号が変わる"
+        ],
+        "correct": 1,
+        "explanations": [
+          "CWEは原因となる弱点の分類です。",
+          "識別と分類を分けて使います。",
+          "製品や実装が違えば修正も異なります。",
+          "深刻度と識別番号は別の情報です。"
+        ]
+      },
+      {
+        "question": "公開され既知の悪用がある重要基盤と、隔離検証機の高スコア脆弱性。優先度判断は？",
+        "choices": [
+          "常に数値だけで降順にする",
+          "低スコアは無視する",
+          "公開・悪用・資産影響等を含めて判断する",
+          "KEV未掲載は影響なしとする"
+        ],
+        "correct": 2,
+        "explanations": [
+          "CVSSだけで環境リスクは決まりません。",
+          "低めのスコアにも重要なリスクがあります。",
+          "技術的深刻度に自分の環境を合わせます。",
+          "掲載がないことは悪用不存在の証明ではありません。"
+        ]
+      },
+      {
+        "question": "パッチ適用後に既存の不正アカウントが残っている。妥当な説明は？",
+        "choices": [
+          "侵入経路の修正だけでは侵害後の影響は消えない",
+          "パッチがあれば自動的に正規アカウントになる",
+          "CVSSを下げれば消える",
+          "ログ削除で復旧できる"
+        ],
+        "correct": 0,
+        "explanations": [
+          "侵入後の永続化や漏えいは別途調査・除去します。",
+          "アカウントの正当性は別途確認します。",
+          "評価値の変更はシステムを修復しません。",
+          "ログ削除は調査を妨げ、原因も除去しません。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Common Vulnerability Scoring System v4.0: Specification Document",
+        "publisher": "FIRST",
+        "url": "https://www.first.org/cvss/v4.0/specification-document",
+        "version": "CVSS v4.0, 2023-11公開",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "About CWE",
+        "publisher": "CWE Program / MITRE",
+        "url": "https://cwe.mitre.org/about/",
+        "version": "継続更新（版番号なし）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Official CVE List / CVE JSON 5",
+        "publisher": "CVE Program",
+        "url": "https://github.com/CVEProject/cvelistV5",
+        "version": "公式CVE List・継続更新（概要を確認）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Known Exploited Vulnerabilities Catalog — official mirror",
+        "publisher": "CISA",
+        "url": "https://github.com/cisagov/kev-data",
+        "version": "CISA公式ミラー・継続更新（個別件数や事例の引用なし）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s01-03",
+      "security:s09-02"
+    ]
+  },
+  {
+    "id": "s09-02",
+    "number": "09-02",
+    "unit": "09",
+    "unitTitle": "脆弱性管理とインシデント分析",
+    "level": "ADVANCED",
+    "title": "ログ分析と不正アクセスの調査",
+    "description": "時刻・アカウント・リクエストIDを結び付け、観測と推測を分けます。",
+    "prerequisites": [
+      "05-01 アカウンティング",
+      "HTTPの応答コード"
+    ],
+    "goals": [
+      "ログの相関から追加調査する仮説を作る",
+      "IPや200応答だけで侵害・犯人を断定しない",
+      "調査できるログの設計要件を説明する"
+    ],
+    "sections": [
+      {
+        "id": "observe",
+        "title": "観測した事実を時系列に並べる",
+        "paragraphs": [
+          "アクセスログは、サーバーが記録した時点と範囲の観測です。ログに何もないことは、攻撃がなかった証明とは限りません。収集漏れ、保持期限、時刻ずれ、侵害による改変の可能性もあります。まず対象期間、対象システム、ログ形式、タイムゾーン、収集経路を記録します。",
+          "同じアカウントへの認証失敗が短時間に続いた後、成功と大量取得があれば調査の手掛かりです。ただし、送信元IPが同じでもNATやプロキシで利用者が複数いる場合があります。成功が正規利用か、取得したデータが何かを認証ログ、操作監査、端末情報と照合します。根拠のある観測と、それを説明する仮説を別欄にします。"
+        ],
+        "flow": [
+          "対象・時刻・ログ形式を確認",
+          "認証イベントと要求IDを相関",
+          "平常時や変更作業と比較",
+          "複数の仮説と不足証拠を列挙",
+          "保全した上で範囲を広げる"
+        ]
+      },
+      {
+        "id": "correlation",
+        "title": "HTTPの結果と業務の結果を分ける",
+        "paragraphs": [
+          "HTTP 200はHTTP要求への成功応答であり、業務上のログイン成功を意味するとは限りません。ログイン失敗画面を200で返すアプリもあります。401、403、500もそれぞれ何が拒否され何が壊れたかをアプリログと突き合わせます。レスポンスサイズが大きいだけでは機密流出の確証にはなりません。",
+          "逆プロキシ環境では接続元と転送ヘッダー由来のIPを分けます。X-Forwarded-Forを誰でも指定できる位置で無条件に採用すると、攻撃者が任意のIPをログへ残せます。信頼するプロキシ境界とヘッダー書換え方針が必要です。ログ中の改行や制御文字もエスケープし、ログ注入による誤認を防ぎます。"
+        ]
+      },
+      {
+        "id": "design",
+        "title": "調査に使える記録を残す",
+        "paragraphs": [
+          "推奨：イベント時刻と受信時刻、結果、主体ID、対象資源、リクエストID、認証方式などを必要な範囲で構造化します。時計の同期、アクセス権の限定、別システムへの転送、保存期間、改ざん検知を設計します。運用担当が調査できることと、無制限に個人情報を収集することは同じではありません。",
+          "パスワード、セッショントークン、秘密鍵等をそのまま記録しません。ログが漏れると第二の侵害経路になります。本教材のログは文書用IPアドレスと架空IDを使う静的データです。実ログを貼り付けて外部へ送る機能はありません。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "失敗後の成功とexportを調べる",
+      "paragraphs": [
+        "同じ架空アカウントu17で09:00から認証失敗が続き、09:02の成功後に09:03のexportが記録されたとします。『資格情報の悪用』は仮説になりますが、正規利用者の入力ミス後の作業という説明も残ります。",
+        "要求IDでexportの対象・件数、認証セッション、MFAイベント、変更申請、端末を突き合わせ、記録のタイムゾーンも確認します。下のログ選択では調べる行とその理由を確認できます。"
+      ]
+    },
+    "pitfalls": [
+      "送信元IPを見ただけで個人や攻撃者を特定しない。",
+      "ログ保全前に不要と判断して削除したり、日時を書換えたりしない。"
+    ],
+    "quiz": [
+      {
+        "question": "ログイン画面へのHTTP 200がある。この一行から確定できるのは？",
+        "choices": [
+          "認証成功",
+          "管理者権限取得",
+          "HTTPとして成功応答が記録されたこと",
+          "機密データ漏えい"
+        ],
+        "correct": 2,
+        "explanations": [
+          "業務上の認証結果は別途ログ等で確認します。",
+          "権限情報がありません。",
+          "コードの意味とアプリの結果を分けます。",
+          "データ内容やアクセス権の情報が不足しています。"
+        ]
+      },
+      {
+        "question": "多数の失敗後の成功とexportを見つけた。次に適切なのは？",
+        "choices": [
+          "同一IPの個人を犯人と公表する",
+          "認証・MFA・操作ログ等を要求IDと時刻で照合する",
+          "成功行を消して集計する",
+          "200なので調査しない"
+        ],
+        "correct": 1,
+        "explanations": [
+          "NAT等もあり個人特定の根拠がありません。",
+          "複数証拠から仮説を確かめます。",
+          "証拠と時間的関係を破壊します。",
+          "成功応答にも不正操作は含まれ得ます。"
+        ]
+      },
+      {
+        "question": "ログ設計で適切なのは？",
+        "choices": [
+          "調査用に全パスワードを平文保存",
+          "転送ヘッダーのIPを無条件採用",
+          "全端末の時刻を無視する",
+          "秘密を除外し、結果と相関IDを保護して記録する"
+        ],
+        "correct": 3,
+        "explanations": [
+          "ログ流出時に認証情報も漏れます。",
+          "信頼境界を決めないと値を偽装されます。",
+          "時系列の相関が困難になります。",
+          "調査可能性と秘密情報の保護を両立します。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Logging Cheat Sheet",
+        "publisher": "OWASP",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+        "version": "継続更新（版番号なし）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Guide to Computer Security Log Management",
+        "publisher": "NIST",
+        "url": "https://csrc.nist.gov/pubs/sp/800/92/final",
+        "version": "SP 800-92, 2006-09（改訂草案とは区別）",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s09-03",
+      "security:s05-01"
+    ]
+  },
+  {
+    "id": "s09-03",
+    "number": "09-03",
+    "unit": "09",
+    "unitTitle": "脆弱性管理とインシデント分析",
+    "level": "ADVANCED",
+    "title": "インシデント対応・証拠保全・復旧判断",
+    "description": "被害の封じ込めと証拠の保持を両立し、根拠を持って復旧を判断します。",
+    "prerequisites": [
+      "06-03 インシデント対応の基本",
+      "09-02 ログ分析"
+    ],
+    "goals": [
+      "対応の意思決定と証拠取得のトレードオフを説明する",
+      "取得履歴とハッシュが示す範囲を区別する",
+      "復旧条件と監視計画を作る"
+    ],
+    "sections": [
+      {
+        "id": "response",
+        "title": "継続的なリスク管理の中で対応する",
+        "paragraphs": [
+          "NIST SP 800-61 Rev.3はCSF 2.0に沿ってインシデント対応をリスク管理全体へ組み込みます。準備は事故の直前だけの作業ではなく、役割、連絡経路、資産、バックアップ、ログ、演習を平時から整えます。検知・対応・復旧で得た知見は、統治や防御の改善へ戻します。古いRev.2の段階図だけを現行版そのものとして紹介しません。",
+          "進行中の暗号化や外部送信が疑われるときは、ネットワーク隔離等による被害抑止と揮発性証拠の保持を比較します。常に即電源断、常に電源維持という一律の解はありません。事業影響、メモリにしかない情報、遠隔操作の危険、担当者の能力に応じて承認された手順を使い、操作と理由を時刻付きで残します。"
+        ],
+        "flow": [
+          "平時: 役割・記録・復旧手順を準備",
+          "検知: 真偽と影響範囲を評価",
+          "対応: 封じ込め・調査・根絶",
+          "復旧: 信頼できる状態と業務を検証",
+          "改善: 判断と検知・手順を更新"
+        ]
+      },
+      {
+        "id": "evidence",
+        "title": "証拠の内容と取扱履歴を保全する",
+        "paragraphs": [
+          "証拠取得では、対象、取得者、日時とタイムゾーン、方法とツール、元の状態、保管先、受渡しを記録します。chain of custodyは誰がどのように扱ったかを追跡するための履歴です。可能な範囲で原本を保護し、解析は複製で行い、アクセスを制限します。取得そのものが状態を変え得るため、完全に無影響だったと根拠なく書きません。",
+          "取得時と解析時のハッシュ一致は、その間でバイト列が変わっていない確認に役立ちます。しかし、取得前に改ざんされていなかったこと、作成者、記載内容の真実までは証明しません。クラウドではディスクだけでなく、管理操作、ID基盤、監査ログ、スナップショットの保持期限と権限も考慮します。"
+        ]
+      },
+      {
+        "id": "recovery",
+        "title": "復旧の判定基準を先に置く",
+        "paragraphs": [
+          "復旧では侵入経路を塞ぎ、侵害範囲を調べ、永続化や不正アカウントを除き、必要な認証情報を更新します。バックアップが起動できるだけでは十分でなく、感染・改ざん前の信頼できる時点か、業務データの整合が取れるかを確認します。侵害された環境で作った新しい鍵が再び盗まれる順序の問題もあります。",
+          "推奨：機能、データ、認証、脆弱性対応、監視を復旧条件として明文化し、段階的に再開します。再侵入兆候の監視とロールバック条件、再開の承認者、未解決事項を残します。漏えいの連絡や届出が必要かは契約や適用法令等も含め担当者が判断します。本教材は個別事案の法的手続きを断定するものではありません。"
+        ]
+      }
+    ],
+    "example": {
+      "title": "バックアップは起動したが不正トークンが残る",
+      "paragraphs": [
+        "架空のWebサービスを前日のバックアップから戻して機能テストが通っても、攻撃者が取得したRefresh Tokenがまだ有効なら再侵入を許す可能性があります。認証基盤の侵害範囲、セッション失効、資格情報更新を復旧チェックに含めます。",
+        "隔離解除を決めた時点の根拠と不確実性を残し、ログの欠落期間は『問題なし』と読み替えません。追加監視の担当と終了条件も決めます。"
+      ]
+    },
+    "pitfalls": [
+      "ハッシュの一致を、取得前の真正性や内容の真実の証明と取り違えない。",
+      "サービスが応答することと、安全な業務再開の条件が揃うことは異なる。"
+    ],
+    "quiz": [
+      {
+        "question": "取得したログのハッシュが解析前後で一致した。直接確認できるのは？",
+        "choices": [
+          "ログに書かれた全事実が真実",
+          "取得前に改ざんされていない",
+          "取得後の比較対象のバイト列が一致すること",
+          "攻撃者の氏名"
+        ],
+        "correct": 2,
+        "explanations": [
+          "内容の真実は別の証拠で評価します。",
+          "比較の前に起きた改ざんは分かりません。",
+          "比較した時点間の同一性を確認する材料です。",
+          "ハッシュは個人を特定しません。"
+        ]
+      },
+      {
+        "question": "暗号化被害が進行している端末の電源をどうするか？",
+        "choices": [
+          "被害抑止と揮発性証拠を評価し、手順と判断を記録する",
+          "全事案で必ず電源断だけ",
+          "全事案で必ず通信を維持",
+          "証拠保全のため攻撃を無期限に許す"
+        ],
+        "correct": 0,
+        "explanations": [
+          "状況と優先事項を比較し、責任ある判断を行います。",
+          "揮発性証拠を失う場合があります。",
+          "被害拡大を招く場合があります。",
+          "保全だけを目的に無制限の被害を認めるものではありません。"
+        ]
+      },
+      {
+        "question": "安全な再開条件として最も適切なのは？",
+        "choices": [
+          "トップページが200を返すだけ",
+          "不正アカウントを残して急ぐ",
+          "ログの欠落は侵害なしと扱う",
+          "経路修正・侵害除去・データ/認証確認・監視を確認する"
+        ],
+        "correct": 3,
+        "explanations": [
+          "HTTP応答だけでは安全性を確認できません。",
+          "再侵入経路が残ります。",
+          "観測できない期間は不確実性として残します。",
+          "複数の復旧条件と承認により再開を判断します。"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "title": "Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile",
+        "publisher": "NIST",
+        "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final",
+        "version": "SP 800-61 Rev.3, 2025-04（Rev.2後継）",
+        "checked": "2026-11-11"
+      },
+      {
+        "title": "Guide to Integrating Forensic Techniques into Incident Response",
+        "publisher": "NIST",
+        "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
+        "version": "SP 800-86, 2006-08",
+        "checked": "2026-11-11"
+      }
+    ],
+    "related": [
+      "security:s06-03",
+      "security:s09-02"
+    ]
+  }
+]

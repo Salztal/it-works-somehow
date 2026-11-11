@@ -2,6 +2,9 @@
 import Shell from '../layouts/Shell.astro';
 import NetworkContent from '../components/NetworkContent.astro';
 import EntryList from '../components/EntryList.astro';
+import SecurityContent from '../components/SecurityContent.astro';
+import SecurityOverview from '../components/SecurityOverview.astro';
+import { security, securityToc } from '../lib/security';
 import { entries, sections, network, href, areaLabel, entryKey, type Entry } from '../lib/catalog';
 import type { MarkdownInstance } from 'astro';
 export function getStaticPaths() {
@@ -17,22 +20,24 @@ const list = entries.filter(e => e.area === area);
 const idx = entry ? list.indexOf(entry) : -1;
 const prev = list[idx - 1], next = list[idx + 1];
 const lesson = network.lessons.find(l => l.id === entry?.id);
+const securityLesson = security.find(l => l.id === entry?.id);
 const pageTitle = md?.frontmatter.title || title;
-const chapterLabel = entry?.kind === 'mission' ? `ミッション ${entry.number}` : entry && /^\d+$/.test(entry.number) ? `第 ${entry.number} 章` : entry?.id === 'index' ? '学習ガイド' : '補助資料';
-const toc = md?.getHeadings().filter(h => h.depth === 2) || (entry?.kind === 'mission' ? [['scenario','状況'],['diagram','構成図'],['requirements','要件'],['questions','理由を考える'],['research','Azureを調べる']] : [['goals','学ぶこと'],['everyday','身近な例'],['terms','用語と役割'],['diagram','図で見る'],['azure','Azureでは？'],['quiz','確認問題'],['recall','自分の言葉で説明する'],['research','Azureを調べる']]).map(([slug,text]) => ({ slug,text,depth:2 }));
+const chapterLabel = securityLesson ? `${entry!.number} · ${securityLesson.level}` : entry?.kind === 'mission' ? `ミッション ${entry.number}` : entry && /^\d+$/.test(entry.number) ? `第 ${entry.number} 章` : entry?.id === 'index' ? '学習ガイド' : '補助資料';
+const toc = securityLesson ? securityToc(securityLesson) : md?.getHeadings().filter(h => h.depth === 2) || (entry?.kind === 'mission' ? [['scenario','状況'],['diagram','構成図'],['requirements','要件'],['questions','理由を考える'],['research','Azureを調べる']] : [['goals','学ぶこと'],['everyday','身近な例'],['terms','用語と役割'],['diagram','図で見る'],['azure','Azureでは？'],['quiz','確認問題'],['recall','自分の言葉で説明する'],['research','Azureを調べる']]).map(([slug,text]) => ({ slug,text,depth:2 }));
 const filtered = section ? list.filter(e => !('section' in section) || e.section === section.section) : [];
 ---
 <Shell title={title} area={area} current={entry && entryKey(entry)} description={entry?.description || section?.description}>
   <nav class="breadcrumbs" aria-label="パンくずリスト"><a href={href('/')}>ホーム</a><span aria-hidden="true">/</span><a href={href(`/${area}/`)}>{areaLabel(area)}</a>{entry && <><span aria-hidden="true">/</span><span aria-current="page">{entry.label}</span></>}</nav>
   {entry ? <div class="reading-layout"><div class="reading-main">
-    <header class="article-header"><p class="eyebrow">{areaLabel(area)} <span>／</span> {chapterLabel}</p><h1>{pageTitle}</h1><p>{lesson?.subtitle || entry.description}</p><div class="article-meta"><span>{entry.kind === 'java' ? 'Java 17 / MySQL / Tomcat 9' : lesson?.title || '構成設計・自己確認'}</span><span data-page-status>未完了</span></div></header>
+    <header class="article-header"><p class="eyebrow">{areaLabel(area)} <span>／</span> {chapterLabel}</p><h1>{pageTitle}</h1><p>{lesson?.subtitle || entry.description}</p><div class="article-meta"><span>{entry.kind === 'java' ? 'Java 17 / MySQL / Tomcat 9' : securityLesson?.unitTitle || lesson?.title || '構成設計・自己確認'}</span><span data-page-status>未完了</span></div></header>
     {entry.id === 'validation' && <p class="notice">このページは移行元で実施された検証記録です。統合サイトで今回行った検証は、プロジェクトの検証記録を参照してください。</p>}
     {entry.id === 'publishing' && <p class="notice">これは元教材の公開手順です。統合サイトの開発・公開は新プロジェクトのREADMEに従ってください。</p>}
-    <article class="prose">{Content ? <Content /> : <NetworkContent id={entry.id} kind={entry.kind} />}</article>
+    <article class:list={['prose',{'security-prose':securityLesson}]}>{securityLesson ? <SecurityContent id={entry.id} /> : Content ? <Content /> : <NetworkContent id={entry.id} kind={entry.kind} />}</article>
     <section class="completion"><div><h2>この章を振り返る</h2><p>{entry.kind === 'mission' ? '自分の考えと参考回答を比べたら、完了を記録しましょう。' : '内容を自分の言葉で説明できたら、完了を記録しましょう。'}</p></div><button class="button" id="mark-complete" type="button" aria-pressed="false">この章を完了にする</button></section>
     <nav class="pager" aria-label="前後の章">{prev ? <a href={href(prev.path)}><small>← 前の章</small><strong>{prev.label}</strong></a> : <span></span>}{next ? <a href={href(next.path)}><small>次の章 →</small><strong>{next.label}</strong></a> : <a href={href(`/${area}/`)}><small>教材の目次へ →</small><strong>{areaLabel(area)}の一覧</strong></a>}</nav>
-    <aside class="related"><h2>関連する教材</h2>{area === 'java' ? <><a href={href('/java/downloads/')}>教材ダウンロード →</a><a href={href('/java/lessons/troubleshooting/')}>つまずき集 →</a><a href={href('/java/lessons/glossary/')}>用語集 →</a></> : <><a href={href('/network/exercises/')}>ミッションで確かめる →</a><a href={href('/network/azure/')}>Azure・構成設計 →</a></>}</aside>
-    <p class="source-note">出典：{area === 'network' ? 'Azure Network Basics（ローカル追加版を含む）' : `Java Study / course/${entry.id}.md`} · <a href={href('/about/')}>移行について</a></p>
+    {area !== 'security' && <aside class="related"><h2>関連する教材</h2>{area === 'java' ? <><a href={href('/java/downloads/')}>教材ダウンロード →</a><a href={href('/java/lessons/troubleshooting/')}>つまずき集 →</a><a href={href('/java/lessons/glossary/')}>用語集 →</a></> : <><a href={href('/network/exercises/')}>ミッションで確かめる →</a><a href={href('/network/azure/')}>Azure・構成設計 →</a></>}</aside>}
+    {area !== 'security' && <div class="related"><h2>Securityとの関連</h2>{(area === 'network' ? ['s07-01','s10-02','s06-01'] : ['s03-01','s05-01','s08-01']).map(id => { const e = entries.find(e => e.id === id)!; return <a href={href(e.path)}>{e.label} →</a>; })}</div>}
+    <p class="source-note">{area === 'security' ? '独自執筆。一次資料は本文の参考資料に記録。' : `出典：${area === 'network' ? 'Azure Network Basics（ローカル追加版を含む）' : `Java Study / course/${entry.id}.md`}`} · <a href={href('/about/')}>教材について</a></p>
   </div><aside class="page-toc"><nav aria-label="このページの目次"><p>このページの内容</p>{toc.map(h => <a href={`#${h.slug}`}>{h.text}</a>)}</nav></aside></div>
-  : <div class="course-overview"><header class="overview-header"><p class="eyebrow">{areaLabel(area)}の教材</p><h1>{title}</h1><p>{section!.description}</p></header><div class="course-overview-meta"><span>{filtered.length}ページ</span><span>初学者向け</span><span>読む → 確かめる → 振り返る</span></div>{!('section' in section!) && <div class="start-links"><a class="button" href={href(area === 'network' ? entries[0].path : '/java/lessons/index/')}>最初から学ぶ →</a>{area === 'java' && <a class="button secondary" href={href('/java/downloads/')}>教材ダウンロード ↓</a>}</div>}<EntryList items={filtered} /></div>}
+  : <div class="course-overview"><header class="overview-header"><p class="eyebrow">{areaLabel(area)}の教材</p><h1>{title}</h1><p>{section!.description}</p></header><div class="course-overview-meta"><span>{filtered.length}ページ</span><span>{area === 'security' ? '基礎から技術実験まで' : '初学者向け'}</span><span>読む → 確かめる → 振り返る</span></div>{area === 'security' ? <SecurityOverview section={'section' in section! ? section!.section : undefined} /> : <>{!('section' in section!) && <div class="start-links"><a class="button" href={href(area === 'network' ? entries[0].path : '/java/lessons/index/')}>最初から学ぶ →</a>{area === 'java' && <a class="button secondary" href={href('/java/downloads/')}>教材ダウンロード ↓</a>}</div>}<EntryList items={filtered} /></>}</div>}
 </Shell>

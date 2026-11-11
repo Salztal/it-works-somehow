@@ -5,6 +5,7 @@ dist/
 .tools/
 src/generated/
 public/downloads/
+public/samples/security/
 upstream/java/docs/
 upstream/java/release/
 upstream/java/.local/

@@ -56,7 +56,8 @@ for(const item of manifest) {
 const search=JSON.parse(fs.readFileSync(path.join(dist,'search.json'),'utf8'));
 const javaRows=JSON.parse(fs.readFileSync(path.join(root,'src/content/java-pages.json'),'utf8'));
 const network=JSON.parse(fs.readFileSync(path.join(root,'src/content/network/course.json'),'utf8'));
-if(search.length!==javaRows.length+network.lessons.length+network.missions.length || search.some(e=>!e.text||!e.url.startsWith(base))) fail('Incomplete search index');
+const security=['basic-01-03','basic-04-06','advanced','lunatic'].flatMap(f=>JSON.parse(fs.readFileSync(path.join(root,`src/content/security/${f}.json`),'utf8')));
+if(search.length!==javaRows.length+network.lessons.length+network.missions.length+security.length || search.some(e=>!e.text||!e.url.startsWith(base))) fail('Incomplete search index');
 for(const entry of search) resolve(entry.url,path.join(dist,'index.html'));
 const result={base,pages:html.length,references:links,assetReferences:assets,learnerZips:manifest.length,zipEntries,searchDocuments:search.length,status:'PASS'};
 fs.mkdirSync(path.join(root,'.local'),{recursive:true});fs.writeFileSync(path.join(root,'.local/check-result.json'),JSON.stringify(result,null,2)+'\n');

@@ -2,9 +2,10 @@
 import '../styles/site.css';
 import { entries, href, areaLabel, entryKey } from '../lib/catalog';
 interface Props { title: string; description?: string; area?: string; current?: string; wide?: boolean }
-const { title, description = 'ネットワークとJavaを、基礎から順に学ぶ技術学習ノート。', area, current, wide = false } = Astro.props;
+const { title, description = 'ネットワーク・Java・Securityを、基礎から順に学ぶ技術学習ノート。', area, current, wide = false } = Astro.props;
 const groups = area === 'network'
   ? [['basics', '基礎を学ぶ'], ['azure', 'Azure・構成設計'], ['exercises', '演習で確かめる']]
+  : area === 'security' ? [['basics','BASIC · 基礎'],['advanced','ADVANCED · 設計と調査'],['lunatic','LUNATIC · 技術実験']]
   : [['setup', '準備する'], ['lessons', '講義を読む'], ['exercises', '演習で確かめる']];
 ---
 <!doctype html>
@@ -23,6 +24,7 @@ const groups = area === 'network'
         <nav class="top-nav" aria-label="メインナビゲーション">
           <a href={href('/network/')} aria-current={area === 'network' ? 'true' : undefined}>ネットワーク</a>
           <a href={href('/java/')} aria-current={area === 'java' ? 'true' : undefined}>Java</a>
+          <a href={href('/security/')} aria-current={area === 'security' ? 'true' : undefined}>Security</a>
           <a href={href('/progress/')} aria-current={Astro.url.pathname.endsWith('/progress/') ? 'page' : undefined}>学習記録</a>
         </nav>
         <a class="search-link" aria-label="教材を検索" href={href('/search/')}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>教材を検索</span><kbd>/</kbd></a>
@@ -44,7 +46,7 @@ const groups = area === 'network'
       </aside>}
       <main id="main" tabindex="-1"><slot /></main>
     </div>
-    <footer class="site-footer"><div><a href={href('/')}>技術学習ノート</a><span>ネットワーク / Java</span></div><a href={href('/about/')}>このサイトと教材の出典</a></footer>
+    <footer class="site-footer"><div><a href={href('/')}>技術学習ノート</a><span>ネットワーク / Java / Security</span></div><a href={href('/about/')}>このサイトと教材の出典</a></footer>
     <div id="storage-status" class="storage-status" role="status" hidden></div>
     <script>import '../lib/client';</script>
   </body>

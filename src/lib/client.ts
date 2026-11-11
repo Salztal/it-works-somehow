@@ -1,18 +1,9 @@
 import { entries, entryKey, href, areaLabel } from './catalog';
-type State = { version: 1; completed: Record<string, boolean>; answers: Record<string, number>; recall: Record<string, string>; notes: Record<string, string>; last: string | null };
+import { empty, validate as validateState, grade } from './progress';
+import { searchIndex } from './search';
 const keys = new Set(entries.map(entryKey));
 const storageKey = `technical-notes:v1:${document.body.dataset.base}`;
-const empty = (): State => ({ version: 1, completed: {}, answers: {}, recall: {}, notes: {}, last: null });
-function validate(value: unknown): State {
-  if (!value || typeof value !== 'object' || (value as State).version !== 1) throw Error('対応していない記録形式です。');
-  const s = value as State, result = empty();
-  for (const name of ['completed','answers','recall','notes'] as const) if (!s[name] || typeof s[name] !== 'object' || Array.isArray(s[name])) throw Error('記録の形式が正しくありません。');
-  for (const [k,v] of Object.entries(s.completed)) if (keys.has(k) && v === true) result.completed[k] = true;
-  for (const [k,v] of Object.entries(s.answers)) if (/^[\w-]+:\d+$/.test(k) && Number.isInteger(v) && v >= 0 && v < 4) result.answers[k] = v;
-  for (const name of ['recall','notes'] as const) for (const [k,v] of Object.entries(s[name])) if (k !== '__proto__' && typeof v === 'string' && v.length <= 20000) result[name][k] = v;
-  result.last = typeof s.last === 'string' && keys.has(s.last) ? s.last : null;
-  return result;
-}
+const validate = (value: unknown) => validateState(value, keys);
 function storageError(message = 'ブラウザに記録を保存できません。学習は続けられますが、画面を閉じると今回の記録は失われます。') { const el = document.querySelector<HTMLElement>('#storage-status'); if (el) { el.hidden = false; el.textContent = message; } }
 let state = empty();
 try { const saved = localStorage.getItem(storageKey); if (saved) state = validate(JSON.parse(saved)); } catch { storageError('保存済み記録を読み出せませんでした。学習記録ページでバックアップの読込みやリセットができます。'); }
@@ -21,7 +12,7 @@ const current = document.body.dataset.current;
 if (current && keys.has(current)) { state.last = current; save(); }
 function render() {
   document.querySelectorAll<HTMLElement>('[data-progress-key]').forEach(el => { const done = !!state.completed[el.dataset.progressKey!]; el.classList.toggle('is-done', done); const indicator = el.querySelector('.done-indicator'); if (indicator) { indicator.textContent = done ? '✓' : ''; indicator.setAttribute('aria-hidden', String(!done)); } });
-  for (const area of ['network','java']) {
+  for (const area of ['network','java','security']) {
     const list = entries.filter(e => e.area === area), count = list.filter(e => state.completed[entryKey(e)]).length;
     document.querySelectorAll(`[data-course-count="${area}"]`).forEach(el => el.textContent = `${count} / ${list.length}`);
     document.querySelectorAll<HTMLProgressElement>(`[data-course-progress="${area}"]`).forEach(el => { el.value = count; el.setAttribute('aria-label', `${areaLabel(area)}の完了 ${count} / ${list.length}`); });
@@ -42,8 +33,10 @@ function answer(field: HTMLFieldSetElement, choice: number) {
   for (const b of buttons) { const n = Number(b.dataset.choice); b.setAttribute('aria-pressed', String(n === choice)); b.classList.toggle('correct-choice', n === correct); b.classList.toggle('wrong-choice', n === choice && n !== correct); }
   const feedback = field.querySelector<HTMLElement>('.feedback')!;
   const text = buttons.find(b => Number(b.dataset.choice) === correct)?.childNodes[1]?.textContent || '';
-  feedback.textContent = `${choice === correct ? '正解です。' : '不正解です。'} 正解：${text}。${field.dataset.explanation}`;
-  feedback.className = `feedback ${choice === correct ? 'correct' : 'incorrect'}`;
+  const reasons: string[] | undefined = field.dataset.reasons ? JSON.parse(field.dataset.reasons) : undefined;
+  const ok = grade(choice, correct, buttons.length);
+  feedback.textContent = `${ok ? '正解です。' : '不正解です。'} 正解：${text}。${reasons ? (ok ? reasons[correct] : `選んだ回答：${reasons[choice]} 正解の理由：${reasons[correct]}`) : field.dataset.explanation}`;
+  feedback.className = `feedback ${ok ? 'correct' : 'incorrect'}`;
 }
 document.querySelectorAll<HTMLFieldSetElement>('.quiz').forEach(field => {
   const container = field.closest<HTMLElement>('[data-lesson]')!, key = `${container.dataset.lesson}:${field.dataset.question}`;
@@ -63,12 +56,21 @@ const courseMenu = document.querySelector<HTMLDetailsElement>('.course-navigatio
 if(courseMenu) { const media = matchMedia('(max-width: 900px)'); const updateMenu = () => courseMenu.open = !media.matches; updateMenu(); media.addEventListener('change', updateMenu); }
 document.addEventListener('keydown', event => { if(event.key==='/' && !event.ctrlKey && !event.metaKey && !event.altKey && !/INPUT|TEXTAREA|SELECT/.test((event.target as HTMLElement).tagName) && !(event.target as HTMLElement).isContentEditable) { event.preventDefault(); const input = document.querySelector<HTMLInputElement>('#query'); input ? input.focus() : location.assign(href('/search/')); } });
 render();
+// Highlight the heading currently reached without moving keyboard focus.
+const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('.page-toc a')];
+if ('IntersectionObserver' in window && tocLinks.length) {
+  const observer = new IntersectionObserver(items => {
+    const active = items.filter(x => x.isIntersecting).sort((a,b) => a.boundingClientRect.top-b.boundingClientRect.top)[0];
+    if (!active) return;
+    for (const a of tocLinks) active.target.id === a.hash.slice(1) ? a.setAttribute('aria-current','location') : a.removeAttribute('aria-current');
+  }, { rootMargin:'-15% 0px -60% 0px', threshold:0 });
+  for (const a of tocLinks) { const h = document.getElementById(a.hash.slice(1)); if (h) observer.observe(h); }
+}
 const form = document.querySelector<HTMLFormElement>('#search-form');
 if(form) {
   type Result = { key:string; title:string; area:string; url:string; description:string; text:string };
   let index: Result[] | undefined;
   const input = document.querySelector<HTMLInputElement>('#query')!, status = document.querySelector('#search-status')!, results = document.querySelector('#search-results')!;
-  const normalize = (s:string) => s.normalize('NFKC').toLocaleLowerCase('ja');
   let generation = 0;
   const search = async () => {
     const thisGeneration = ++generation, q = input.value.trim();
@@ -79,8 +81,7 @@ if(form) {
     try {
       if(!index) { const response=await fetch(href('/search.json')); if(!response.ok) throw Error(); index=await response.json(); }
       if(thisGeneration !== generation) return;
-      const words = normalize(q).split(/\s+/);
-      const matches = index!.filter(r => words.every(w=>normalize(r.title+' '+r.description+' '+r.text).includes(w))).sort((a,b) => Number(normalize(b.title).includes(normalize(q)))-Number(normalize(a.title).includes(normalize(q))));
+      const matches = searchIndex(index!,q);
       status.textContent = matches.length ? `${matches.length}件の教材が見つかりました。` : `「${q}」に一致する教材はありません。別の言葉や短い用語で試してください。`;
       for(const r of matches) { const li=document.createElement('li'), a=document.createElement('a'), meta=document.createElement('small'), title=document.createElement('strong'), detail=document.createElement('p'); a.href=r.url; meta.textContent=areaLabel(r.area); title.textContent=r.title; detail.textContent=r.description; a.append(meta,title,detail); li.append(a); results.append(li); }
     } catch { if(thisGeneration===generation) status.textContent='検索索引を読み込めません。通信を確認して検索し直してください。'; }

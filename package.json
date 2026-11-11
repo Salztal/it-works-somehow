@@ -11,6 +11,7 @@
     "preview": "node scripts/serve.mjs",
     "check": "node scripts/check.mjs",
     "check:content": "node scripts/check-content.mjs",
+    "check:security": "node scripts/check-security.mjs",
     "check:types": "node scripts/astro.mjs check",
     "verify": "node scripts/verify.mjs",
     "check:base": "node scripts/check-base.mjs"

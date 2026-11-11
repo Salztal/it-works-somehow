@@ -1,8 +1,10 @@
 # 技術学習ノート
 
-Azure Network BasicsとJava Studyを統合した、日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
+Azure Network BasicsとJava Studyを統合し、Securityを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは6レッスン・23問の選択問題・3ミッション・5語の記述復習。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。生成ページは40、本文検索の対象は27教材です。
+Networkは6レッスン・23問の選択問題・3ミッション・5語の記述復習。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。生成ページは74、本文検索の対象は57教材です。
+
+Securityの[調査・設計](docs/security-design.md)、[出典・仕様更新の確認](docs/security-sources.md)、[実装・検証結果と制約](docs/security-verification.md)を参照してください。個人の非商用学習用で、IPAの公式教材ではありません。
 
 ## 開発環境
 
@@ -35,11 +37,11 @@ pnpm build
 pnpm preview
 ```
 
-- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容の照合。
-- `check:base`: `/` と検証専用 `/phase1-path-check/` の両方でビルド・参照・ZIP・HTTPの全58ファイルを検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
+- `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto実装の照合。
+- `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。
+- `check:types`、`check`、`check:content`、`check:security`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -60,8 +62,11 @@ pnpm preview
 src/content/java/          講義Markdown（編集対象）
 src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
+src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
 src/lib/catalog.ts         URL・分野・目次の定義
 src/lib/client.ts          検索・記録・問題判定の小さな共通処理
+src/lib/progress.ts        v1記録形式の検証・問題判定（純粋関数）
+src/lib/security-*.ts      操作教材の表示制御・判定モデル・Web Crypto処理
 src/layouts/              共通レイアウト
 src/components/           教材本文・一覧
 src/styles/site.css       共通CSS
@@ -69,6 +74,7 @@ src/generated/            原稿の派生物（編集・Git管理しない）
 upstream/network/         移行元の参照スナップショットとMITライセンス
 upstream/java/            公開許可リストでコピーした完成コード・生成検査処理
 public/downloads/java/    自動生成する学習用ZIP（Git管理しない）
+public/samples/security/  自動生成する合成TLS外形PCAP（実通信・有効な暗号文ではない）
 scripts/                  統合生成と検証
 docs/                     調査・移行・UI検収・検証記録
 migration-manifest.json   ファイルごとの由来・元ハッシュ

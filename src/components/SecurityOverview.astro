@@ -1,0 +1,13 @@
+---
+import { security } from '../lib/security';
+import { entries, href } from '../lib/catalog';
+import EntryList from './EntryList.astro';
+const { section } = Astro.props as { section?: string };
+const chosen = security.filter(l => !section || (l.level === 'BASIC' ? 'basics' : l.level.toLowerCase()) === section);
+const units = [...new Set(chosen.map(l => l.unit))];
+---
+<p class="notice">個人の整理・復習のための非商用教材です。IPAの公式教材や特定企業の研修教材ではありません。難易度の18：9：3は学習内容の配分で、IPA試験の出題比率ではありません。</p>
+<div class="start-links"><a class="button" href={href(entries.find(e => e.id === chosen[0].id)!.path)}>この範囲の最初から学ぶ →</a></div>
+<nav class="start-links" aria-label="Securityの難易度"><a href={href('/security/basics/')}>BASIC · 18レッスン</a><a href={href('/security/advanced/')}>ADVANCED · 9レッスン</a><a href={href('/security/lunatic/')}>LUNATIC · 3レッスン</a></nav>
+{units.map(unit => <section><h2 class="list-heading">{unit}. {chosen.find(l => l.unit === unit)!.unitTitle} <span class="difficulty">{chosen.find(l => l.unit === unit)!.level}</span></h2><EntryList items={entries.filter(e => chosen.some(l => l.unit === unit && l.id === e.id))} /></section>)}
+<section class="prose"><h2>範囲と出典</h2><p>BASICは基本情報レベルのセキュリティ基礎を一通り扱います。ADVANCEDは設計・原因分析、LUNATICは前提知識を示してプロトコルや数学的な背景へ進みます。試験の全範囲を網羅する試験対策講座ではありません。</p><ul><li><a href="https://www.ipa.go.jp/shiken/syllabus/omgdg50000005kpe-att/syllabus_fe_ver9_2.pdf">IPA 基本情報技術者試験シラバス Ver.9.2</a>（2026-01-08掲載）中分類11の基礎・管理・対策・実装を01〜06に対応。</li><li><a href="https://www.ipa.go.jp/shiken/syllabus/nq6ept00000014ir-att/syllabus_sc_ver2_1.pdf">IPA 情報処理安全確保支援士試験シラバス Ver.2.1</a>、<a href="https://www.ipa.go.jp/shiken/syllabus/nq6ept00000014hj-att/syllabus_sc_am2_tsuiho4_0.pdf">追補版 Ver.4.0</a>（2023-12-25掲載、追補の科目名称2026-07-06更新）を07〜09の設計・運用の範囲確認に使用。</li><li><a href="https://www.ipa.go.jp/shiken/syllabus/henkou/2026/20260630.html">2027年度新制度のシラバス案</a>は変更の可能性がある草案です。確定した現行範囲と混同していません。</li></ul><p>確認日：2026-11-11。技術仕様の個別出典は各レッスン末尾に記録しています。</p></section>

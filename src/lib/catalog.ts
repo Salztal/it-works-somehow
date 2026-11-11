@@ -1,15 +1,22 @@
 import javaRows from '../content/java-pages.json';
 import network from '../content/network/course.json';
+import security from '../generated/security-catalog.json';
+const levelSection = (level: string) => level === 'BASIC' ? 'basics' : level.toLowerCase();
 export { network };
-export type Entry = { id: string; area: 'network' | 'java'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'java'; description: string };
+export type Entry = { id: string; area: 'network' | 'java' | 'security'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'java' | 'security'; description: string; level?: string };
 const networkLabels = ['ネットワークの役割', 'IPアドレスとサブネット', 'ゲートウェイとルーティング', 'DNS・ポート・HTTP', 'ファイアウォールとNSG', 'Azureの構成を考える'];
 export { javaRows };
 export const entries: Entry[] = [
   ...network.lessons.map((l, i) => ({ id: l.id, area: 'network' as const, section: i < 5 ? 'basics' : 'azure', label: networkLabels[i], number: l.number, path: `/network/${i < 5 ? 'basics' : 'azure'}/${l.id}/`, kind: 'network' as const, description: l.subtitle })),
   ...network.missions.map((m, i) => ({ id: m.id, area: 'network' as const, section: 'exercises', label: ['Web・DBの構成設計', 'Webアクセスの流れ', 'Azure構成図を読む'][i], number: m.n, path: `/network/exercises/${m.id}/`, kind: 'mission' as const, description: m.s })),
   ...javaRows.map(([id, label, number, section, description]) => ({ id, area: 'java' as const, section, label, number, path: id === 'setup' ? '/java/setup/' : `/java/${section}/${id}/`, kind: 'java' as const, description })),
+  ...security.map(l => ({ id: l.id, area: 'security' as const, section: levelSection(l.level), label: l.title, number: l.number, path: `/security/${levelSection(l.level)}/${l.id}/`, kind: 'security' as const, description: l.description, level: l.level })),
 ];
 export const sections = [
+  { path: '/security/', area: 'security', label: 'Security', description: '情報セキュリティの基礎、設計と調査、プロトコルの実験を10ユニット・30レッスンで学びます。' },
+  { path: '/security/basics/', area: 'security', section: 'basics', label: 'Security BASIC', description: 'CIAとリスクから、攻撃、防御、暗号、認証、組織的な管理まで。6ユニット・18レッスン。' },
+  { path: '/security/advanced/', area: 'security', section: 'advanced', label: 'Security ADVANCED', description: 'TLS・PKI、認証基盤とメール、脆弱性管理とインシデント分析。3ユニット・9レッスン。' },
+  { path: '/security/lunatic/', area: 'security', section: 'lunatic', label: 'Security LUNATIC', description: 'TLSのパケット、DNSSECの署名検証、PQCの仕組みと限界。1ユニット・3レッスン。' },
   { path: '/network/', area: 'network', label: 'ネットワーク', description: '通信の基礎からAzureの構成設計まで。図で理解し、問題とミッションで確かめます。' },
   { path: '/network/basics/', area: 'network', section: 'basics', label: 'ネットワーク基礎', description: '機器をつなぐ仕組みを、身近な例と図解から学びます。' },
   { path: '/network/azure/', area: 'network', section: 'azure', label: 'Azure・構成設計', description: '基礎で学んだ用語を、Azureネットワークの構成に結び付けます。' },
@@ -19,5 +26,5 @@ export const sections = [
   { path: '/java/exercises/', area: 'java', section: 'exercises', label: 'Javaの演習', description: '各章の開始コードで実装し、完成条件を確かめます。' },
 ];
 export function href(path: string) { return import.meta.env.BASE_URL.replace(/\/$/, '') + path; }
-export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : 'Java';
+export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : 'Java';
 export const entryKey = (e: Entry) => `${e.area}:${e.id}`;
