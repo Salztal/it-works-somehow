@@ -4,7 +4,7 @@ Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計
 
 Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。生成ページは208、本文検索の対象は201件です。
 
-HTTP・Webアプリ Phase 6の[調査・設計](docs/web-phase6-design.md)、[一次資料・適用範囲](docs/web-phase6-sources.md)、[実装・検証結果と残る確認](docs/web-phase6-verification.md)を参照してください。既存version 1と保存先を維持。ユーザー承認によりmainへのCommit・Pushを行う方針です。実ブラウザの操作検証は残っています。
+HTTP・Webアプリ Phase 6の[調査・設計](docs/web-phase6-design.md)、[一次資料・適用範囲](docs/web-phase6-sources.md)、[実装・検証結果と残る確認](docs/web-phase6-verification.md)を参照してください。既存version 1と保存先を維持。ユーザー承認によりmainへCommit・Push済み。実ブラウザの8操作教材・学習記録のJSON往復・実CSS幅390px/325pxを確認し、Pagesの自動検査・公開も成功しました。
 
 テスト設計 Phase 5の[調査・設計](docs/test-design-phase5-design.md)、[一次資料・適用版](docs/test-design-phase5-sources.md)、[実装・検証結果と未確認事項](docs/test-design-phase5-verification.md)を参照してください。学習記録のversion 1と保存先は維持。Commit・Push・本番公開は行っていません。
 

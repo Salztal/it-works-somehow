@@ -29,12 +29,35 @@
 
 証拠ログはGit対象外の `.local/phase6-verify.log`、`.local/phase6-git-real.log`、`.local/phase6-base.log`。最初のverifyは短すぎる選択肢説明を検出し、説明を具体化して修正。再実行は新教材を含む全検査を通過した後、一時Gitリポジトリへのsandbox書込み制限で停止。実Git検査は必要な権限で個別に再実行してPASS。その後、正式なverify全体も必要な権限で再実行してPASS。最初のprepareを省いた試験ビルドで旧base付きJava生成原稿が検出された件も、正式なprepareから再生成して解消した。
 
-## 実ブラウザ・残る確認
+## 実ブラウザ検証
 
-現時点で実ブラウザの操作検証は未実施。環境の利用可能性を確認したところで、先にGitへ保存するというユーザー指示へ切り替えた。自動モデルテストやHTTP取得を実ブラウザ検証の証拠とは扱わない。
+2026-11-16、ChatGPT in-app browserでビルド済みサイトを127.0.0.1:4327から操作した。既存の利用者記録と混同しないポートで、架空メモと回答だけを作った。自動モデルテストやHTTP取得とは別の証拠である。
 
-残る項目：追跡の正常/障害、Cookie条件、CORS成功/失敗、キャッシュ再検証、nginx経路、LB切替、診断導線、学習記録の保存/再読込み/インポート/エクスポート、390px/325pxの実CSS幅、キーボード、Console warn/error。実機Safari、実nginx、実DB、実認証はモデル対象外。
+| 操作 | 観測した結果 |
+| --- | --- |
+| HTTP追跡 | 正常200・仮想65ms。DNS/TLSはHTTP応答なし、転送先誤り502、アプリ例外500、DB待ち504、期限切れ401、CORSは200＋JS参照不可、CDN旧版200。比較と初期化も動作 |
+| Cookie | SecureでHTTPへ未送信、明示LaxでクロスSite fetchへ未送信・トップレベルGETで送信。時間経過後はCookie送信ありでも401。ログアウトで状態失効とCookie削除 |
+| CORS | include＋*のJSONは事前確認失敗・実要求なし。同条件のフォームPOSTは実送信あり・JS参照不可。明示Originへ変更すると成功。JSONは事前確認ありで成功 |
+| Cache | 初回200→通信なし再利用→60秒後304・本文空→版変更と強制再検証で200/v2 |
+| nginx | URIなしは/api/orders?q=1、/指定は/orders?q=1、/v1/指定は/v1/orders?q=1を表示 |
+| LB | ローカルのAログイン→B要求は401。共有ならBも200。A停止・検出前502→ヘルスチェック後Bで200 |
+| 組立・Redirect | POSTの再送で保存2→3件、HEAD200の本文は空。302でPOST→GET・本文除去、307はPOST・本文保持、ループで停止 |
+| 診断導線 | 症状選択でCORS症例の証拠・手順等を展開し、関連H06へ移動できた |
+| v1保存と復元 | H06の完了・回答・予想・メモが再読込みで復元。JSONを書出し、メモを一時変更後にそのJSONを読み込み、旧メモ・正解・完了を復元 |
+| 390px・325px | 実CSS幅を読取り確認。入口・8ラボ・診断・H06の11ページ×2幅で、document幅は各377px/312pxでページ全体の横はみ出しなし。拡大率のため最初の指定サイズと実CSS幅が違ったので補正後に検査し直した |
+| 長い通信ログ | 325px幅、425文字のURLでリクエスト欄の内容幅3072px・枠249px。文書幅312pxのまま専用領域だけが横スクロール |
+| キーボード | EnterでCORS判定が動作。フォーカス対象は判定ボタン、:focus-visible=true、outline=solid |
+| Console | 確認したローカル操作と公開入口でwarn/errorは0件 |
+| 公開入口 | https://salztal.github.io/it-works-somehow/web/ で講座見出し・目的別導線を確認 |
+
+画面記録： [公開入口](screenshots/web-phase6-published.jpg)、[325pxのCORS教材](screenshots/web-phase6-cors-325.jpg)、[追跡ラボ](screenshots/web-phase6-trace-desktop.jpg)。スクリーンショットは表示確認の記録で、上記の全操作を1枚で証明するものではない。
+
+## 既知の制約・未検証事項
+
+実機Safari/Firefox、タッチ端末、全ブラウザ組合せ、支援技術による読上げの全経路は未検証。実NGINX・実DB・実認証・第三者Cookie制限・Partitioned等は教育モデルの対象外。実装の全ての例外入力をブラウザで総当たりしたものではなく、モデルの固定期待値検査と代表UI操作を組み合わせた。
 
 ## Git方針の変更
 
 当初はCommit・Push禁止。2026-11-12にユーザーが保存を承認し、2026-11-16にmainへのPushを明示承認した。mainへのPushは既存Pagesワークフローを起動することを案内済み。Author/Committerは既存規則のSalztalとGitHub提供noreplyを使い、Co-authored-byや永続設定変更・履歴改変は行わない。検証ログ・依存・生成物はGitへ含めない。
+
+mainへ実装を保存したコミットは1696aee。AuthorとCommitterはともに既存のSalztal/noreplyで、実コミットヘッダーをPush前に確認済み。[既存Pagesワークフロー](https://github.com/Salztal/it-works-somehow/actions/runs/43857228962)はcheck/build/deployを含めsuccessとなり、公開入口も実ブラウザで確認した。ブラウザ検証記録と画像は追補コミットで保存する。
