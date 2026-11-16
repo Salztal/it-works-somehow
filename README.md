@@ -1,8 +1,10 @@
 # 技術学習ノート
 
-Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計・HTTP/Webアプリを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
+Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計・HTTP/Webアプリ・Spring・Mailを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。Spring Boot・業務アプリ設計は4 Unit・15講義・5ミッション・72問・8操作教材・14比較です。生成ページは245、本文検索の対象は243件です。
+Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。Spring Boot・業務アプリ設計は4 Unit・15講義・5ミッション・72問・8操作教材・14比較です。Mail・メールサーバーは5 Unit・15講義・5ミッション・60問、8操作教材・15症例・16比較・34語の用語集です。生成ページは285、本文検索の対象は336件です。
+
+Mail・メールサーバー Phase 8の[調査・設計](docs/mail-phase8-design.md)、[一次資料台帳](docs/mail-phase8-sources.md)、[実装・検証結果](docs/mail-phase8-verification.md)を参照してください。RFC 9989/9990を主要基準に、受付・配送・保存・閲覧と、個別認証・Alignmentを区別する合成データの教材です。実メールサーバー・外部SMTP・実DNSは使用しません。既存v1記録と保存先を維持。2026-11-16の追加指示により、Commit・通常Push・Pages公開後にブラウザ確認を行います。
 
 Spring Boot・業務アプリ設計 Phase 7の[調査・設計](docs/spring-phase7-design.md)、[一次資料・適用版](docs/spring-phase7-sources.md)、[実装・検証結果と実機未検証範囲](docs/spring-phase7-verification.md)を参照してください。JPA・Transactionの重点教材を含む概念講座で、Java・DB・実APIは起動しません。既存v1を保持。2026-11-16にユーザーがCommit・通常Push・Pages公開を承認。検証ログ・スクリーンショットはリリース対象から除外し、公開結果は対象CommitのGitHub Actionsで確認します。
 
@@ -51,7 +53,7 @@ pnpm preview
 - `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・テスト設計・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`、`check:spring`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
+- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`、`check:spring`、`check:mail`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -74,6 +76,10 @@ src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
 src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
 src/content/git/           15講義・5ミッション・20 QA・一次資料（独自原稿）
+src/content/mail/          Mail15講義・5ミッション・60問・症例・比較・一次資料
+src/lib/mail-*.ts         外部通信のないメール配送・認証・TLS等の模型
+src/pages/mail/           8操作教材・診断センター・比較・用語・出典
+scripts/check-mail.mjs    独立固定期待値・330遷移・v1互換性の検証
 src/content/spring/        Spring15講義・5ミッション・72問・比較・一次資料
 src/lib/spring-*.ts        ブラウザ内の限定モデル・表示処理
 src/pages/spring/          操作教材8種・比較・資料台帳
@@ -151,3 +157,5 @@ GitHubのSettings → Pages → Sourceを**GitHub Actions**にします。`.gith
 - [実施した検証と未検証事項](docs/04-validation.md)
 
 進捗はブラウザとbase pathごとに保存します。旧URLのlocalStorageは自動取得できません。JSONの書出し・読込みを用意しています。実MySQLのCRUD・Tomcat上でのHTTP/JSP動作、実機Safari、実GitHub Pages上の公開は今回の再検証に含みません。今回のNetwork操作教材は教育用の限定モデルです。新規PCAPは追加せず、通信例は合成テキストとして区別しています。
+
+Mail検査は `pnpm check:mail`。`verify`と`check:base`にも含まれます。Commitを一切作らずにローカル検査を行う場合は `node scripts/verify.mjs --skip-real-git` を使うと、既存の実Git一時リポジトリ試験だけを省略します（Git教材・モデル回帰は実行）。通常の `verify` は従来どおり専用一時リポジトリで実Gitも照合します。

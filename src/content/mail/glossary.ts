@@ -1,0 +1,11 @@
+const terms:[string,string,string,string][]=[
+['mua','MUA','利用者が作成・閲覧に使うメールクライアント。','01'],['msa','MSA','利用者からのSubmissionを受け付ける役割。','01'],['mta','MTA','配送先を選び、SMTPで中継する役割。','01'],['mda','MDA','ローカルのメールボックスへ保存する役割。','01'],
+['submission','Submission','利用者から送信基盤へのメール受付。Relayと条件が異なる。','02'],['envelope','SMTP Envelope','MAIL FROM・RCPT TOで指定する配送情報。表示ヘッダーとは別。','02'],['reverse-path','逆配送先','MAIL FROMのアドレス。不達通知の返送経路。通知等では空になる場合がある。','02'],
+['mime','MIME','本文の種類・転送エンコード・複数パート等を表す拡張。','03'],['mailbox','メールボックス','サーバーでメールを保持し、IMAP等でアクセスする保存先。','05'],['maildir','Maildir','メールを個別ファイル等で保持する保存形式の一つ。','05'],['lmtp','LMTP','主にローカル配送の引渡しに使うプロトコル。IMAPとは別。','05'],
+['queue','配送キュー','受付後に保持し、配送や再試行を調整する仕組み。','06'],['deferred','deferred','一時失敗等で次の配送試行を待つ状態。','06'],['dsn','DSN','配送状態通知。生成できても、その通知の到達までは保証しない。','06'],['backoff','バックオフ','再試行の間隔を制御し、連続失敗時の負荷を抑える考え方。','06'],
+['mx','MX','優先度と交換ホスト名で受信経路を示すDNSレコード。','07'],['null-mx','Null MX','0 . でメールを受信しないと宣言する。MX不在と異なる。','07'],['ptr','PTR','IPの逆引きで名前を返すレコード。正引きとの整合も確認する。','07'],['ttl','TTL','DNS応答のキャッシュ有効時間の指標。変更直後も旧値が残り得る。','07'],
+['alignment','Alignment','Fromと認証ドメインの整合。strictは完全一致、relaxedは組織ドメイン一致。','08'],['org-domain','Organizational Domain','DMARCの管理境界。RFC 9989ではDNS Tree Walk等の規定で判断し、末尾2ラベルと決めない。','08'],['selector','DKIM selector','s=で識別する公開鍵の参照名。d=と組み合わせてDNSを調べる。','08'],['rua','rua','DMARC集計レポートの宛先を指定するタグ。レポート仕様はRFC 9990。','08'],
+['opportunistic','Opportunistic TLS','利用可能ならTLSを使う考え方。厳格な相手認証・暗号化必須を自動保証しない。','09'],['mta-sts','MTA-STS','HTTPS等で公開する方針により、MTA間配送のTLS条件を強化する仕組み。','09'],['dane','DANE','DNSSECで検証したTLSA等によってTLSの相手検証を支える仕組み。','09'],['tls-rpt','TLS-RPT','SMTPのTLS配送障害を集計報告する仕組み。接続を強制するものではない。','09'],['relay','オープンリレー','外部から外部への中継を無制限に許す危険な状態。','10'],
+['reputation','レピュテーション','送信IP・ドメイン等の評判。認証結果だけで決まらない。','11'],['dnsbl','DNSBL','DNSを使うリスト照会。受信側の判断材料の一つ。','11'],['message-id','Message-ID','メッセージ側の識別情報。局所的なQueue IDとは別。','12'],['queue-id','Queue ID','各MTA内の配送追跡用識別子。ホストと時刻も合わせて読む。','12'],['received','Received','経由サーバーが追加する配送情報。信頼境界外の偽行に注意。','14'],['authentication-results','Authentication-Results','認証結果を伝えるヘッダー。追加元authserv-idと信頼境界を確認する。','14']
+];
+export const glossary=terms.map(([id,term,definition,lesson])=>({id:`mail-term-${id}`,term,definition,lesson:`mail-ml${lesson}`}));

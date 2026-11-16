@@ -1,0 +1,21 @@
+---
+import {labUI,labs,type LabKind} from '../content/mail/labs';
+import {href} from '../lib/catalog';
+import {mailPath} from '../lib/mail';
+const {kind}=Astro.props as {kind:LabKind};
+const ui=labUI[kind],lab=labs.find(x=>x[0]===kind)!;
+---
+<section class="mail-lab" data-mail-lab={kind} aria-label={lab[1]}>
+ <h3>{lab[1]}</h3><p class="notice"><strong>学習用モデルの前提</strong>：{ui.assumptions}</p><p>{ui.steps}</p>
+ <div class="mail-fields">{ui.fields.map(f=><label>{f.label}<select data-field={f.name} aria-label={f.label}>{f.options.map(([value,label])=><option value={value}>{label}</option>)}</select></label>)}</div>
+ <p class="source-note">{kind==='trace'||kind==='queue'?'障害・応答の変更は現在の状態を保持します。その他の条件変更は初期化します。':kind==='imap'?'同期先フォルダーの変更は状態を保持します。表示キャッシュは同期操作で更新します。認証条件の変更は初期化します。':'条件を切り替えると、この実験の状態と履歴を初期化します。'}</p>
+ <div class="mail-actions">{ui.actions.map(([event,label])=><button type="button" data-event={event}>{label}</button>)}<button type="button" data-reset>初期状態に戻す</button></div>
+ <p data-lab-message role="status" aria-live="polite">全て架空データ。実メール送信・外部接続はありません。</p>
+ {kind==='trace'&&<div class="table-scroll" tabindex="0" role="region" aria-label="配送経路の現在位置"><ol class="mail-route" data-route>{['作成 MUA','Submission','送信キュー','DNS MX','宛先MTA','LMTP・保存','IMAP取得','既読フラグ'].map((label,i)=><li data-route-step={i}>{label} →</li>)}</ol></div>}
+ <div class="table-scroll" tabindex="0" role="region" aria-label="操作前後の状態"><table class="mail-state"><thead><tr><th scope="col">観測対象</th><th scope="col">操作前</th><th scope="col">現在の状態</th></tr></thead><tbody data-state></tbody></table></div>
+ <details open><summary>処理の実行順序</summary><ol data-log></ol></details>
+ <p><a href={href(mailPath(lab[2]))}>関連講義を読む →</a></p>
+ <p class="source-note"><strong>未確認・未実施：</strong>{ui.unknown}</p>
+ <noscript><p>操作にはJavaScriptが必要です。講義の状態比較表を参照してください。</p></noscript>
+</section>
+<script>import '../lib/mail-client';</script>

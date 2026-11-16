@@ -1,0 +1,7 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import {glossary} from '../../content/mail/glossary';
+import {mailPath} from '../../lib/mail';
+import {href} from '../../lib/catalog';
+---
+<Shell title="Mailの用語集" area="mail"><div class="prose security-prose"><h1>Mailの用語集</h1><p>調査で何を表す言葉かを確認します。詳細と出典は関連講義を参照してください。</p><ul>{glossary.map(t=><li><a href={`#${t.id}`}>{t.term}</a></li>)}</ul><dl>{glossary.map(t=><><dt id={t.id}><strong>{t.term}</strong></dt><dd><p>{t.definition}</p><a href={href(mailPath(t.lesson))}>関連講義 →</a></dd></>)}</dl></div></Shell>

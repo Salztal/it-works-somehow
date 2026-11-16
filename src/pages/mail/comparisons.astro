@@ -1,0 +1,7 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import {comparisons} from '../../content/mail/comparisons';
+import {mailPath,sources} from '../../lib/mail';
+import {href} from '../../lib/catalog';
+---
+<Shell title="メール配送の16の比較" area="mail"><div class="prose security-prose"><h1>メール配送の16の比較</h1><p>言葉の定義と、調査でその違いが必要になる場面を結び付けます。</p><ul>{comparisons.map(c=><li><a href={`#${c.id}`}>{c.title}</a></li>)}</ul>{comparisons.map(c=><section><h2 id={c.id}>{c.title}</h2><div class="table-scroll" tabindex="0" role="region" aria-label={c.title}><table><thead><tr><th>比較する責務</th><th>対応する責務</th></tr></thead><tbody><tr><td>{c.left}</td><td>{c.right}</td></tr></tbody></table></div><p><strong>違いが重要になる場面：</strong>{c.when}</p><p><a href={href(mailPath(c.lesson))}>関連講義 →</a> ／ <a href={sources[c.source].url}>{sources[c.source].title}</a></p></section>)}</div></Shell>

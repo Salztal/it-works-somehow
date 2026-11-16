@@ -1,0 +1,6 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import {labs,labUI} from '../../../content/mail/labs';
+import {href} from '../../../lib/catalog';
+---
+<Shell title="Mailの8操作教材" area="mail"><div class="prose"><h1>Mailの8操作教材</h1><p>全てブラウザ内の合成データです。実SMTP・IMAP・DNSへの接続、署名生成・実アカウント認証は行いません。実験状態は再読込みで初期化します。講義の回答とメモは既存の学習記録v1に保存します。</p>{labs.map(([key,title])=><section><h2><a href={href(`/mail/lab/${key}/`)}>{title} →</a></h2><p>{labUI[key].steps}</p></section>)}</div></Shell>

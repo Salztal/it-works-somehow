@@ -1,0 +1,12 @@
+.mail-lab{border:1px solid var(--line,#d8e2e3);padding:clamp(.6rem,2vw,1.25rem);margin:1.5rem 0;border-radius:6px;min-width:0}
+.mail-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}
+.mail-fields label{display:flex;flex-direction:column;gap:.3rem;font-size:.9rem;min-width:0}
+.mail-fields select{width:100%;min-width:0;max-width:100%;padding:.55rem;border:1px solid #9cabad;border-radius:4px;background:white;color:#172f32;font:inherit}
+.mail-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.mail-actions button{padding:.55rem .7rem;border:1px solid #9cabad;border-radius:4px;background:#f2f7f6;color:#153e43;font:inherit;font-size:.88rem;cursor:pointer;min-height:44px}
+.mail-actions button:hover{background:#e2efec}.mail-actions button:focus-visible,.mail-fields select:focus-visible{outline:3px solid #247d70;outline-offset:2px}
+.mail-state{font-size:.85rem;min-width:570px;table-layout:fixed;width:100%}.mail-state th:first-child{width:28%}.mail-state td{white-space:pre-wrap;overflow-wrap:anywhere;vertical-align:top}.mail-state .mail-changed td:last-child{background:#e9f5ef}
+.mail-diagram{max-width:100%;overflow:auto;border:1px solid #d8e2e3;background:#f6f8f7;padding:.8rem}.mail-diagram pre{width:max-content;min-width:100%;margin:0;font-size:.86rem;line-height:1.8;white-space:pre}
+.mail-lab [data-log]{font-size:.9rem;padding-left:1.3rem;max-height:23rem;overflow:auto}.mail-lab [data-lab-message]{font-size:.9rem;overflow-wrap:anywhere}
+
+.mail-lab [data-log]{overflow-wrap:anywhere}.mail-state{min-width:630px}.mail-route{display:flex;gap:.6rem;min-width:1000px;list-style:none;padding:.6rem!important}.mail-route li{padding:.5rem;border:1px solid var(--line);background:var(--soft);flex:1}.mail-route [aria-current=step]{outline:2px solid var(--accent);font-weight:700}.mail-case[hidden],[data-case-link][hidden]{display:none!important}

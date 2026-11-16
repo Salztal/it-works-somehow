@@ -1,3 +1,5 @@
+import mailCatalog from '../generated/mail-catalog.json';
+import {units as mailUnits} from '../content/mail/types';
 import javaRows from '../content/java-pages.json';
 import network from '../content/network/course.json';
 import security from '../generated/security-catalog.json';
@@ -12,11 +14,12 @@ import {units as springUnits} from '../content/spring/types';
 import {units as webUnits} from '../content/web/types';
 const levelSection = (level: string) => level === 'BASIC' ? 'basics' : level.toLowerCase();
 export { network };
-export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git' | 'test-design' | 'web' | 'spring'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git' | 'test-design' | 'web' | 'spring'; description: string; level?: string };
+export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git' | 'test-design' | 'web' | 'spring' | 'mail'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git' | 'test-design' | 'web' | 'spring' | 'mail'; description: string; level?: string };
 const networkLabels = ['ネットワークの役割', 'IPアドレスとサブネット', 'ゲートウェイとルーティング', 'DNS・ポート・HTTP', 'ファイアウォールとNSG', 'Azureの構成を考える'];
 const legacyNetworkEntries = network.lessons.map((l, i) => ({ id: l.id, area: 'network' as const, section: i < 5 ? 'basics' : 'azure', label: networkLabels[i], number: l.number, path: `/network/${i < 5 ? 'basics' : 'azure'}/${l.id}/`, kind: 'network' as const, description: l.subtitle }));
 export { javaRows };
 export const entries: Entry[] = [
+  ...mailCatalog.map(l=>({id:l.id,area:'mail' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'mail' as const,description:l.description})),
   ...springCatalog.map(l=>({id:l.id,area:'spring' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'spring' as const,description:l.description})),
   ...webCatalog.map(l=>({id:l.id,area:'web' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'web' as const,description:l.description})),
   ...legacyNetworkEntries.slice(0,5),
@@ -30,6 +33,9 @@ export const entries: Entry[] = [
   ...testCatalog.map(l=>({id:l.id,area:'test-design' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'test-design' as const,description:l.description})),
 ];
 export const sections = [
+  {path:'/mail/',area:'mail',label:'Mail・メールサーバー',description:'なぜ届くのか、なぜ届かないのか。5 Unit・15講義・5ミッション・60問、8操作教材と15症例で責任境界を追う。'},
+  ...mailUnits.map((u,i)=>({path:`/mail/unit-${i+1}/`,area:'mail',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`Mail：${u}を3講義と操作教材で学びます。`})),
+  {path:'/mail/exercises/',area:'mail',section:'exercises',label:'Mailの実践ミッション',description:'受付失敗・キュー滞留・Alignment・迷惑メール・確認メールの5件を合成証拠から調べる。'},
   {path:'/spring/',area:'spring',label:'Spring Boot・業務アプリ設計',description:'架空の注文APIで依存・永続化・Transactionの状態を追う。4 Unit・15講義・5ミッション・72問。ブラウザ内の概念教材。'},
   ...springUnits.map((u,i)=>({path:`/spring/unit-${i+1}/`,area:'spring',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`Spring設計：${u}を注文APIで学びます。`})),
   {path:'/spring/exercises/',area:'spring',section:'exercises',label:'Spring設計の実践ミッション',description:'処理追跡・Entity状態・例外・二重登録・機能追加の設計判断を行う5件。'},
@@ -56,5 +62,5 @@ export const sections = [
   { path: '/java/exercises/', area: 'java', section: 'exercises', label: 'Javaの演習', description: '各章の開始コードで実装し、完成条件を確かめます。' },
 ];
 export function href(path: string) { return import.meta.env.BASE_URL.replace(/\/$/, '') + path; }
-export const areaLabel = (area: string) => area === 'spring' ? 'Spring Boot・業務アプリ設計' : area === 'web' ? 'HTTP・Webアプリ' : area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : area === 'test-design' ? 'テスト設計' : 'Java';
+export const areaLabel = (area: string) => area === 'mail' ? 'Mail・メールサーバー' : area === 'spring' ? 'Spring Boot・業務アプリ設計' : area === 'web' ? 'HTTP・Webアプリ' : area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : area === 'test-design' ? 'テスト設計' : 'Java';
 export const entryKey = (e: Entry) => `${e.area}:${e.id}`;

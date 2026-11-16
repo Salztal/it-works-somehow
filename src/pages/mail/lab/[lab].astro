@@ -1,0 +1,9 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import MailLab from '../../../components/MailLab.astro';
+import {labs} from '../../../content/mail/labs';
+import {href} from '../../../lib/catalog';
+export const getStaticPaths=()=>labs.map(([key,title])=>({params:{lab:key},props:{kind:key,title}}));
+const {kind,title}=Astro.props;
+---
+<Shell title={title} area="mail"><div class="prose security-prose"><nav class="breadcrumbs" aria-label="パンくずリスト"><a href={href('/mail/')}>Mail・メールサーバー</a><span>/</span><a href={href('/mail/lab/')}>操作教材</a></nav><h1>{title}</h1><p>操作前の状態と予想を比べ、処理順序を確認してください。実メールサーバーを動かした検証結果ではありません。</p><MailLab kind={kind}/></div></Shell>
