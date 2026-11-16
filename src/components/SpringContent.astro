@@ -1,0 +1,19 @@
+---
+import {springLessons,springMissions,springPath,sources,springConnections} from '../lib/spring';
+import {entries,href,areaLabel} from '../lib/catalog';
+import TestQuestions from './TestQuestions.astro';
+import SpringLab from './SpringLab.astro';
+import type {LabKind} from '../content/spring/labs';
+const {id}=Astro.props as {id:string};
+const l=springLessons.find(x=>x.id===id),m=springMissions.find(x=>x.id===id),item=(l||m)!;
+const links=Object.entries(springConnections).filter(([,ids])=>ids.includes(id)).map(([key])=>entries.find(e=>e.id===key)).filter(e=>!!e);
+---
+<p class="notice">概念学習教材です。Java・Spring・実DBは動かしません。短いSQL表現は説明用で、実行検証済みコードではありません。</p>
+{l?<><h2 id="situation">事象と前提</h2><p>{l.situation}</p><p><strong>前提知識：</strong>{l.prerequisite}</p><p><strong>注文APIの学習箇所：</strong>{l.part}</p><ul>{l.goals.map(x=><li>{x}</li>)}</ul><label for="spring-think">操作する前の予想と根拠</label><textarea id="spring-think" rows="3" data-recall={`${id}:think`}></textarea>
+<h2 id="mechanism">原因と状態変化を読む</h2>{l.sections.map(sec=><section><h3>{sec.title}</h3>{sec.paragraphs.map(p=><p>{p}</p>)}</section>)}
+<h2 id="diagram">図と状態の比較</h2><div class="spring-diagram" tabindex="0" role="region" aria-label="仕組みの概念図"><pre>{l.diagram}</pre></div><p class="source-note">概念を追うための簡略図。実行時の全オブジェクトや全呼出しを示すものではありません。</p><div class="table-scroll" tabindex="0" role="region" aria-label="状態と責務の比較"><table><thead><tr>{l.table.headers.map(x=><th scope="col">{x}</th>)}</tr></thead><tbody>{l.table.rows.map(row=><tr>{row.map((x,i)=>i===0?<th scope="row">{x}</th>:<td>{x}</td>)}</tr>)}</tbody></table></div>
+<h2 id="practice">操作して確認する</h2><p>{l.practice}</p><SpringLab kind={l.lab as LabKind}/><h3>判断の注意点</h3><ul>{l.pitfalls.map(x=><li>{x}</li>)}</ul><TestQuestions id={id} questions={l.quiz}/></>:<>
+<h2 id="situation">背景と事象</h2><p>{m!.background}</p><p class="notice">{m!.assumptions}</p><h2 id="evidence">調査対象と証拠</h2><h3>分かっていること</h3><ul>{m!.evidence.map(x=><li>{x}</li>)}</ul><h3>調べる場所</h3><ul>{m!.targets.map(x=><li>{x}</li>)}</ul><TestQuestions id={id} questions={m!.quiz}/><h2 id="assignment">調査記録を作る</h2><p>{m!.assignment}</p><label for="spring-investigation">事実・仮説・判断理由・追加検証・変更影響</label><textarea id="spring-investigation" data-recall={`${id}:investigation`} rows="7"></textarea><SpringLab kind={m!.lab as LabKind}/><h2 id="explanation">解説と未確認事項</h2><details><summary>判断の理由を比較する</summary>{m!.explanation.map(x=><p>{x}</p>)}</details><h3>この証拠だけでは分からないこと</h3><ul>{m!.unknown.map(x=><li>{x}</li>)}</ul></>}
+<h2 id="sources">関連教材・出典</h2><ul>{item.related.map(key=>{const other=[...springLessons,...springMissions].find(x=>x.id===key)!;return <li><a href={href(springPath(key))}>{other.number} {other.title}</a></li>;})}{links.map(e=><li><a href={href(e!.path)}>{areaLabel(e!.area)}：{e!.label}</a></li>)}<li><a href={href('/spring/comparisons/')}>実務で違いが重要になる14の比較</a></li><li><a href={href('/spring/sources/')}>確認版・一次資料・実機未検証の範囲</a></li></ul>
+<p class="source-note">SQL・DB（将来カテゴリ）：Transaction・ロック・INDEXは既存JavaのDB教材と接続します。未作成URLへのリンクは設けていません。</p>
+<ol class="references">{item.sources.map(k=>{const r=sources[k];return <li><a href={r.url}>{r.title}</a><br/>{r.publisher} ／ {r.version}<br/>確認日：<time datetime={r.checked}>{r.checked}</time><p>{r.scope}</p></li>;})}</ol><label for="spring-note">学習メモ</label><textarea id="spring-note" rows="4" data-note={`spring:${id}`}></textarea>

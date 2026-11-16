@@ -1,0 +1,19 @@
+---
+import {labUI,labs,type LabKind} from '../content/spring/labs';
+import {href} from '../lib/catalog';
+import {springPath} from '../lib/spring';
+const {kind}=Astro.props as {kind:LabKind};
+const ui=labUI[kind],lab=labs.find(x=>x[0]===kind)!;
+---
+<section class="spring-lab" data-spring-lab={kind} aria-label={lab[1]}>
+ <h3>{lab[1]}</h3><p class="notice"><strong>学習用モデルの前提</strong>：{ui.assumptions}</p><p>{ui.steps}</p>
+ <div class="spring-fields">{ui.fields.map(f=><label>{f.label}<select data-field={f.name} aria-label={f.label}>{f.options.map(([value,label])=><option value={value}>{label}</option>)}</select></label>)}</div>
+ <p class="source-note">{kind==='idempotency'?'条件を切り替えても処理済み記録を保持します。確定/取消しは表示中の処理中要求が対象です。':'条件を切り替えると、この実験の状態と履歴を初期化します。'}</p>
+ <div class="spring-actions">{ui.actions.map(([event,label])=><button type="button" data-event={event}>{label}</button>)}<button type="button" data-reset>初期状態に戻す</button></div>
+ <p data-lab-message role="status" aria-live="polite">Java・Spring・DBは起動しません。実APIへのアクセスはありません。</p>
+ <div class="table-scroll" tabindex="0" role="region" aria-label="操作前後の状態"><table class="spring-state"><thead><tr><th scope="col">観測対象</th><th scope="col">操作前</th><th scope="col">現在の状態</th></tr></thead><tbody data-state></tbody></table></div>
+ <details open><summary>処理の実行順序</summary><ol data-log></ol></details>
+ <p><a href={href(springPath(lab[2]))}>関連講義を読む →</a></p>
+ <noscript><p>操作にはJavaScriptが必要です。講義の状態比較表を参照してください。</p></noscript>
+</section>
+<script>import '../lib/spring-client';</script>

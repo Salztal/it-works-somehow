@@ -1,0 +1,16 @@
+export const comparisons=[
+ {id:'framework-boot',title:'Spring Framework / Spring Boot',left:'Framework：DI・MVC・Transaction等の基盤。',right:'Boot：基盤と周辺部品の依存管理・条件付き設定・起動支援。',when:'注文APIが起動しないとき、依存・設定の組立てと業務クラスの責務を分けて調べる。',source:'boot',lesson:'spring-s01'},
+ {id:'modules',title:'Spring MVC / Spring Data JPA / Spring Security',left:'MVC：HTTPとハンドラ。Data JPA：JPAのRepository支援。',right:'Security：Filter等による認証・認可・攻撃対策。',when:'403、入力400、保存失敗のどの層から調査するかを決める。',source:'mvc',lesson:'spring-s04'},
+ {id:'bean-object',title:'Bean / 通常のJavaオブジェクト',left:'Bean：コンテナの管理対象となったJavaオブジェクト。',right:'普通のnew：それだけでDIやAOPの管理下には入らない。',when:'手動生成したServiceでTransactionが適用されない原因を調べる。',source:'di',lesson:'spring-s03'},
+ {id:'di-new',title:'DI / newによる直接生成',left:'DI：依存を外から渡す。生成・選択と利用を分ける。',right:'直接生成：利用側が依存の実装と生成を決める。全てのnewが悪いわけではない。',when:'Repositoryの代替を試験で渡したいとき、依存の差替え箇所を探す。',source:'di',lesson:'spring-s03'},
+ {id:'layers',title:'Controller / Service / Repository',left:'Controller：HTTP入出力。Service：業務判断と調整。',right:'Repository：永続化へのアクセス。名称だけでなく実際の責務を確認する。',when:'注文と在庫の整合を守る境界をどこへ置くか判断する。',source:'mvc',lesson:'spring-s04'},
+ {id:'dto-entity',title:'DTO / Entity',left:'DTO：外部との入出力契約。',right:'Entity：永続化上の識別子・マッピング・管理状態を持つ。',when:'DB列や遅延関連をそのままAPIへ公開し、互換性や取得SQLへ影響していないか見る。',source:'persistence',lesson:'spring-s04'},
+ {id:'jpa-stack',title:'JPA / Hibernate / Spring Data JPA',left:'JPA：仕様。Hibernate：providerの実装。',right:'Spring Data JPA：JPAを使ったRepository支援。',when:'SQL発行時刻について、仕様の保証かprovider固有の条件かを判断する。',source:'jpa',lesson:'spring-s07'},
+ {id:'save',title:'persist / merge / save',left:'persist：newを管理へ。merge：状態を管理側へコピーし戻り値を返す。',right:'Spring Data save：新規判定でpersist/mergeへ委譲。即SQL・即確定の同義ではない。',when:'detachedな元参照を変更し続けても反映されない理由やsave後のSQLを調べる。',source:'jpa',lesson:'spring-s08'},
+ {id:'flush-commit',title:'flush / commit',left:'flush：DBへの同期。SQLが出てもまだTransaction内の未確定状態。',right:'commit：DBの確定。同期済みでもcommit前はrollback対象。',when:'UPDATEのログがあるのに確定データが変わらない原因を調べる。',source:'persistence',lesson:'spring-s08'},
+ {id:'managed-detached',title:'Managed / Detached',left:'Managed：Contextが追跡し、同期時に変更を反映し得る。',right:'Detached：現在のContextは元参照の変更を追跡しない。',when:'取得元とContext寿命、OSIV、merge戻り値を確認する。',source:'persistence',lesson:'spring-s08'},
+ {id:'exceptions',title:'Checked Exception / RuntimeException',left:'Checked：標準の宣言的規則では既定rollback対象外。',right:'RuntimeException（およびError）：標準ではrollback対象。設定で変更可能。',when:'例外が適用境界へ伝播したのにデータが残るとき、型とrollbackForを確認する。',source:'rollback',lesson:'spring-s09'},
+ {id:'auth',title:'認証 / 認可',left:'認証：誰かを確認し、認証状態を確立する。',right:'認可：その利用者の操作を許すかを判断する。',when:'ログイン済みの403を、権限・URL規則・CSRF等の別条件から切り分ける。',source:'security',lesson:'spring-s10'},
+ {id:'locks',title:'楽観ロック / 悲観ロック',left:'楽観：更新時等に版不一致で競合を検出する。',right:'悲観：DBのロックで待機等を行う。保持時間やデッドロックを考慮。',when:'同じ注文の編集頻度と処理時間から、競合時の利用者体験を設計する。',source:'persistence',lesson:'spring-s13'},
+ {id:'tx-idempotency',title:'Transaction / 冪等性',left:'Transaction：参加するリソースへの1回の処理を一まとまりにする。',right:'冪等性：再送を含む繰返しで意図した効果が重複しない契約を作る。',when:'タイムアウト後のPOST再送。単一TXの成功だけでは重複要求を区別できない。',source:'http',lesson:'spring-s14'},
+];

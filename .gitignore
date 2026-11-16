@@ -2,6 +2,7 @@ node_modules/
 dist/
 .astro/
 .local/
+/docs/screenshots/spring-phase7-*
 .tools/
 src/generated/
 public/downloads/

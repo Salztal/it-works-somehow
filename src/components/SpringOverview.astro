@@ -1,0 +1,9 @@
+---
+import {springLessons,springMissions,springPath,units} from '../lib/spring';
+import {intents,labs} from '../content/spring/labs';
+import {href} from '../lib/catalog';
+const {section}=Astro.props as {section?:string};
+---
+{!section&&<><p class="notice">Javaの基本文法を学んだ方から若手SEへ。架空の注文APIを通して、既存Spring Bootシステムの内部状態と設計意図を読む講座です。ブラウザ内の説明モデルのみで、実装力や実アプリの正しさを保証する講座ではありません。</p><h2>疑問から読み始める</h2><ul class="test-intents">{intents.map(([title,id])=><li><a href={href(springPath(id))}>{title} →</a></li>)}</ul><div class="start-links"><a class="button" href={href(springPath('spring-s01'))}>S01から順に学ぶ →</a><a class="button secondary" href={href(springPath('spring-s08'))}>S08：JPAの状態を追う →</a></div><h2>学び方</h2><p>S01〜S07で起動・依存・要求の流れを学び、S08・S09で永続化とTransactionを重点的に扱います。S10〜S15では、認証、スキーマ変更、競合、再送、試験を調査の観点へ広げます。実装例の配布やSpring実機の試験は今回の対象外です。</p><nav class="test-lab-nav" aria-label="Spring操作教材と資料"><a href={href('/spring/lab/')}>8種類の操作教材</a><a href={href('/spring/comparisons/')}>14の比較</a><a href={href('/spring/sources/')}>公式資料・確認版・モデルの範囲</a></nav><details><summary>操作教材を選ぶ</summary><ul>{labs.map(([key,title])=><li><a href={href(`/spring/lab/${key}/`)}>{title}</a></li>)}</ul></details></>}
+{units.map((title,i)=>(!section||section===`unit-${i+1}`)&&<section><h2 class="list-heading">Unit {i+1}：{title}</h2><ol class="git-course-list">{springLessons.filter(l=>l.unit===i+1).map(l=><li><a href={href(springPath(l.id))} data-progress-key={`spring:${l.id}`}><span>{l.number}</span><strong>{l.title}</strong><small>{l.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>)}
+{(!section||section==='exercises')&&<section><h2 class="list-heading">実践ミッション</h2><ol class="git-course-list">{springMissions.map(m=><li><a href={href(springPath(m.id))} data-progress-key={`spring:${m.id}`}><span>{m.number}</span><strong>{m.title}</strong><small>{m.description}</small><span class="done-indicator" aria-label="完了"></span></a></li>)}</ol></section>}

@@ -55,6 +55,7 @@ jobs:
           pnpm check:git
           pnpm check:test-design
           pnpm check:web
+          pnpm check:spring
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

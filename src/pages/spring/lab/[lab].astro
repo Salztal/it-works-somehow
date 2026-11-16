@@ -1,0 +1,9 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import SpringLab from '../../../components/SpringLab.astro';
+import {labs} from '../../../content/spring/labs';
+import {href} from '../../../lib/catalog';
+export const getStaticPaths=()=>labs.map(([key,title])=>({params:{lab:key},props:{kind:key,title}}));
+const {kind,title}=Astro.props;
+---
+<Shell title={title} area="spring"><div class="prose security-prose"><nav class="breadcrumbs" aria-label="パンくずリスト"><a href={href('/spring/')}>Spring Boot・業務アプリ設計</a><span>/</span><a href={href('/spring/lab/')}>操作教材</a></nav><h1>{title}</h1><p>操作前の状態と予想を比べ、処理順序を確認してください。Spring実機の全実行パターンを再現する教材ではありません。</p><SpringLab kind={kind}/></div></Shell>

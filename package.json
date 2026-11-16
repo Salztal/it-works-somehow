@@ -21,7 +21,8 @@
     "check:test-design": "node scripts/check-test-design.mjs",
     "check:git": "node scripts/check-git.mjs",
     "check:git-real": "node scripts/check-git-real.mjs",
-    "check:web": "node scripts/check-web.mjs"
+    "check:web": "node scripts/check-web.mjs",
+    "check:spring": "node scripts/check-spring.mjs"
   },
   "dependencies": {
     "astro": "7.4.7"

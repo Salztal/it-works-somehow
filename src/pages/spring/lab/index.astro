@@ -1,0 +1,6 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import {labs} from '../../../content/spring/labs';
+import {href} from '../../../lib/catalog';
+---
+<Shell title="Springの操作教材" area="spring"><div class="prose"><h1>Springの操作教材</h1><p>8種類の学習モデルです。全て架空データで、実API・Java・実DBは使用しません。学習記録とは別に、実験状態はページを再読込みすると初期化します。</p><ul>{labs.map(([key,title])=><li><a href={href(`/spring/lab/${key}/`)}>{title} →</a></li>)}</ul></div></Shell>

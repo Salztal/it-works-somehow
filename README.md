@@ -2,7 +2,9 @@
 
 Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計・HTTP/Webアプリを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。生成ページは208、本文検索の対象は201件です。
+Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。Spring Boot・業務アプリ設計は4 Unit・15講義・5ミッション・72問・8操作教材・14比較です。生成ページは245、本文検索の対象は243件です。
+
+Spring Boot・業務アプリ設計 Phase 7の[調査・設計](docs/spring-phase7-design.md)、[一次資料・適用版](docs/spring-phase7-sources.md)、[実装・検証結果と実機未検証範囲](docs/spring-phase7-verification.md)を参照してください。JPA・Transactionの重点教材を含む概念講座で、Java・DB・実APIは起動しません。既存v1を保持。2026-11-16にユーザーがCommit・通常Push・Pages公開を承認。検証ログ・スクリーンショットはリリース対象から除外し、公開結果は対象CommitのGitHub Actionsで確認します。
 
 HTTP・Webアプリ Phase 6の[調査・設計](docs/web-phase6-design.md)、[一次資料・適用範囲](docs/web-phase6-sources.md)、[実装・検証結果と残る確認](docs/web-phase6-verification.md)を参照してください。既存version 1と保存先を維持。ユーザー承認によりmainへCommit・Push済み。実ブラウザの8操作教材・学習記録のJSON往復・実CSS幅390px/325pxを確認し、Pagesの自動検査・公開も成功しました。
 
@@ -49,7 +51,7 @@ pnpm preview
 - `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・テスト設計・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
+- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`、`check:spring`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -72,6 +74,10 @@ src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
 src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
 src/content/git/           15講義・5ミッション・20 QA・一次資料（独自原稿）
+src/content/spring/        Spring15講義・5ミッション・72問・比較・一次資料
+src/lib/spring-*.ts        ブラウザ内の限定モデル・表示処理
+src/pages/spring/          操作教材8種・比較・資料台帳
+scripts/check-spring.mjs   独立期待値38時点・96条件・v1互換性の検証
 src/content/web/           HTTP・Webアプリ15講義・5ミッション・症例・比較・一次資料
 src/lib/web-model.ts      外部通信なしのHTTP操作教材モデル
 src/pages/web/            操作教材8種・症例診断・比較
