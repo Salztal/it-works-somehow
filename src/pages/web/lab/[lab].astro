@@ -1,0 +1,10 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import {href} from '../../../lib/catalog';
+import {labs} from '../../../content/web/labs';
+import {webLessons,webMissions,webPath} from '../../../lib/web';
+import WebLab from '../../../components/WebLab.astro';
+export function getStaticPaths(){return labs.map(([kind,title])=>({params:{lab:kind},props:{kind,title}}));}
+const {kind,title}=Astro.props;
+---
+<Shell title={title} area="web"><div class="prose security-prose web-prose"><nav class="breadcrumbs" aria-label="パンくずリスト"><a href={href('/web/')}>HTTP・Webアプリ</a><span>/</span><a href={href('/web/lab/')}>操作教材</a></nav><h1>{title}</h1><nav class="test-lab-nav" aria-label="操作教材">{labs.map(([key,label])=><a href={href(`/web/lab/${key}/`)} aria-current={key===kind?'page':undefined}>{label}</a>)}</nav><WebLab kind={kind}/><h2>関連する講義とミッション</h2><ul>{[...webLessons,...webMissions].filter(x=>x.lab===kind).map(x=><li><a href={href(webPath(x.id))}>{x.number} {x.title}</a></li>)}</ul><a href={href('/web/diagnosis/')}>症状から診断する →</a></div></Shell>

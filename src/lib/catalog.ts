@@ -6,13 +6,16 @@ import gitCatalog from '../generated/git-catalog.json';
 import { units } from '../content/git/types';
 import testCatalog from '../generated/test-design-catalog.json';
 import {units as testUnits} from '../content/test-design/types';
+import webCatalog from '../generated/web-catalog.json';
+import {units as webUnits} from '../content/web/types';
 const levelSection = (level: string) => level === 'BASIC' ? 'basics' : level.toLowerCase();
 export { network };
-export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git' | 'test-design'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git' | 'test-design'; description: string; level?: string };
+export type Entry = { id: string; area: 'network' | 'java' | 'security' | 'git' | 'test-design' | 'web'; section: string; label: string; number: string; path: string; kind: 'network' | 'mission' | 'foundation' | 'network-mission' | 'java' | 'security' | 'git' | 'test-design' | 'web'; description: string; level?: string };
 const networkLabels = ['ネットワークの役割', 'IPアドレスとサブネット', 'ゲートウェイとルーティング', 'DNS・ポート・HTTP', 'ファイアウォールとNSG', 'Azureの構成を考える'];
 const legacyNetworkEntries = network.lessons.map((l, i) => ({ id: l.id, area: 'network' as const, section: i < 5 ? 'basics' : 'azure', label: networkLabels[i], number: l.number, path: `/network/${i < 5 ? 'basics' : 'azure'}/${l.id}/`, kind: 'network' as const, description: l.subtitle }));
 export { javaRows };
 export const entries: Entry[] = [
+  ...webCatalog.map(l=>({id:l.id,area:'web' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'web' as const,description:l.description})),
   ...legacyNetworkEntries.slice(0,5),
   ...foundations.map(l => ({id:l.id,area:'network' as const,section:`unit-${l.unit!.toLowerCase()}`,label:l.title,number:l.number,path:`/network/unit-${l.unit!.toLowerCase()}/${l.id}/`,kind:'foundation' as const,description:l.description})),
   ...legacyNetworkEntries.slice(5),
@@ -24,6 +27,9 @@ export const entries: Entry[] = [
   ...testCatalog.map(l=>({id:l.id,area:'test-design' as const,section:l.section,label:l.title,number:l.number,path:l.path,kind:'test-design' as const,description:l.description})),
 ];
 export const sections = [
+  {path:'/web/',area:'web',label:'HTTP・Webアプリ',description:'ブラウザからDBまでの通信を観測し、根拠を持って切り分ける。5 Unit・15講義・5ミッション・60問と8操作教材。'},
+  ...webUnits.map((u,i)=>({path:`/web/unit-${i+1}/`,area:'web',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`HTTP・Webアプリ：${u}を3講義と操作教材で学びます。`})),
+  {path:'/web/exercises/',area:'web',section:'exercises',label:'HTTP・Webアプリの実践ミッション',description:'画面表示・ログイン・CORS・キャッシュ・500系障害を証拠から判断する5件。'},
   {path:'/test-design/',area:'test-design',label:'テスト設計',description:'何を確認し、何が未確認かを説明する。5ユニット・15講義・5ミッション・60問で、仕様からテスト観点を設計します。'},
   ...testUnits.map((u,i)=>({path:`/test-design/unit-${i+1}/`,area:'test-design',section:`unit-${i+1}`,label:`Unit ${i+1}：${u}`,description:`テスト設計：${u}を3講義と操作教材で学びます。`})),
   {path:'/test-design/exercises/',area:'test-design',section:'exercises',label:'テスト設計の実践ミッション',description:'境界・条件・状態・変更・十分性を判断する5件の架空案件。'},
@@ -44,5 +50,5 @@ export const sections = [
   { path: '/java/exercises/', area: 'java', section: 'exercises', label: 'Javaの演習', description: '各章の開始コードで実装し、完成条件を確かめます。' },
 ];
 export function href(path: string) { return import.meta.env.BASE_URL.replace(/\/$/, '') + path; }
-export const areaLabel = (area: string) => area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : area === 'test-design' ? 'テスト設計' : 'Java';
+export const areaLabel = (area: string) => area === 'web' ? 'HTTP・Webアプリ' : area === 'network' ? 'ネットワーク' : area === 'security' ? 'Security' : area === 'git' ? 'Git' : area === 'test-design' ? 'テスト設計' : 'Java';
 export const entryKey = (e: Entry) => `${e.area}:${e.id}`;

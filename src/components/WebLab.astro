@@ -1,0 +1,27 @@
+---
+import {labUI} from '../content/web/lab-fields';
+import '../styles/web.css';
+import {labs} from '../content/web/labs';
+import {faults,faultLabels,layers} from '../lib/web-model';
+const {kind}=Astro.props as {kind:string};
+const ui=labUI[kind],name=labs.find(([k])=>k===kind)![1];
+---
+<section class="web-lab" data-web-lab={kind} aria-label={name}>
+<h3>{name}</h3><p>{ui.intro}</p><p class="lab-scope">{ui.scope}</p>
+<form data-web-form>
+{kind==='trace'&&<><label for={`${kind}-fault`}>障害を注入する場所・条件</label><select id={`${kind}-fault`} data-field="fault">{faults.map(f=><option value={f}>{faultLabels[f]}</option>)}</select></>}
+<div class="web-fields">{ui.fields.map(f=><div class:list={{'web-field':true,'web-field-wide':f.type==='textarea'}}>{f.type==='checkbox'?<label class="web-check" for={`${kind}-${f.key}`}><input type="checkbox" id={`${kind}-${f.key}`} data-field={f.key} checked={f.value==='true'}/>{f.label}</label>:<><label for={`${kind}-${f.key}`}>{f.label}</label>{f.options?<select id={`${kind}-${f.key}`} data-field={f.key}>{f.options.map(([v,label])=><option value={v} selected={v===f.value}>{label}</option>)}</select>:f.type==='textarea'?<textarea id={`${kind}-${f.key}`} data-field={f.key} rows="3" maxlength="4000">{f.value}</textarea>:<input id={`${kind}-${f.key}`} data-field={f.key} type={f.type||'text'} value={f.value} min={f.type==='number'?0:undefined} max={f.type==='number'?3600:undefined} maxlength="500"/>}</>}</div>)}</div>
+<div class="lab-actions">{ui.actions.map(([event,label],i)=><button class:list={['button',{'secondary':i>0}]} type={i===0?'submit':'button'} data-action={event}>{label}</button>)}<button class="button secondary" type="button" data-action="reset">初期状態に戻す</button></div>
+</form>
+<p class="lab-result" data-web-status role="status" aria-live="polite">未実行です。設定を選び、操作してください。</p>
+{kind==='trace'&&<><ol class="web-trace" aria-label="リクエストの通信経路">{layers.map((l,i)=><li><button type="button" data-layer={i} disabled>{l}</button><span data-layer-time={i}>未到達</span></li>)}</ol><div data-layer-detail class="web-layer-detail"></div></>}
+<div class="web-results">
+<section><h4>リクエスト／送信条件</h4><pre class="web-output" data-web-request tabindex="0" aria-label="模擬リクエスト">未送信</pre></section>
+<section><h4>レスポンス／観測結果</h4><pre class="web-output" data-web-response tabindex="0" aria-label="模擬応答">未観測</pre></section>
+</div>
+<section><h4>各層のログ・現在の状態</h4><pre class="web-output" data-web-details tabindex="0" aria-label="合成ログと状態">記録なし</pre></section>
+<section data-web-compare hidden><h4>同じ入力の正常系との比較（全層実行した仮想結果）</h4><pre class="web-output" data-web-comparison tabindex="0" aria-label="正常系と障害系の比較"></pre></section>
+<details><summary>操作履歴</summary><ol class="web-history" data-web-history></ol></details>
+<noscript><p>操作にはJavaScriptが必要です。講義本文と全選択肢の解説はJavaScriptなしでも読めます。</p></noscript>
+</section>
+<script>import '../lib/web-client';</script>

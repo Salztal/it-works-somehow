@@ -1,0 +1,5 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import {sources} from '../../content/web/sources';
+---
+<Shell title="HTTP・Webアプリの一次資料と適用範囲" area="web"><article class="prose security-prose"><h1>一次資料とモデルの適用範囲</h1><p>確認日は2026年11月12日です。固定版RFCと継続更新資料を区別し、引用転載ではなく独自の説明・問題を作成しています。実ブラウザや製品の全挙動を保証する教材ではありません。</p>{Object.entries(sources).map(([key,r])=><section><h2 id={key}><a href={r.url}>{r.title}</a></h2><p>{r.publisher} ／ {r.version}</p><p>確認日：<time datetime={r.checked}>{r.checked}</time></p><p>{r.scope}</p></section>)}</article></Shell>

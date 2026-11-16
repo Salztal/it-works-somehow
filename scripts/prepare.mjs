@@ -6,6 +6,7 @@ const root = path.resolve(import.meta.dirname, '..');
 await import('./prepare-security.mjs');
 await import('./prepare-git.mjs');
 await import('./prepare-test-design.mjs');
+await import('./prepare-web.mjs');
 const java = path.join(root, 'upstream/java');
 fs.mkdirSync(path.join(root,'public/licenses'),{recursive:true});
 fs.copyFileSync(path.join(root,'upstream/network/LICENSE'),path.join(root,'public/licenses/azure-network-basics.txt'));

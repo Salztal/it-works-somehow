@@ -1,8 +1,10 @@
 # 技術学習ノート
 
-Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計を追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
+Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計・HTTP/Webアプリを追加した日本語の静的学習サイトです。Astro / TypeScript / CSSで構築し、バックエンドや外部検索サービスは使いません。移行元のフォルダーは変更していません。
 
-Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。生成ページは169、本文検索の対象は148件です。
+Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。生成ページは208、本文検索の対象は201件です。
+
+HTTP・Webアプリ Phase 6の[調査・設計](docs/web-phase6-design.md)、[一次資料・適用範囲](docs/web-phase6-sources.md)、[実装・検証結果と残る確認](docs/web-phase6-verification.md)を参照してください。既存version 1と保存先を維持。ユーザー承認によりmainへのCommit・Pushを行う方針です。実ブラウザの操作検証は残っています。
 
 テスト設計 Phase 5の[調査・設計](docs/test-design-phase5-design.md)、[一次資料・適用版](docs/test-design-phase5-sources.md)、[実装・検証結果と未確認事項](docs/test-design-phase5-verification.md)を参照してください。学習記録のversion 1と保存先は維持。Commit・Push・本番公開は行っていません。
 
@@ -47,7 +49,7 @@ pnpm preview
 - `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・テスト設計・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
-- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
+- `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 
 リポジトリ配下パスを手元で確認する例（実リポジトリ名の設定ではありません）:
 
@@ -70,6 +72,9 @@ src/content/java-pages.json 章名・順序・所属・説明
 src/content/network/       原本どおりの構造化教材・図・問題・解答
 src/content/security/      30レッスンの独自原稿・図解データ・問題・全選択肢理由・出典
 src/content/git/           15講義・5ミッション・20 QA・一次資料（独自原稿）
+src/content/web/           HTTP・Webアプリ15講義・5ミッション・症例・比較・一次資料
+src/lib/web-model.ts      外部通信なしのHTTP操作教材モデル
+src/pages/web/            操作教材8種・症例診断・比較
 src/content/test-design/   15講義・5ミッション・60問・一次資料・配布テンプレート原本
 src/lib/test-design-*.ts   仕様オラクル・正常/不具合入り対象・設計モデル・表示処理
 src/pages/test-design/    8種類の操作教材とテンプレート配布

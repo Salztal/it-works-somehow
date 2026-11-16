@@ -1,0 +1,7 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import {href} from '../../lib/catalog';
+import {comparisons} from '../../content/web/comparisons';
+import {sources} from '../../content/web/sources';
+---
+<Shell title="HTTP・Webアプリの比較教材" area="web"><article class="prose security-prose web-prose"><h1>実務で使う12の比較</h1><nav class="test-lab-nav" aria-label="比較一覧">{comparisons.map(c=><a href={`#${c.id}`}>{c.title}</a>)}</nav>{comparisons.map(c=><section><h2 id={c.id}>{c.title}</h2><p>{c.when}</p><div class="table-scroll" tabindex="0" role="region" aria-label={c.title}><table><thead><tr>{c.headers.map(h=><th scope="col">{h}</th>)}</tr></thead><tbody>{c.rows.map(row=><tr>{row.map((v,i)=>i===0?<th scope="row">{v}</th>:<td>{v}</td>)}</tr>)}</tbody></table></div><p class="source-note">出典：<a href={sources[c.source].url}>{sources[c.source].title}</a> ／ {sources[c.source].version} ／ 確認日 {sources[c.source].checked}</p></section>)}<a href={href('/web/')}>講座一覧へ</a></article></Shell>

@@ -1,0 +1,6 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import {href} from '../../../lib/catalog';
+import {labs} from '../../../content/web/labs';
+---
+<Shell title="HTTP・Webアプリの操作教材" area="web"><div class="prose security-prose"><h1>HTTP・Webアプリの操作教材</h1><p>すべて架空データで完結する8種類の教材です。実サーバーへの通信や実Cookieの操作は行いません。</p><ol>{labs.map(([id,label])=><li><a href={href(`/web/lab/${id}/`)}>{label}</a></li>)}</ol><a href={href('/web/')}>講座一覧へ</a></div></Shell>
