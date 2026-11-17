@@ -4,6 +4,8 @@ Azure Network BasicsとJava Studyを統合し、Security・Git・テスト設計
 
 Networkは24レッスン・77問の確認問題・7ミッション（追加ミッションの判断問題12問、自由記述12題）・5語の記述復習。既存6章を維持し、TCP/IPをUnit A〜Fの18章と8種類の操作教材で深めます。Javaは原稿18本、9つの開始コード、完成版、SQL・設定キットを収録しています。Securityは10ユニット・30レッスン（BASIC18 / ADVANCED9 / LUNATIC3）・独自問題90問と10種類の操作教材。Gitは15レッスン・30問・5ミッション（判断10問）・20の状況別QA・11状況の操作教材を収録。テスト設計は5ユニット・15講義・5ミッション・60問と8種類の操作教材、3種類のテンプレートを収録。HTTP・Webアプリは5 Unit・15講義・5ミッション・60問・8操作教材・13症例・12比較です。Spring Boot・業務アプリ設計は4 Unit・15講義・5ミッション・72問・8操作教材・14比較です。Mail・メールサーバーは5 Unit・15講義・5ミッション・60問、8操作教材・15症例・16比較・34語の用語集です。生成ページは285、本文検索の対象は336件です。
 
+UI・ナビゲーション Phase 9の[巡回・発見事項](docs/ui-phase9-audit.md)、[実装・検証結果と未検証範囲](docs/ui-phase9-verification.md)を参照してください。既存8カテゴリの教材とURL、学習記録v1、検索・操作モデルを維持し、TOP・共通メニュー・フッター・操作領域を改善しました。今回はローカル実装・検証までで、Commit・Push・Pages公開は未実施です。
+
 Mail・メールサーバー Phase 8の[調査・設計](docs/mail-phase8-design.md)、[一次資料台帳](docs/mail-phase8-sources.md)、[実装・検証結果](docs/mail-phase8-verification.md)を参照してください。RFC 9989/9990を主要基準に、受付・配送・保存・閲覧と、個別認証・Alignmentを区別する合成データの教材です。実メールサーバー・外部SMTP・実DNSは使用しません。既存v1記録と保存先を維持。2026-11-16の追加指示により、Commit・通常Push・Pages公開後にブラウザ確認を行います。
 
 Spring Boot・業務アプリ設計 Phase 7の[調査・設計](docs/spring-phase7-design.md)、[一次資料・適用版](docs/spring-phase7-sources.md)、[実装・検証結果と実機未検証範囲](docs/spring-phase7-verification.md)を参照してください。JPA・Transactionの重点教材を含む概念講座で、Java・DB・実APIは起動しません。既存v1を保持。2026-11-16にユーザーがCommit・通常Push・Pages公開を承認。検証ログ・スクリーンショットはリリース対象から除外し、公開結果は対象CommitのGitHub Actionsで確認します。
@@ -45,6 +47,7 @@ node scripts/astro.mjs dev --host 127.0.0.1
 ```powershell
 pnpm verify
 pnpm check:base
+pnpm check:ui
 pnpm build
 pnpm preview
 ```
@@ -52,6 +55,7 @@ pnpm preview
 - `verify`: 元Javaの配布生成・検査、型検査、静的ビルド、全参照・アンカー・秘密情報パターン・ZIP・移行内容、Security全教材と問題・判定・v1バックアップ・Web Crypto、Network追加教材・全採点分岐・TCP6事例・CIDR境界・VLAN/DHCP/ルート/PAT/DNS/障害判定、Git40問全160分岐・v1互換性・DAGモデル・実Git44時点の照合、テスト設計60問全240分岐・独立期待値・16ルール・20状態イベント・網羅計算・組み合わせ・依存経路・Todo改修の照合。実Git照合は新規の一時リポジトリだけで行い、合成作者情報を子プロセスに渡します。
 - `check:base`: `/` と `/it-works-somehow/` の両方でビルド・参照・ZIP・Security・Network・Git・テスト設計・HTTP配信を検査。最後は配下パス用のdistになるので、通常プレビュー前に`pnpm build`で戻します。
 - `build`: `dist/`へ公開物を生成。Java ZIPは毎回安全な原本から再生成します。
+- `check:ui`: ビルド済み285ページの共通メニュー・フッター・TOP構造を検査。任意のローカル監査原本があれば教材・模型・索引の不変性も照合します。ブラウザ実操作は別に記録します。
 - `preview`: 生成済みdistを127.0.0.1:4321で配信。Ctrl+Cで停止。ポートは環境変数`PORT`で変更できます。
 - `check:types`、`check`、`check:content`、`check:security`、`check:network`、`check:git`、`check:git-real`、`check:test-design`、`check:web`、`check:spring`、`check:mail`を個別にも実行できます。`node scripts/check-http.mjs`は生成ファイルのHTTP取得とバイト一致を検査します。ブラウザ実操作とは別の検査です。
 

@@ -1,0 +1,16 @@
+---
+import {courseGroups} from '../lib/navigation';
+import {href} from '../lib/catalog';
+const {area}=Astro.props as {area?:string};
+---
+<nav class="global-nav" aria-label="メインナビゲーション">
+  <details class="catalog-menu" data-catalog-menu>
+    <summary aria-controls="catalog-panel">教材を探す <span class="disclosure-arrow" aria-hidden="true">⌄</span></summary>
+    <div id="catalog-panel" class="catalog-panel">
+      <p class="catalog-intro">分野を選んで、講義・演習へ</p>
+      {courseGroups.map(g=><section class="catalog-group"><h2>{g.label}</h2><ul>{g.courses.map(c=><li><a href={href(c.path)} aria-current={area===c.id?'true':undefined}><span>{c.label}</span>{area===c.id&&<small>閲覧中</small>}</a></li>)}</ul></section>)}
+    </div>
+  </details>
+  <a class="nav-utility" href={href('/search/')} aria-current={Astro.url.pathname.endsWith('/search/')?'page':undefined}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>検索</span></a>
+  <a class="nav-utility" href={href('/progress/')} aria-current={Astro.url.pathname.endsWith('/progress/')?'page':undefined}>学習記録</a>
+</nav>

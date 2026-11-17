@@ -18,6 +18,7 @@ function render() {
     document.querySelectorAll<HTMLProgressElement>(`[data-course-progress="${area}"]`).forEach(el => { el.value = count; el.setAttribute('aria-label', `${areaLabel(area)}の完了 ${count} / ${list.length}`); });
   }
   const last = entries.find(e => entryKey(e) === state.last);
+  document.querySelectorAll<HTMLElement>('[data-resume-panel]').forEach(el => el.hidden = !last);
   if (last) {
     document.querySelectorAll('[data-resume-title]').forEach(el => el.textContent = last.label);
     document.querySelectorAll('[data-resume-detail]').forEach(el => el.textContent = `${areaLabel(last.area)} / ${state.completed[entryKey(last)] ? '完了済みの章を振り返る' : '最後に開いた章から再開できます。'}`);
@@ -53,7 +54,7 @@ document.querySelector('#reset-progress')?.addEventListener('click', () => { if 
 document.querySelector<HTMLInputElement>('#import-progress')?.addEventListener('change', async event => { const input = event.currentTarget as HTMLInputElement, file = input.files?.[0]; if (!file) return; try { if (file.size > 1024 * 1024) throw Error('ファイルが大きすぎます（上限1MB）。'); const imported = validate(JSON.parse(await file.text())); if (!confirm('現在の学習記録を、ファイルの記録に置き換えますか？')) return; state = imported; save(); location.reload(); } catch(e) { if(recordStatus) recordStatus.textContent = e instanceof Error ? e.message : '読み込めませんでした。'; } finally { input.value = ''; } });
 document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(pre => { const wrapper = document.createElement('div'); wrapper.className = 'code-wrapper'; pre.before(wrapper); wrapper.append(pre); const b = document.createElement('button'); b.type='button'; b.className='copy-code'; b.textContent='コピー'; b.setAttribute('aria-label','コードをコピー'); b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(pre.textContent || ''); b.textContent='コピーしました'; } catch { b.textContent='手動で選択してコピー'; } setTimeout(()=>b.textContent='コピー',2000); }); wrapper.prepend(b); });
 const courseMenu = document.querySelector<HTMLDetailsElement>('.course-navigation');
-if(courseMenu) { const media = matchMedia('(max-width: 900px)'); const updateMenu = () => courseMenu.open = !media.matches; updateMenu(); media.addEventListener('change', updateMenu); }
+if(courseMenu) { const media = matchMedia('(max-width: 900px)'); const updateMenu = () => courseMenu.open = !!current && !media.matches; updateMenu(); media.addEventListener('change', updateMenu); }
 document.addEventListener('keydown', event => { if(event.key==='/' && !event.ctrlKey && !event.metaKey && !event.altKey && !/INPUT|TEXTAREA|SELECT/.test((event.target as HTMLElement).tagName) && !(event.target as HTMLElement).isContentEditable) { event.preventDefault(); const input = document.querySelector<HTMLInputElement>('#query'); input ? input.focus() : location.assign(href('/search/')); } });
 render();
 // Highlight the heading currently reached without moving keyboard focus.

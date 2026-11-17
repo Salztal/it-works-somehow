@@ -23,7 +23,8 @@
     "check:git-real": "node scripts/check-git-real.mjs",
     "check:web": "node scripts/check-web.mjs",
     "check:spring": "node scripts/check-spring.mjs",
-    "check:mail": "node scripts/check-mail.mjs"
+    "check:mail": "node scripts/check-mail.mjs",
+    "check:ui": "node scripts/check-ui.mjs"
   },
   "dependencies": {
     "astro": "7.4.7"

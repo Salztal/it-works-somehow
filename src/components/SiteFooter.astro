@@ -1,0 +1,9 @@
+---
+import {courses} from '../lib/navigation';
+import {href} from '../lib/catalog';
+---
+<footer class="site-footer">
+  <div class="footer-heading"><a href={href('/')}>技術学習ノート</a><span>学ぶ・確かめる・振り返る</span></div>
+  <nav class="footer-courses" aria-label="分野別の教材">{courses.map(c=><a href={href(c.path)}>{c.label}</a>)}</nav>
+  <nav class="footer-utilities" aria-label="補助ナビゲーション"><a href={href('/about/')}>このサイトと教材の出典</a><a href={href('/progress/')}>学習記録</a><a href={href('/search/')}>教材検索</a></nav>
+</footer>
